@@ -122,9 +122,7 @@ const cardVariants = {
               <span className="text-primary">Future of Food</span>
             </h1>
             <p className="text-gray-300 text-sm md:text-lg font-normal leading-relaxed max-w-2xl mx-auto lg:mx-0">
-              Sumedha Agro delivers premium spawn, fresh mushrooms, 
-              processed foods, training, and sustainable farming solutions 
-              for farmers, businesses, and homes.
+              Edible mushrooms are a gift from nature with therapeutic properties; don't ruin this gift by using chemicals. Growing edible mushrooms protects both the environment and human health
             </p>
             <div className="flex flex-wrap gap-4 pt-4 justify-center lg:justify-start">
               <div className="flex items-center gap-3 bg-white/5 hover:bg-primary px-4 py-2 rounded-lg border border-white/10 backdrop-blur-sm group group-hover:bg-primary hover:scale-105 transition cursor-pointer Duration-300">

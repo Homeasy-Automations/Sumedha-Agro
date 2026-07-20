@@ -107,16 +107,23 @@ export default function About() {
                 </span>
               </div>
               <h1 className="text-text-main dark:text-black text-4xl md:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight">
-                Innovating Agriculture <br className="hidden lg:block" />{" "}
+                Mushroom Seed Production Laboratory <br className="hidden lg:block" />{" "}
                 through{" "}
                 <span className="text-primary underline decoration-4 underline-offset-4 decoration-primary/30">
                   Fungi
                 </span>
               </h1>
               <p className="text-text-main/80 dark:text-gray-500 text-lg md:text-xl font-normal leading-relaxed max-w-xl">
-                Sumedha Agro is an integrated mushroom enterprise focused on quality spawn production,
-                sustainable cultivation, processed foods, farmer training, and future-ready 
-                agricultural solutions. We are building a healthier and more profitable mushroom ecosystem.
+                The SAMSPL operated for Quality Mushroom Spawn production and training program With a clear mission to integrate mushrooms into mainstream Indian diets and contribute to the farmers double income with rural and urban economy,
+ the lab’s efforts are strategically aligned to address some of the most pressing the challenges faced by society today such as youth unemployment, malnutrition,
+ women’s empowerment, and management of agricultural waste.
+For thousands of years,
+ mushrooms—one of nature's oldest and most varied organisms—have been valued for their gastronomic, medicinal,
+ and even cultural and spiritual qualities. Psilocybin mushrooms were referred to as Teonanácatl "Flesh of the God" by ancient Mesoamerican tribes such as the Maya and Aztecs, 
+who used them in holy rites to converse with gods. The red-and-white Amanita muscaria (Glückspilz) mushroom is considered lucky in German and other European mythology.
+We are striving to make mushrooms generally available,
+ economically feasible, and socially acceptable through cutting-edge facilities, community-based training, 
+and knowledge-sharing programs. This guarantees that they can make a significant contribution to grassroots entrepreneurship as well as national and nutritional goals.
               </p>
             </div>
             <div className="w-full md:w-1/2 aspect-4/3 rounded-2xl overflow-hidden shadow-2xl shadow-primary/10 relative group">

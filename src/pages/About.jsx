@@ -240,8 +240,8 @@ We are striving to make mushrooms generally availableeconomically feasible, and 
                 {/* We focus on research; spawn production, training, conservation,
                 and sustainable technologies to promote mushrooms as a delicious
                 and nutritious food, income source and ecofriendly solution. */}
-                We work across the complete mushroom value chain to create income, 
-                nutrition, and scalable agricultural growth.
+               We focus on research; spawn production, training, conservation,
+               and sustainable technologies to promote mushrooms as a delicious and nutritious food, income source and ecofriendly solution.
               </p>
             </div>
             </div>

@@ -79,7 +79,7 @@ const cardVariants = {
             </h1>
             <p className="text-gray-300 text-lg md:text-xl font-normal leading-relaxed max-w-2xl mx-auto lg:mx-0">
               Sumedha Agro is a pioneer in high-tech mushroom farming. We
-              deliver premium organic produce and sustainable agricultural
+              delivers the premium organic produce and sustainable agricultural
               solutions to businesses worldwide.
             </p>
             <div className="flex flex-wrap gap-4 pt-4 justify-center lg:justify-start">

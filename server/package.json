@@ -1,18 +1,30 @@
 {
-  "name": "server",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "name": "sumedha-agro-server",
+  "version": "2.0.0",
+  "private": true,
+  "description": "REST API for the Sumedha Agro website (training applications, contact, quotes, subscriptions, visitor count).",
+  "type": "module",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=20"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "node --test \"test/**/*.test.js\"",
+    "lint": "eslint ."
+  },
   "dependencies": {
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
-    "nodemailer": "^8.0.1"
+    "helmet": "^8.3.0",
+    "mongodb": "^6.21.0",
+    "pg": "^8.23.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
+    "globals": "^16.5.0"
   }
 }

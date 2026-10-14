@@ -1,0 +1,44 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter.woff2') format('woff2');
+  font-display: swap;
+}
+@import "tailwindcss";
+
+/* Light theme only, like the live site: `dark:` utilities only apply under a .dark class,
+   which is never set, so a device's dark mode setting doesn't change the site. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+.material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
+
+/* Colours of the live site (sumedhaagro.com). */
+@theme{
+    --color-background-light :#f6f8f6;
+    --color-background-dark : #102210;
+    --color-text-side :#006400;
+    --color-background-even :#7fff00;
+    --color-text-icon :#7fff00;
+    --color-primary :#13ec13;
+    --color-border-active : #cfe7cf;
+    --color-border-light: #e7f3e7;
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+    color-scheme: light; /* light form controls and scrollbars, even when the device uses dark mode */
+}
+body {
+    background-color: #ffffff;
+    color: #0d1b0d;
+}
+
+/* Visible keyboard focus: dark green on light surfaces, brand green on dark ones. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-text-side);
+    outline-offset: 2px;
+}
+.on-dark :where(a, button, [tabindex]):focus-visible {
+    outline-color: var(--color-primary);
+}

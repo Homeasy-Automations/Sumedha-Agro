@@ -32,9 +32,9 @@ function UploadForm({ onUploaded }) {
 
   const submit = async (e) => {
     e.preventDefault();
-    const nextErrors = { image: file ? "" : "Choose an image.", alt: alt.trim() ? "" : "Describe the image." };
+    const nextErrors = { image: file ? "" : "Choose an image." };
     setErrors(nextErrors);
-    if (nextErrors.image || nextErrors.alt) return;
+    if (nextErrors.image) return;
 
     setProgress(0);
     setMessage({ tone: "success", text: "" });
@@ -115,8 +115,7 @@ function UploadForm({ onUploaded }) {
           <Field
             id={`${uid}-alt`}
             label="Description (alt text)"
-            required
-            hint="Describe what the photo shows, for visitors who use screen readers. E.g. “Oyster mushrooms growing on paddy straw bags”."
+            hint="Optional, but recommended: describe what the photo shows, for visitors who use screen readers. E.g. “Oyster mushrooms growing on paddy straw bags”."
             error={errors.alt}
           >
             <input {...fieldProps(`${uid}-alt`, errors.alt, true)} value={alt} maxLength={200} onChange={(e) => setAlt(e.target.value)} />
@@ -141,7 +140,7 @@ function UploadForm({ onUploaded }) {
 
 function EditImage({ image, onClose, onSaved }) {
   const { request } = useAdmin();
-  const [alt, setAlt] = useState(image.alt);
+  const [alt, setAlt] = useState(image.alt ?? "");
   const [caption, setCaption] = useState(image.caption ?? "");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -163,7 +162,7 @@ function EditImage({ image, onClose, onSaved }) {
   return (
     <form onSubmit={save} className="flex flex-col gap-4">
       <img src={image.thumbnailSrc ?? image.src} alt="" className="max-h-64 w-full rounded-xl object-contain" />
-      <Field id="edit-alt" label="Description (alt text)" required error={error}>
+      <Field id="edit-alt" label="Description (alt text)" error={error}>
         <input {...fieldProps("edit-alt", error)} value={alt} maxLength={200} onChange={(e) => setAlt(e.target.value)} />
       </Field>
       <Field id="edit-caption" label="Caption">
@@ -189,7 +188,7 @@ export default function GalleryAdmin() {
   const items = data?.items ?? [];
 
   const remove = async (image) => {
-    if (!window.confirm(`Delete this image from the gallery and Cloudinary?\n\n${image.alt}`)) return;
+    if (!window.confirm(`Delete this image from the gallery and Cloudinary?${image.alt ? `\n\n${image.alt}` : ""}`)) return;
     try {
       await request(`/gallery/${image.id}`, { method: "DELETE" });
       invalidateSiteContent("gallery");
@@ -217,13 +216,17 @@ export default function GalleryAdmin() {
             <li key={image.id} className="overflow-hidden rounded-2xl border border-border-light bg-white shadow-sm">
               <img src={image.thumbnailSrc ?? image.src} alt={image.alt} loading="lazy" className="aspect-square w-full object-cover" />
               <div className="p-3">
-                <p className="line-clamp-2 text-sm font-medium text-[#0d1b0d]">{image.alt}</p>
+                {image.alt ? (
+                  <p className="line-clamp-2 text-sm font-medium text-[#0d1b0d]">{image.alt}</p>
+                ) : (
+                  <p className="text-sm italic text-[#5b735b]">No description</p>
+                )}
                 {image.caption && <p className="mt-1 line-clamp-1 text-xs text-[#5b735b]">{image.caption}</p>}
                 <div className="mt-3 flex gap-2">
                   <Button variant="secondary" icon={Pencil} onClick={() => setEditing(image)} className="flex-1 px-2">
                     Edit
                   </Button>
-                  <Button variant="danger" icon={Trash2} onClick={() => remove(image)} aria-label={`Delete ${image.alt}`} className="px-3" />
+                  <Button variant="danger" icon={Trash2} onClick={() => remove(image)} aria-label={`Delete ${image.alt || image.caption || "image"}`} className="px-3" />
                 </div>
               </div>
             </li>

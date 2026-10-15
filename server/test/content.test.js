@@ -152,7 +152,7 @@ describe("admin panel API", () => {
       assert.equal(list.headers.get("cache-control"), "no-cache");
     });
 
-    it("rejects assets outside the site's folder and missing alt text", async () => {
+    it("rejects assets outside the site's folder", async () => {
       const foreign = await t.api("POST", "/api/admin/gallery", { ...auth, body: { publicId: "someone-else/cat", alt: "x" } });
       assert.equal(foreign.status, 400);
       assert.match(foreign.body.errors.publicId, /Upload the file again/);
@@ -161,14 +161,23 @@ describe("admin panel API", () => {
         body: { publicId: `${CLOUDINARY.folder}/gallery/../videos/x`, alt: "x" },
       });
       assert.equal(traversal.status, 400);
-      const noAlt = await t.api("POST", "/api/admin/gallery", { ...auth, body: { publicId } });
-      assert.equal(noAlt.body.errors.alt, "This field is required.");
     });
 
-    it("edits alt text and caption", async () => {
+    it("accepts an image without alt text or caption (both optional)", async () => {
+      const res = await t.api("POST", "/api/admin/gallery", { ...auth, body: { publicId: `${CLOUDINARY.folder}/gallery/plain` } });
+      assert.equal(res.status, 201, JSON.stringify(res.body));
+      assert.equal(res.body.item.alt, "");
+      assert.equal(res.body.item.caption, "");
+      assert.equal((await t.api("DELETE", `/api/admin/gallery/${res.body.item.id}`, auth)).status, 200);
+    });
+
+    it("edits alt text and caption, and allows clearing them", async () => {
       const res = await t.api("PUT", `/api/admin/gallery/${item.id}`, { ...auth, body: { alt: "New alt", caption: "" } });
       assert.equal(res.body.item.alt, "New alt");
       assert.equal(res.body.item.caption, "");
+      const cleared = await t.api("PUT", `/api/admin/gallery/${item.id}`, { ...auth, body: { alt: "", caption: "" } });
+      assert.equal(cleared.status, 200, JSON.stringify(cleared.body));
+      assert.equal(cleared.body.item.alt, "");
     });
 
     it("deletes the record and the Cloudinary asset", async () => {

@@ -147,7 +147,7 @@ Unknown fields are ignored. On a `400`, `errors` maps each field to the same mes
 | `GET` / `PATCH` / `DELETE /api/admin/training-applications/:id` | Full record / `{ "status": "accepted" }` / delete |
 | `GET`, `DELETE /api/admin/contact-messages[/:id]`, `/quote-requests[/:id]`, `/subscribers[/:id]` | List / delete |
 | `POST /api/admin/uploads` | `{ "kind": "image" \| "video" }` → signed parameters for uploading the file straight to Cloudinary |
-| `POST /api/admin/gallery` | `{ publicId, alt, caption?, width?, height? }` after the Cloudinary upload |
+| `POST /api/admin/gallery` | `{ publicId, alt?, caption?, width?, height? }` after the Cloudinary upload |
 | `POST /api/admin/videos` | `{ publicId, title }` (uploaded file) or `{ url, title }` (YouTube/Vimeo) |
 | `POST /api/admin/news`, `/trainings` | Item fields as listed above |
 | `PUT` / `DELETE /api/admin/{gallery,videos,news,trainings}/:id` | Edit / delete (deleting media also removes it from Cloudinary) |

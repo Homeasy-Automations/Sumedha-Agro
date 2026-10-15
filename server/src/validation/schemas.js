@@ -79,14 +79,14 @@ export const subscriberSchema = {
 // these describe the uploaded asset.
 export const galleryImageSchema = {
   publicId: { required: true, max: 300 },
-  alt: { required: true, max: 200 },
+  alt: { max: 200 },
   caption: { max: 300 },
   width: { check: "dimension" },
   height: { check: "dimension" },
 };
 
 export const galleryUpdateSchema = {
-  alt: { required: true, max: 200 },
+  alt: { max: 200 },
   caption: { max: 300 },
 };
 

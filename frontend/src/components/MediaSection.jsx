@@ -114,7 +114,7 @@ function Lightbox({ items, index, onClose, onStep }) {
         if (e.key === "ArrowRight") onStep(1);
         if (e.key === "ArrowLeft") onStep(-1);
       }}
-      aria-label={item?.alt}
+      aria-label={item?.alt || item?.caption || ui.viewImage}
       className="m-auto w-[min(1100px,94vw)] bg-transparent p-0 text-white backdrop:bg-black/85"
     >
       {item && (
@@ -169,7 +169,7 @@ function GalleryGrid({ compact }) {
                 type="button"
                 onClick={() => setOpen(i)}
                 className={`group block w-full overflow-hidden rounded-2xl border border-border-light ${cardHover}`}
-                aria-label={`${ui.viewImage}: ${image.alt}`}
+                aria-label={image.alt || image.caption ? `${ui.viewImage}: ${image.alt || image.caption}` : `${ui.viewImage} ${i + 1}`}
               >
                 <img
                   src={image.thumbnailSrc ?? image.src}

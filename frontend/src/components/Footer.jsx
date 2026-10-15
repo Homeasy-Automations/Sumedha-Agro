@@ -1,10 +1,13 @@
+import { useId, useState } from "react";
 import { Link } from "react-router-dom";
-import { Eye } from "lucide-react";
+import { Eye, LoaderCircle } from "lucide-react";
 import logo from "../assets/Logo.webp";
 import content from "../data/content";
+import { newsletter } from "../data/legacyContent";
 import useVisitorCount from "../hooks/useVisitorCount";
+import { apiRequest } from "../lib/api";
 import ContactBlock from "./ContactBlock";
-import { container } from "./styles";
+import { containerWide, input } from "./styles";
 
 const { footer, site } = content;
 const YEAR = new Date().getFullYear();
@@ -43,17 +46,88 @@ function VisitorCount() {
   );
 }
 
+// "Stay Updated" newsletter sign-up (restored), saved through POST /api/subscribe.
+// The browser checks the address (required, type="email"); the API has the final say.
+function Newsletter() {
+  const uid = useId();
+  const [email, setEmail] = useState("");
+  const [result, setResult] = useState({ state: "idle", message: "" }); // idle | sending | done | error
+  const sending = result.state === "sending";
+  const SubmitIcon = newsletter.submitIcon;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (sending) return;
+    setResult({ state: "sending", message: "" });
+    try {
+      const { status } = await apiRequest("/api/subscribe", {
+        method: "POST",
+        body: { email: email.trim() },
+        withStatus: true,
+      });
+      setEmail("");
+      setResult({ state: "done", message: status === 201 ? newsletter.messages.created : newsletter.messages.exists });
+    } catch (err) {
+      setResult({ state: "error", message: err.errors?.email || err.message });
+    }
+  };
+
+  return (
+    <div>
+      <h2 className="mb-5 text-base font-bold text-[#0d1b0d]">{newsletter.heading}</h2>
+      <p className="mb-4 text-sm leading-relaxed text-gray-600">{newsletter.text}</p>
+      <form onSubmit={handleSubmit} aria-busy={sending} className="flex gap-2">
+        <input
+          type="email"
+          name="email"
+          required
+          autoComplete="email"
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (result.state === "error") setResult({ state: "idle", message: "" });
+          }}
+          placeholder={newsletter.placeholder}
+          aria-label={newsletter.placeholder}
+          aria-invalid={result.state === "error" ? true : undefined}
+          aria-describedby={`${uid}-status`}
+          className={`${input} min-w-0`}
+        />
+        <button
+          type="submit"
+          disabled={sending}
+          aria-label={newsletter.submitLabel}
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary text-[#0d1b0d] shadow-sm transition hover:bg-green-400 active:scale-[0.97] disabled:cursor-wait disabled:opacity-70"
+        >
+          {sending ? (
+            <LoaderCircle size={18} aria-hidden="true" className="animate-spin" />
+          ) : (
+            <SubmitIcon size={20} aria-hidden="true" />
+          )}
+        </button>
+      </form>
+      <p
+        id={`${uid}-status`}
+        aria-live="polite"
+        className={`mt-2 min-h-5 text-sm font-medium ${result.state === "error" ? "text-red-600" : "text-text-side"}`}
+      >
+        {result.message}
+      </p>
+    </div>
+  );
+}
+
 export default function Footer() {
   return (
     <footer className="border-t border-border-light bg-white text-[#3f5f3f]">
-      <div className={`${container} pb-6 pt-10`}>
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1.1fr_1.5fr]">
-          <div className="flex flex-col gap-5">
-            <Link to="/" className="flex w-fit items-center gap-3">
+      <div className={`${containerWide} pb-6 pt-10`}>
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-[1.2fr_0.9fr_1.1fr_1.6fr_1.2fr]">
+          <div className="flex flex-col items-center gap-5 text-center">
+            <Link to="/" className="flex w-fit flex-col items-center gap-3">
               <img
                 src={logo}
                 alt={site.logoAlt}
-                className="h-11 w-auto object-contain"
+                className="h-16 w-auto object-contain"
                 width="70"
                 height="70"
               />
@@ -69,6 +143,8 @@ export default function Footer() {
             <h2 className="mb-5 text-base font-bold text-[#0d1b0d]">{footer.contactHeading}</h2>
             <ContactBlock parts={["address", "phone", "email"]} />
           </div>
+
+          <Newsletter />
         </div>
 
         {/* Copyright left, visitor count centred, legal links right (stacked on small screens). */}

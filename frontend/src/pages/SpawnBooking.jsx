@@ -8,7 +8,7 @@ import SectionHeading from "../components/SectionHeading";
 import HeadingCard from "../components/HeadingCard";
 import ContactBlock from "../components/ContactBlock";
 import Icon from "../components/Icon";
-import { card, container, heading, iconTile, sectionY } from "../components/styles";
+import { card, cardHover, container, heading, iconTile, sectionY } from "../components/styles";
 
 const { spawnBooking, valueAdded, images, nav, meta } = content;
 
@@ -17,9 +17,9 @@ function BookingCard({ item, children }) {
     <article
       id={item.id}
       aria-labelledby={`${item.id}-heading`}
-      className={`${card} flex h-full scroll-mt-36 flex-col gap-6 p-6 md:p-10`}
+      className={`group ${card} ${cardHover} flex h-full scroll-mt-36 flex-col gap-6 p-6 md:p-10`}
     >
-      <span className={iconTile}>
+      <span className={`${iconTile} transition-colors group-hover:bg-primary group-hover:text-[#0d1b0d]`}>
         <Icon name={item.icon} size={24} />
       </span>
       <h2 id={`${item.id}-heading`} className={`text-2xl font-bold ${heading}`}>
@@ -40,18 +40,20 @@ export default function SpawnBooking() {
 
       <section className={`bg-background-light ${sectionY}`}>
         <div className={container}>
-          <Reveal>
-            <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-              {spawnBooking.offerings.map((offering) => (
-                <li key={offering.label} className={`${card} flex flex-col items-center gap-3 p-5 text-center`}>
-                  <span className={iconTile}>
-                    <Icon name={offering.icon} size={24} />
-                  </span>
-                  <span className={`font-semibold ${heading}`}>{offering.label}</span>
-                </li>
-              ))}
-            </ul>
-          </Reveal>
+          <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            {spawnBooking.offerings.map((offering, i) => (
+              <li key={offering.label}>
+                <Reveal delay={i * 0.06} className="h-full">
+                  <div className={`group ${card} ${cardHover} flex h-full flex-col items-center gap-3 p-5 text-center`}>
+                    <span className={`${iconTile} transition-colors group-hover:bg-primary group-hover:text-[#0d1b0d]`}>
+                      <Icon name={offering.icon} size={24} />
+                    </span>
+                    <span className={`font-semibold ${heading}`}>{offering.label}</span>
+                  </div>
+                </Reveal>
+              </li>
+            ))}
+          </ul>
 
           <div className="mt-8 grid gap-6 lg:grid-cols-2">
             <Reveal className="h-full">

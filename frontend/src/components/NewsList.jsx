@@ -2,7 +2,8 @@ import { ExternalLink, Newspaper } from "lucide-react";
 import content from "../data/content";
 import useSiteContent from "../hooks/useSiteContent";
 import EmptyState from "./EmptyState";
-import { body, card, heading, muted } from "./styles";
+import Reveal from "./Reveal";
+import { body, card, cardHover, heading, muted } from "./styles";
 
 const { news, ui } = content;
 const NEWS_FALLBACK = news.items;
@@ -27,33 +28,35 @@ export default function NewsList({ limit, compact = false }) {
 
   return (
     <ul className="flex flex-col gap-4">
-      {items.map((item) => (
+      {items.map((item, i) => (
         <li key={item.id ?? `${item.date}-${item.title}`}>
-          <article className={`${card} p-5 md:p-6`}>
-            {item.date && (
-              <time dateTime={item.date} className={`text-xs font-semibold ${muted}`}>
-                {dateFormat.format(new Date(`${item.date}T00:00:00Z`))}
-              </time>
-            )}
-            <h3 className={`mt-1 text-lg font-bold ${heading}`}>{item.title}</h3>
-            {item.body && (
-              <p className={`mt-2 whitespace-pre-line text-sm leading-relaxed ${body} ${compact ? "line-clamp-3" : ""}`}>
-                {item.body}
-              </p>
-            )}
-            {item.link && (
-              <a
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-text-side underline-offset-4 hover:underline"
-              >
-                {ui.readMore}
-                <ExternalLink size={14} aria-hidden="true" />
-                <span className="sr-only">{ui.opensInNewTab}</span>
-              </a>
-            )}
-          </article>
+          <Reveal delay={Math.min(i, 5) * 0.06}>
+            <article className={`${card} ${cardHover} p-5 md:p-6`}>
+              {item.date && (
+                <time dateTime={item.date} className={`text-xs font-semibold ${muted}`}>
+                  {dateFormat.format(new Date(`${item.date}T00:00:00Z`))}
+                </time>
+              )}
+              <h3 className={`mt-1 text-lg font-bold ${heading}`}>{item.title}</h3>
+              {item.body && (
+                <p className={`mt-2 whitespace-pre-line text-sm leading-relaxed ${body} ${compact ? "line-clamp-3" : ""}`}>
+                  {item.body}
+                </p>
+              )}
+              {item.link && (
+                <a
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-text-side underline-offset-4 hover:underline"
+                >
+                  {ui.readMore}
+                  <ExternalLink size={14} aria-hidden="true" />
+                  <span className="sr-only">{ui.opensInNewTab}</span>
+                </a>
+              )}
+            </article>
+          </Reveal>
         </li>
       ))}
     </ul>

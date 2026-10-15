@@ -3,7 +3,8 @@ import { ChevronLeft, ChevronRight, Images, Play, Video, X } from "lucide-react"
 import content from "../data/content";
 import useSiteContent from "../hooks/useSiteContent";
 import EmptyState from "./EmptyState";
-import { heading } from "./styles";
+import Reveal from "./Reveal";
+import { cardHover, heading } from "./styles";
 
 const { media, ui } = content;
 const VIDEO_FALLBACK = media.videos.items;
@@ -37,7 +38,7 @@ function VideoCard({ video }) {
   const src = playing && video.thumbnailUrl ? `${video.embedUrl}?autoplay=1` : video.embedUrl;
 
   return (
-    <figure className="overflow-hidden rounded-2xl border border-border-light bg-white">
+    <figure className={`overflow-hidden rounded-2xl border border-border-light bg-white ${cardHover}`}>
       <div className="relative aspect-video bg-black">
         {video.provider === "upload" ? (
           <UploadedVideo video={video} />
@@ -82,9 +83,11 @@ function VideoGrid({ compact }) {
   if (shown.length === 0) return <EmptyState icon={Video} compact={compact} />;
   return (
     <ul className={gridClass}>
-      {shown.map((video) => (
+      {shown.map((video, i) => (
         <li key={video.id ?? video.embedUrl}>
-          <VideoCard video={video} />
+          <Reveal delay={Math.min(i, 5) * 0.06}>
+            <VideoCard video={video} />
+          </Reveal>
         </li>
       ))}
     </ul>
@@ -161,19 +164,21 @@ function GalleryGrid({ compact }) {
       <ul className={gridClass}>
         {shown.map((image, i) => (
           <li key={image.id ?? image.src}>
-            <button
-              type="button"
-              onClick={() => setOpen(i)}
-              className="group block w-full overflow-hidden rounded-2xl border border-border-light"
-              aria-label={`${ui.viewImage}: ${image.alt}`}
-            >
-              <img
-                src={image.thumbnailSrc ?? image.src}
-                alt={image.alt}
-                loading="lazy"
-                className="aspect-square w-full object-cover transition duration-300 group-hover:scale-105"
-              />
-            </button>
+            <Reveal delay={Math.min(i, 7) * 0.05}>
+              <button
+                type="button"
+                onClick={() => setOpen(i)}
+                className={`group block w-full overflow-hidden rounded-2xl border border-border-light ${cardHover}`}
+                aria-label={`${ui.viewImage}: ${image.alt}`}
+              >
+                <img
+                  src={image.thumbnailSrc ?? image.src}
+                  alt={image.alt}
+                  loading="lazy"
+                  className="aspect-square w-full object-cover transition duration-300 group-hover:scale-105 motion-reduce:group-hover:scale-100"
+                />
+              </button>
+            </Reveal>
           </li>
         ))}
       </ul>

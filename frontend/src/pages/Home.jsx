@@ -11,8 +11,10 @@ import NewsList from "../components/NewsList";
 import MediaSection from "../components/MediaSection";
 import Icon from "../components/Icon";
 import { body, card, cardHover, container, heading, iconTile, pill, pillOnDark, sectionY } from "../components/styles";
+import PartnerCTA from "../components/PartnerCTA";
+import { services, trustStrip, whyMushrooms } from "../data/legacyContent";
 
-const { site, home, about, training, spawnBooking, incubation, news, media, contact, images, nav, ui, meta } = content;
+const { site, home, about, training, spawnBooking, incubation, news, media, images, nav, ui, meta } = content;
 
 // Focus-area cards on the home page link to the full text on /about,
 // or to /contact for items that have no body text.
@@ -64,6 +66,25 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Trust strip (restored) */}
+      <section className="border-b border-border-light bg-background-light py-6 md:py-8">
+        <ul className={`${container} grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-4`}>
+          {trustStrip.map((item, i) => {
+            const ItemIcon = item.icon;
+            return (
+              <li key={item.label}>
+                <Reveal delay={i * 0.06} className="flex items-center gap-3">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/15 text-text-side">
+                    <ItemIcon size={22} aria-hidden="true" />
+                  </span>
+                  <span className={`text-sm font-bold leading-snug md:text-base ${heading}`}>{item.label}</span>
+                </Reveal>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
       {/* About teaser */}
       <section className={`bg-white ${sectionY}`}>
         <div className={`${container} grid items-center gap-8 lg:grid-cols-2 lg:gap-10`}>
@@ -112,6 +133,33 @@ export default function Home() {
                         <ArrowRight size={16} aria-hidden="true" className="transition-transform group-hover:translate-x-1" />
                       </span>
                     </Link>
+                  </Reveal>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </section>
+
+      {/* Why We Choose Mushrooms? (restored) */}
+      <section className={`bg-white ${sectionY}`} aria-labelledby="why-mushrooms-heading">
+        <div className={container}>
+          <Reveal>
+            <SectionHeading id="why-mushrooms-heading" title={whyMushrooms.heading} description={whyMushrooms.intro} />
+          </Reveal>
+          <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {whyMushrooms.items.map((item, i) => {
+              const ItemIcon = item.icon;
+              return (
+                <li key={item.title}>
+                  <Reveal delay={i * 0.06} className="h-full">
+                    <article className={`group ${card} ${cardHover} flex h-full flex-col gap-4 p-6`}>
+                      <span className={`${iconTile} transition-colors group-hover:bg-primary group-hover:text-[#0d1b0d]`}>
+                        <ItemIcon size={24} aria-hidden="true" />
+                      </span>
+                      <h3 className={`text-lg font-bold leading-snug ${heading}`}>{item.title}</h3>
+                      <p className={`text-sm leading-relaxed md:text-base ${body}`}>{item.text}</p>
+                    </article>
                   </Reveal>
                 </li>
               );
@@ -212,6 +260,47 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Our Services: Complete Mushroom Ecosystem (restored; training first) */}
+      <section className={`border-t border-border-light bg-white ${sectionY}`} aria-labelledby="services-heading">
+        <div className={container}>
+          <Reveal>
+            <SectionHeading
+              id="services-heading"
+              eyebrow={services.eyebrow}
+              title={services.heading}
+              description={services.intro}
+            />
+          </Reveal>
+          <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {services.items.map((item, i) => {
+              const ItemIcon = item.icon;
+              return (
+                <li key={item.title}>
+                  <Reveal delay={(i % 3) * 0.06} className="h-full">
+                    <Link to={item.to} className={`group ${card} ${cardHover} flex h-full flex-col gap-4 p-6`}>
+                      <span className={`${iconTile} transition-colors group-hover:bg-primary group-hover:text-[#0d1b0d]`}>
+                        <ItemIcon size={24} aria-hidden="true" />
+                      </span>
+                      <h3 className={`text-lg font-bold leading-snug ${heading}`}>{item.title}</h3>
+                      <p className={`text-sm leading-relaxed md:text-base ${body}`}>{item.text}</p>
+                      <span className="mt-auto inline-flex items-center gap-2 text-sm font-bold text-text-side">
+                        {services.linkLabel}
+                        <ArrowRight size={16} aria-hidden="true" className="transition-transform group-hover:translate-x-1" />
+                      </span>
+                    </Link>
+                  </Reveal>
+                </li>
+              );
+            })}
+          </ul>
+          <Reveal className="mt-8 flex justify-center">
+            <ButtonLink to={services.cta.to} icon={ArrowRight}>
+              {services.cta.label}
+            </ButtonLink>
+          </Reveal>
+        </div>
+      </section>
+
       {/* Incubation */}
       <section className={`bg-background-light ${sectionY}`}>
         <div className={container}>
@@ -246,26 +335,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Contact strip */}
-      <section className={`bg-background-light ${sectionY}`}>
-        <div className={container}>
-          <Reveal>
-            <SectionHeading
-              title={contact.heading}
-              action={{ label: nav.links.contact.label, to: nav.links.contact.to }}
-            />
-            <ContactBlock layout="grid" className={`${card} mt-6 p-6 md:p-8`} />
-          </Reveal>
-        </div>
-      </section>
+      {/* Partner with Sumedha Agro (restored) */}
+      <PartnerCTA />
     </main>
   );
 }
 
 function BookingCard({ item, children }) {
   return (
-    <article className={`${card} flex h-full flex-col gap-5 p-6 md:p-8`}>
-      <span className={iconTile}>
+    <article className={`group ${card} ${cardHover} flex h-full flex-col gap-5 p-6 md:p-8`}>
+      <span className={`${iconTile} transition-colors group-hover:bg-primary group-hover:text-[#0d1b0d]`}>
         <Icon name={item.icon} size={24} />
       </span>
       <h3 className={`text-xl font-bold ${heading}`}>{item.title}</h3>

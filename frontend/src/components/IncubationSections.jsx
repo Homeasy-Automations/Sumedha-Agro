@@ -4,24 +4,29 @@ import content from "../data/content";
 import Reveal from "./Reveal";
 import SectionHeading from "./SectionHeading";
 import HeadingCard from "./HeadingCard";
-import ButtonLink from "./ButtonLink";
-import ContactBlock from "./ContactBlock";
 import Icon from "./Icon";
-import { anchorOffset, card, container, heading, iconTile, sectionY } from "./styles";
+import { anchorOffset, card, cardHover, container, heading, iconTile, sectionY } from "./styles";
 
-const { incubation, services, technologies, contact, images, nav, ui } = content;
+const { incubation, technologies, images, nav, ui } = content;
 
 const CARD_IMAGES = { "spawn-incubation": images.spawn, "rtf-incubation": images.oyster };
 
 function FacilityCard({ item }) {
   const image = CARD_IMAGES[item.id];
   return (
-    <article id={item.id} className={`${card} ${anchorOffset} flex h-full flex-col overflow-hidden`}>
+    <article id={item.id} className={`group ${card} ${cardHover} ${anchorOffset} flex h-full flex-col overflow-hidden`}>
       {image && (
-        <img src={image.src} alt={image.alt} loading="lazy" className="aspect-[16/9] w-full object-cover" />
+        <div className="overflow-hidden">
+          <img
+            src={image.src}
+            alt={image.alt}
+            loading="lazy"
+            className="aspect-[16/9] w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+          />
+        </div>
       )}
       <div className="flex flex-1 flex-col gap-5 p-6 md:p-8">
-        <span className={iconTile}>
+        <span className={`${iconTile} transition-colors group-hover:bg-primary group-hover:text-[#0d1b0d]`}>
           <Icon name={item.icon} size={24} />
         </span>
         <h3 className={`text-xl font-bold leading-snug md:text-2xl ${heading}`}>{item.title}</h3>
@@ -37,8 +42,8 @@ function FacilityCard({ item }) {
   );
 }
 
-// Incubation, Services Offered, Mushroom Technologies and the contact details: the former
-// Incubation page, now part of the Training page (/training#incubation, #services, #technologies).
+// Incubation and Mushroom Technologies: the former Incubation page, now part of the Training
+// page (/training#incubation, #technologies).
 export default function IncubationSections() {
   return (
     <>
@@ -79,18 +84,6 @@ export default function IncubationSections() {
               </Reveal>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Contact */}
-      <section className={`bg-white ${sectionY}`} aria-labelledby="training-contact-heading">
-        <div className={container}>
-          <Reveal className={`${card} p-6 md:p-10`}>
-            <h2 id="training-contact-heading" className={`mb-8 text-2xl font-bold ${heading}`}>
-              {contact.heading}
-            </h2>
-            <ContactBlock layout="grid" />
-          </Reveal>
         </div>
       </section>
     </>

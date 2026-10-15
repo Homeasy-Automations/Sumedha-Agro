@@ -122,7 +122,8 @@ const content = {
           id: "spawn-production-and-supply",
           icon: "Package",
           title: "Spawn production and supply",
-          body: null,
+          // Drafted October 2026 at the site owner's request (not client-supplied text): confirm with the client.
+          body: "The lab produces quality mushroom spawn (seed) in-house, from pure tissue culture and mother spawn to G1, G2 and cultivation spawn, and supplies it to farmers, entrepreneurs and growers together with compost, ready-to-fruit (RTF) bags and growing kits. Spawn can be booked by phone or online.",
         },
         {
           id: "training-and-knowledge-sharing",
@@ -134,13 +135,15 @@ const content = {
           id: "conservation-of-wild-mushroom-germplasm",
           icon: "Sprout",
           title: "Conservation of wild mushroom Germplasm",
-          body: null,
+          // Drafted October 2026 at the site owner's request (not client-supplied text): confirm with the client.
+          body: "The lab collects, identifies and preserves wild mushroom strains as pure cultures, conserving mushroom biodiversity so that valuable strains remain available for research, strain improvement and future spawn production.",
         },
         {
           id: "innovation-and-mechanization",
           icon: "Cog",
           title: "Innovation & mechanization",
-          body: null,
+          // Drafted October 2026 at the site owner's request (not client-supplied text): confirm with the client.
+          body: "The lab develops mechanized quality spawn production, brings solar energy into the spawn production system and turns crop waste into food, helping growers produce good spawn and mushrooms more consistently while making better use of agricultural waste.",
         },
         {
           id: "women-empowerment-through-rtf-bags",
@@ -165,12 +168,12 @@ const content = {
     // The sentence above, split at each comma (one card per item).
     modules: [
       "Pure tissue culture production",
-      "mother spawn production",
-      "G1 and G2 spawn production",
-      "cultivation spawn",
-      "spawn unit layout",
-      "mechanization of spawn production",
-      "incorporation of solar energy into the spawn production system",
+      "Mother Spawn production",
+      "G1 and G2 Spawn production",
+      "Cultivation Spawn",
+      "Spawn unit layout",
+      "Mechanization of Spawn production",
+      "Incorporation of solar energy into the Spawn production system",
     ],
     scheduleHeading: "Training Schedule",
     applyLabel: "Apply for Training",

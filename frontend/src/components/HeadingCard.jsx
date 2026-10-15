@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import content from "../data/content";
 import Icon from "./Icon";
-import { body as bodyText, card, heading, iconTile } from "./styles";
+import { body as bodyText, card, cardHover, heading, iconTile } from "./styles";
 
 const { ui, nav } = content;
 
@@ -12,9 +12,9 @@ export default function HeadingCard({ id, icon, title, body, index, link, classN
   const cta = link ?? (body ? null : { label: ui.contactUs, to: nav.links.contact.to });
 
   return (
-    <article id={id} className={`${card} flex h-full scroll-mt-36 flex-col gap-5 p-6 md:p-8 ${className}`}>
+    <article id={id} className={`group ${card} ${cardHover} flex h-full scroll-mt-36 flex-col gap-5 p-6 md:p-8 ${className}`}>
       <div className="flex items-center justify-between gap-4">
-        <span className={iconTile}>
+        <span className={`${iconTile} transition-colors group-hover:bg-primary group-hover:text-[#0d1b0d]`}>
           <Icon name={icon} size={24} />
         </span>
         {index != null && (

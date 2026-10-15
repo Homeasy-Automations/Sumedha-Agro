@@ -12,7 +12,8 @@ export class ApiError extends Error {
   }
 }
 
-export async function apiRequest(path, { method = "GET", body, token, signal, timeoutMs } = {}) {
+// withStatus: resolve to { status, data } instead of data, e.g. to tell 201 Created from 200 OK.
+export async function apiRequest(path, { method = "GET", body, token, signal, timeoutMs, withStatus = false } = {}) {
   const headers = { Accept: "application/json" };
   let payload = body;
   if (body !== undefined && !(body instanceof FormData)) {
@@ -39,5 +40,5 @@ export async function apiRequest(path, { method = "GET", body, token, signal, ti
   if (!res.ok || !data || data.ok === false) {
     throw new ApiError(data?.message || `Request failed (${res.status}).`, { status: res.status, errors: data?.errors });
   }
-  return data;
+  return withStatus ? { status: res.status, data } : data;
 }

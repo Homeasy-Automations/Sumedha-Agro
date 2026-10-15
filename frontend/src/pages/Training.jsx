@@ -4,12 +4,11 @@ import content from "../data/content";
 import defaultTrainings from "../data/trainings";
 import usePageMeta from "../hooks/usePageMeta";
 import useSiteContent from "../hooks/useSiteContent";
-import PageHeader from "../components/PageHeader";
 import Reveal from "../components/Reveal";
 import ButtonLink from "../components/ButtonLink";
 import TrainingCalendar from "../components/TrainingCalendar";
 import IncubationSections from "../components/IncubationSections";
-import { anchorOffset, card, container, heading, sectionY } from "../components/styles";
+import { anchorOffset, card, cardHover, container, heading, sectionY } from "../components/styles";
 
 const { training, trainingCalendar, incubation, technologies, images, nav, meta } = content;
 
@@ -22,27 +21,9 @@ export default function Training() {
 
   return (
     <main>
-      <PageHeader crumbs={[{ label: nav.links.training.label }]} title={training.heading} />
-
-      <nav
-        aria-label={training.heading}
-        className="sticky top-16 z-30 border-b border-border-light bg-white/95 backdrop-blur-md md:top-[116px]"
-      >
-        <ul className={`${container} flex gap-2 overflow-x-auto py-3`}>
-          {SECTION_LINKS.map((section) => (
-            <li key={section.id} className="shrink-0">
-              <Link
-                to={`#${section.id}`}
-                className="inline-flex rounded-full border border-border-light bg-white px-4 py-2 text-sm font-semibold text-[#0d1b0d] transition hover:border-text-side hover:text-text-side"
-              >
-                {section.heading}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
       <section className={`bg-white ${sectionY}`}>
+        {/* The page title for screen readers and search engines; the page opens with the intro below. */}
+        <h1 className="sr-only">{training.heading}</h1>
         <div className={`${container} grid items-center gap-8 lg:grid-cols-2 lg:gap-10`}>
           <Reveal>
             <p className={`border-l-4 border-primary pl-5 text-lg font-medium leading-relaxed md:text-xl ${heading}`}>
@@ -64,19 +45,39 @@ export default function Training() {
         </div>
       </section>
 
+      <nav
+        aria-label={training.heading}
+        className="sticky top-16 z-30 border-y border-border-light bg-white/95 backdrop-blur-md md:top-[116px]"
+      >
+        <ul className={`${container} flex gap-2 overflow-x-auto py-3`}>
+          {SECTION_LINKS.map((section) => (
+            <li key={section.id} className="shrink-0">
+              <Link
+                to={`#${section.id}`}
+                className="inline-flex rounded-full border border-border-light bg-white px-4 py-2 text-sm font-semibold text-[#0d1b0d] transition hover:border-text-side hover:text-text-side"
+              >
+                {section.heading}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
       <section className={`bg-background-light ${sectionY}`} aria-label={training.heading}>
         <div className={container}>
           <ol className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {training.modules.map((module, i) => (
               <li key={module} className={i === training.modules.length - 1 ? "lg:col-span-2" : ""}>
-                <Reveal delay={(i % 4) * 0.06} className={`${card} flex h-full flex-col gap-4 p-6`}>
-                  <span
-                    aria-hidden="true"
-                    className="flex h-11 w-11 items-center justify-center rounded-xl bg-background-dark font-mono text-sm font-bold text-primary"
-                  >
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <p className={`text-lg font-semibold leading-snug ${heading}`}>{module}</p>
+                <Reveal delay={(i % 4) * 0.06} className="h-full">
+                  <div className={`group ${card} ${cardHover} flex h-full flex-col gap-4 p-6`}>
+                    <span
+                      aria-hidden="true"
+                      className="flex h-11 w-11 items-center justify-center rounded-xl bg-background-dark font-mono text-sm font-bold text-primary transition-colors group-hover:bg-primary group-hover:text-[#0d1b0d]"
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <p className={`text-lg font-semibold leading-snug ${heading}`}>{module}</p>
+                  </div>
                 </Reveal>
               </li>
             ))}

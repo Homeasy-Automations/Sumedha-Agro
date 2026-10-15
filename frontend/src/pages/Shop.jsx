@@ -55,6 +55,7 @@
 import React, { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { products } from "../data/product";
+import Reveal from "../components/Reveal";
 
 export default function Shop() {
   const navigate = useNavigate();
@@ -75,41 +76,42 @@ export default function Shop() {
   // 🔹 Reusable card (same UI)
   const renderProducts = (items) => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {items.map((product) => (
-        <div
-          key={product.id}
-          onClick={() => {
-            navigate(`/products/${product.slug}`);
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }}
-          className="cursor-pointer bg-white border border-border-light rounded-xl overflow-hidden hover:shadow-lg hover:border-primary transition-all duration-300"
-        >
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full h-56 object-cover"
-          />
+      {items.map((product, i) => (
+        <Reveal key={product.id} delay={(i % 3) * 0.06} className="h-full">
+          <div
+            onClick={() => {
+              navigate(`/products/${product.slug}`);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            className="h-full cursor-pointer bg-white border border-border-light rounded-xl overflow-hidden hover:-translate-y-1 hover:shadow-lg hover:border-primary transition-all duration-300 motion-reduce:hover:translate-y-0"
+          >
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-56 object-cover"
+            />
 
-          <div className="p-6">
-            <h3 className="text-lg font-bold text-text-main mb-2">
-              {product.name}
-            </h3>
+            <div className="p-6">
+              <h3 className="text-lg font-bold text-text-main mb-2">
+                {product.name}
+              </h3>
 
-            <p className="text-sm text-text-side mb-4 line-clamp-2">
-              {product.description}
-            </p>
+              <p className="text-sm text-text-side mb-4 line-clamp-2">
+                {product.description}
+              </p>
 
-            <div className="flex justify-between items-center">
-              {/* <span className="font-semibold text-primary">
-                ₹{product.price}
-              </span> */}
+              <div className="flex justify-between items-center">
+                {/* <span className="font-semibold text-primary">
+                  ₹{product.price}
+                </span> */}
 
-              <button className="px-4 py-2 text-sm font-medium border border-gray-300 rounded hover:bg-primary hover:text-black hover:border-primary transition-colors">
-                View Details
-              </button>
+                <button className="px-4 py-2 text-sm font-medium border border-gray-300 rounded hover:bg-primary hover:text-black hover:border-primary transition-colors">
+                  View Details
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </Reveal>
       ))}
     </div>
   );

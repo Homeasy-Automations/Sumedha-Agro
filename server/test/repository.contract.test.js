@@ -5,7 +5,7 @@ import { after, before, describe, it } from "node:test";
 import { loadConfig } from "../src/config.js";
 import { createDatabase } from "../src/db/index.js";
 import { DuplicateKeyError, InvalidQueryError } from "../src/db/errors.js";
-import { testEnv } from "./support/testServer.js";
+import { dropTestDatabase, testEnv } from "./support/testServer.js";
 
 const drivers = [
   { name: "memory", env: { DB_DRIVER: "memory" } },
@@ -21,14 +21,18 @@ for (const driver of drivers) {
   describe(`${driver.name} driver`, { skip: driver.skip }, () => {
     let db;
     let repo;
+    let config;
 
     before(async () => {
-      const { config } = loadConfig(testEnv(driver.env));
+      ({ config } = loadConfig(testEnv(driver.env)));
       db = await createDatabase(config);
       repo = db.repositories.subscribers;
     });
 
-    after(() => db?.close());
+    after(async () => {
+      await db?.close();
+      if (config) await dropTestDatabase(config);
+    });
 
     it("exposes a repository for every entity, plus counters", () => {
       for (const name of ["trainingApplications", "contactMessages", "quoteRequests", "subscribers"]) {

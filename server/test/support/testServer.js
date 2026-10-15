@@ -62,6 +62,19 @@ export function testEnv(overrides = {}) {
   };
 }
 
+// Against MongoDB every test server gets its own database (MONGODB_DB above). Drop it afterwards,
+// so repeated runs don't fill a hosted cluster (Atlas's free tier caps databases and collections).
+export async function dropTestDatabase(config) {
+  if (config.db.driver !== "mongodb") return;
+  const { MongoClient } = await import("mongodb");
+  const client = new MongoClient(config.db.mongodbUri, { serverSelectionTimeoutMS: 10_000 });
+  try {
+    await client.db(config.db.mongodbDb).dropDatabase();
+  } finally {
+    await client.close();
+  }
+}
+
 // options.storage: "fake" (default) or "disabled" (no Cloudinary configured).
 export async function startTestServer(overrides = {}, options = {}) {
   const { config, errors } = loadConfig(testEnv(overrides));
@@ -103,6 +116,7 @@ export async function startTestServer(overrides = {}, options = {}) {
     async close() {
       await new Promise((resolve) => server.close(resolve));
       await db.close();
+      await dropTestDatabase(config);
     },
   };
 }

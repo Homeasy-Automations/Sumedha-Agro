@@ -6,7 +6,7 @@ Website for **Sumedha Agro — Mushroom Seed (Spawn) Production Laboratory**, Lu
 |---|---|---|
 | [`frontend/`](frontend/) | React 19 + Vite 7 + Tailwind v4 site, plus the admin panel at `/admin` | Vercel |
 | [`server/`](server/) | Node + Express 5 REST API | Render |
-| Database | PostgreSQL (swappable: MongoDB driver included) | Neon (free) |
+| Database | MongoDB (swappable: PostgreSQL driver included) | MongoDB Atlas (free M0) |
 | Media | Gallery images and video files | Cloudinary |
 | Email | Notifications and confirmations | Resend |
 
@@ -19,7 +19,7 @@ Needs Node 20+.
 ```bash
 # 1. API (terminal 1)
 cd server
-cp .env.example .env        # set DATABASE_URL, or DB_DRIVER=memory to skip the database
+cp .env.example .env        # set MONGODB_URI, or DB_DRIVER=memory to skip the database
 npm install
 npm run dev                 # http://localhost:5000  (check: /api/health)
 
@@ -49,7 +49,23 @@ Changes appear on the website immediately. Sign-ins never expire: you stay signe
 
 ## Deploy
 
-### 1. Database: Neon (PostgreSQL)
+### 1. Database: MongoDB Atlas
+
+The API runs on MongoDB in production (`DB_DRIVER=mongodb` in [`render.yaml`](render.yaml)). PostgreSQL still works the same way: see 1b.
+
+1. At [cloud.mongodb.com](https://cloud.mongodb.com), create a free **M0** cluster in **AWS / Mumbai (ap-south-1)**, the region closest to Lucknow.
+2. **Database Access > Add New Database User**: password authentication with **Autogenerate Secure Password** (copy it), and under **Database User Privileges** choose **Specific Privileges** > `readWrite` on the database `sumedha_agro`.
+3. **Network Access > Add IP Address > Allow Access from Anywhere** (`0.0.0.0/0`). Render's free plan has no fixed outbound IP address, so the cluster can't be limited to Render. The database user's password is then the only protection, which is why it must be a long generated one.
+4. **Connect > Drivers**: copy the connection string, `mongodb+srv://<user>:<password>@<cluster>.mongodb.net/?retryWrites=true&w=majority`, and put the user's password in it. This is `MONGODB_URI`.
+5. On Render set `DB_DRIVER=mongodb`, `MONGODB_URI=<connection string>` and `MONGODB_DB=sumedha_agro`, then redeploy. `GET <render-url>/api/health` returns `{"ok":true,"db":{"driver":"mongodb","status":"up"}}`, the same shape as for PostgreSQL.
+
+Collections and indexes (unique `referenceId` on training applications and quote requests, unique `email` on subscribers) are created on first start. **Browse Collections** in Atlas shows the data. Backups: `mongodump --uri "$MONGODB_URI" --db sumedha_agro --out backup-$(date +%F)` ([MongoDB Database Tools](https://www.mongodb.com/try/download/database-tools)); restore with `mongorestore --uri "$MONGODB_URI" backup-<date>`.
+
+Atlas pauses an M0 cluster after about 60 days with no connections (resume it from the Atlas UI). `/api/ping`, which the keep-awake workflow calls, doesn't touch the database by design. While the Render service is running, the MongoDB driver keeps its own connections to the cluster open, and real traffic or an occasional `GET /api/health` also counts, so the cluster normally stays active.
+
+### 1b. Database (alternative): Neon (PostgreSQL)
+
+Only needed with `DB_DRIVER=postgres`.
 
 1. Create a free project at [neon.tech](https://neon.tech) (region: AWS Asia Pacific / Singapore).
 2. Copy the connection string (**Connection Details > Node.js**). This is `DATABASE_URL`.
@@ -71,14 +87,16 @@ Either **New > Blueprint** and pick this repo (uses [`render.yaml`](render.yaml)
 | Variable | Required | Value |
 |---|---|---|
 | `NODE_ENV` | yes | `production` |
-| `DATABASE_URL` | yes | Neon connection string |
+| `MONGODB_URI` | for MongoDB | Atlas connection string |
+| `MONGODB_DB` | for MongoDB | `sumedha_agro` |
+| `DATABASE_URL` | for PostgreSQL | Neon connection string |
 | `DATABASE_SSL` | for Neon/Supabase | `true` |
 | `CORS_ORIGIN` | yes | Comma-separated site URLs, e.g. `https://sumedhaagro.com,https://www.sumedhaagro.com,https://<project>.vercel.app` |
 | `ADMIN_PASSWORD` | yes | Long passphrase for `/admin` |
 | `CLOUDINARY_URL` | for uploads | `cloudinary://<key>:<secret>@<cloud>` |
 | `RESEND_API_KEY`, `MAIL_FROM`, `COMPANY_EMAIL` | for email | see above |
 | `ADMIN_API_KEY` | no | For scripts calling `/api/admin` |
-| `DB_DRIVER` | no | `postgres` (default), `mongodb` (+ `MONGODB_URI`) or `memory` |
+| `DB_DRIVER` | yes | `mongodb` (as in `render.yaml`); `postgres` (the default when unset) or `memory` |
 
 The API refuses to start without a database URL, and logs a warning for anything else that's missing.
 
@@ -157,6 +175,7 @@ To add another database, implement the contract in [`server/src/db/README.md`](s
 
 Run the test suite against a real database:
 `TEST_DB_DRIVER=postgres TEST_DATABASE_URL=<url> npm test` (or `TEST_DB_DRIVER=mongodb TEST_MONGODB_URI=<uri>`). Each test server uses its own schema, so a scratch database is enough.
+On MongoDB each test server uses its own `sumedha_test_*` database and drops it when it finishes. Against Atlas this needs a database user allowed to create those databases (e.g. **Read and write to any database**), so don't use the production user limited to `sumedha_agro`; a separate user, a separate cluster or a local MongoDB all work.
 
 ## Project layout
 

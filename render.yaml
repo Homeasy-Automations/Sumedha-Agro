@@ -15,10 +15,14 @@ services:
       - key: NODE_ENV
         value: production
       - key: DB_DRIVER
-        value: postgres
-      - key: DATABASE_URL # e.g. from Neon (free, no expiry)
+        value: mongodb
+      - key: MONGODB_URI # MongoDB Atlas connection string (mongodb+srv://…)
         sync: false
-      - key: DATABASE_SSL
+      - key: MONGODB_DB
+        value: sumedha_agro
+      - key: DATABASE_URL # only used when DB_DRIVER=postgres (e.g. from Neon, free, no expiry)
+        sync: false
+      - key: DATABASE_SSL # only used when DB_DRIVER=postgres
         value: "true"
       - key: CORS_ORIGIN
         sync: false

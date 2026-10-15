@@ -1,6 +1,6 @@
 import { useId, useState } from "react";
 import { Link } from "react-router-dom";
-import { Eye, LoaderCircle } from "lucide-react";
+import { Eye, Heart, LoaderCircle } from "lucide-react";
 import logo from "../assets/Logo.webp";
 import content from "../data/content";
 import { newsletter } from "../data/legacyContent";
@@ -9,7 +9,7 @@ import { apiRequest } from "../lib/api";
 import ContactBlock from "./ContactBlock";
 import { containerWide, input } from "./styles";
 
-const { footer, site } = content;
+const { footer, site, ui } = content;
 const YEAR = new Date().getFullYear();
 
 const linkClass = "text-sm text-gray-600 transition-colors hover:text-text-side";
@@ -162,6 +162,30 @@ export default function Footer() {
               </li>
             ))}
           </ul>
+        </div>
+
+        {/* Developer credit, centred under the visitor count. */}
+        <div className="mt-5 flex justify-center">
+          <a
+            href="https://kynyx.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.16em] text-gray-500 transition-colors hover:text-text-side"
+          >
+            <span>Made with</span>
+            <Heart
+              size={12}
+              aria-hidden="true"
+              fill="currentColor"
+              className="text-rose-500 transition-transform duration-200 group-hover:scale-125 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+            />
+            <span className="sr-only">love</span>
+            <span>
+              by{" "}
+              <span className="font-bold text-[#0d1b0d] transition-colors group-hover:text-text-side">KYNYX</span>
+            </span>
+            <span className="sr-only">{ui.opensInNewTab}</span>
+          </a>
         </div>
       </div>
     </footer>

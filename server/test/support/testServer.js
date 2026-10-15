@@ -1,6 +1,5 @@
 // Starts the API on a random port with a fake mailer.
-// Uses the in-memory driver unless TEST_DB_DRIVER is set
-// (postgres + TEST_DATABASE_URL, or mongodb + TEST_MONGODB_URI).
+// Uses the in-memory driver unless TEST_DB_DRIVER=mongodb (with TEST_MONGODB_URI) is set.
 import { randomBytes } from "node:crypto";
 import { createApp } from "../../src/app.js";
 import { loadConfig } from "../../src/config.js";
@@ -52,8 +51,6 @@ export function testEnv(overrides = {}) {
   return {
     NODE_ENV: "test",
     DB_DRIVER: process.env.TEST_DB_DRIVER || "memory",
-    DATABASE_URL: process.env.TEST_DATABASE_URL || "",
-    DATABASE_SCHEMA: `test_${randomBytes(4).toString("hex")}`, // isolates each test server's tables
     MONGODB_URI: process.env.TEST_MONGODB_URI || "",
     MONGODB_DB: `sumedha_test_${randomBytes(4).toString("hex")}`,
     ADMIN_API_KEY: ADMIN_KEY,

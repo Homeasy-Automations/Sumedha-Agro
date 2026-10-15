@@ -9,7 +9,7 @@ services:
     plan: free
     buildCommand: npm ci --omit=dev
     startCommand: npm start
-    healthCheckPath: /api/ping # database-free, so Render's frequent checks don't keep Neon awake
+    healthCheckPath: /api/ping # database-free: a brief Atlas hiccup doesn't make Render restart the API
     autoDeploy: true
     envVars:
       - key: NODE_ENV
@@ -20,10 +20,6 @@ services:
         sync: false
       - key: MONGODB_DB
         value: sumedha_agro
-      - key: DATABASE_URL # only used when DB_DRIVER=postgres (e.g. from Neon, free, no expiry)
-        sync: false
-      - key: DATABASE_SSL # only used when DB_DRIVER=postgres
-        value: "true"
       - key: CORS_ORIGIN
         sync: false
       - key: ADMIN_PASSWORD

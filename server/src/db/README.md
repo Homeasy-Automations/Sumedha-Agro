@@ -5,8 +5,7 @@ The API never talks to a database directly. Services use **repositories** return
 
 | `DB_DRIVER` | Package | Use for |
 |---|---|---|
-| `postgres` (default) | `pg` | Production (Neon, Supabase, Render Postgres or self-hosted PostgreSQL 13+) |
-| `mongodb` | `mongodb` | Alternative: MongoDB Atlas or self-hosted |
+| `mongodb` (default) | `mongodb` | Production: MongoDB Atlas or self-hosted MongoDB 5+ |
 | `memory` | none | Local development without a database, and tests |
 
 Images and video files are not stored in the database: they live in Cloudinary
@@ -44,9 +43,8 @@ Every repository implements:
 `counters` implements `get(name)` (0 if missing) and `increment(name, by = 1)` (atomic, returns the new value).
 
 Records are plain objects whose field values are strings, numbers, booleans or `null`
-(`createdAt`/`updatedAt` are `Date`s). The PostgreSQL driver stores each collection as a table with
-a `jsonb` column for the fields, plus `id`, `created_at` and `updated_at` columns; tables and
-indexes are created on startup, so there are no migrations to run.
+(`createdAt`/`updatedAt` are `Date`s). The MongoDB driver stores each entity in its own collection
+and creates the collections and indexes on startup, so there are no migrations to run.
 
 ## Adding a database
 

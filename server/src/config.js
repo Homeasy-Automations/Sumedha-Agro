@@ -1,4 +1,5 @@
 // Reads and validates environment variables once, at startup.
+import { availableDrivers } from "./db/index.js";
 
 const list = (value) =>
   (value ?? "")
@@ -51,13 +52,7 @@ export function loadConfig(env = process.env) {
     isProduction,
     port: int(env.PORT, 5000),
     db: {
-      driver: (env.DB_DRIVER || "postgres").toLowerCase(),
-      databaseUrl: env.DATABASE_URL || "",
-      // "true" = TLS with certificate checks (Neon, Supabase, Render external URL);
-      // "no-verify" = TLS without checks; unset = whatever DATABASE_URL says.
-      databaseSsl: (env.DATABASE_SSL || "").toLowerCase(),
-      // Optional PostgreSQL schema (default "public"), e.g. when the database is shared.
-      databaseSchema: env.DATABASE_SCHEMA || "",
+      driver: (env.DB_DRIVER || "mongodb").toLowerCase(),
       mongodbUri: env.MONGODB_URI || "",
       mongodbDb: env.MONGODB_DB || "",
     },
@@ -77,11 +72,11 @@ export function loadConfig(env = process.env) {
   const errors = [];
   const warnings = [];
 
-  if (config.db.driver === "postgres" && !config.db.databaseUrl) {
-    errors.push("DATABASE_URL is required when DB_DRIVER=postgres.");
+  if (!availableDrivers.includes(config.db.driver)) {
+    errors.push(`DB_DRIVER="${config.db.driver}" is not supported. Use mongodb, or memory to run without a database.`);
   }
   if (config.db.driver === "mongodb" && !config.db.mongodbUri) {
-    errors.push("MONGODB_URI is required when DB_DRIVER=mongodb.");
+    errors.push("MONGODB_URI is required (your MongoDB Atlas connection string), or set DB_DRIVER=memory to run without a database.");
   }
   if (config.cloudinary.urlError) errors.push(config.cloudinary.urlError);
   if (isProduction && config.db.driver === "memory") {

@@ -2,8 +2,7 @@ name: Keep Render API awake
 
 # Render's free plan puts the API to sleep after 15 minutes without traffic, and the next
 # visitor then waits 30-60 s. This pings /api/ping every 10 minutes so it stays awake.
-# /api/ping never touches the database, so a scale-to-zero database (Neon) can still
-# sleep between real visits instead of burning its free compute hours on these pings.
+# /api/ping never touches the database, so these pings add no load on MongoDB Atlas.
 #
 # Setup: Settings > Secrets and variables > Actions > Variables > New repository variable
 #   Name:  RENDER_API_URL

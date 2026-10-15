@@ -12,7 +12,7 @@ describe("API", () => {
   after(() => t.close());
 
   describe("GET /api/ping", () => {
-    it("answers without touching the database (so pings don't wake Neon)", async () => {
+    it("answers without touching the database", async () => {
       const realPing = t.db.ping;
       let dbCalls = 0;
       t.db.ping = async () => {
@@ -342,8 +342,10 @@ describe("configuration", () => {
 
   it("refuses to start without a database URL for the chosen driver", async () => {
     const { loadConfig } = await import("../src/config.js");
-    assert.ok(loadConfig({ NODE_ENV: "production" }).errors.some((e) => e.includes("DATABASE_URL")));
-    assert.ok(loadConfig({ DB_DRIVER: "mongodb" }).errors.some((e) => e.includes("MONGODB_URI")));
+    const prod = loadConfig({ NODE_ENV: "production" });
+    assert.equal(prod.config.db.driver, "mongodb", "MongoDB is the default driver");
+    assert.ok(prod.errors.some((e) => e.includes("MONGODB_URI")));
+    assert.ok(loadConfig({ DB_DRIVER: "postgres", MONGODB_URI: "mongodb://x" }).errors.some((e) => e.includes("DB_DRIVER")));
     assert.deepEqual(loadConfig({ DB_DRIVER: "memory" }).errors, []);
   });
 

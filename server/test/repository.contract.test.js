@@ -1,5 +1,5 @@
 // Behaviour every database driver must share. Add new drivers to `drivers` below.
-// The PostgreSQL suite runs when TEST_DATABASE_URL is set, MongoDB when TEST_MONGODB_URI is set.
+// The MongoDB suite runs when TEST_MONGODB_URI is set.
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import { loadConfig } from "../src/config.js";
@@ -9,11 +9,6 @@ import { dropTestDatabase, testEnv } from "./support/testServer.js";
 
 const drivers = [
   { name: "memory", env: { DB_DRIVER: "memory" } },
-  {
-    name: "postgres",
-    env: { DB_DRIVER: "postgres" },
-    skip: !process.env.TEST_DATABASE_URL && "TEST_DATABASE_URL not set",
-  },
   { name: "mongodb", env: { DB_DRIVER: "mongodb" }, skip: !process.env.TEST_MONGODB_URI && "TEST_MONGODB_URI not set" },
 ];
 

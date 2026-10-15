@@ -6,7 +6,7 @@ Website for **Sumedha Agro — Mushroom Seed (Spawn) Production Laboratory**, Lu
 |---|---|---|
 | [`frontend/`](frontend/) | React 19 + Vite 7 + Tailwind v4 site, plus the admin panel at `/admin` | Vercel |
 | [`server/`](server/) | Node + Express 5 REST API | Render |
-| Database | MongoDB (swappable: PostgreSQL driver included) | MongoDB Atlas (free M0) |
+| Database | MongoDB | MongoDB Atlas (free M0) |
 | Media | Gallery images and video files | Cloudinary |
 | Email | Notifications and confirmations | Resend |
 
@@ -51,26 +51,17 @@ Changes appear on the website immediately. Sign-ins never expire: you stay signe
 
 ### 1. Database: MongoDB Atlas
 
-The API runs on MongoDB in production (`DB_DRIVER=mongodb` in [`render.yaml`](render.yaml)). PostgreSQL still works the same way: see 1b.
+The API stores its data in MongoDB (`DB_DRIVER=mongodb`, also the default when unset).
 
-1. At [cloud.mongodb.com](https://cloud.mongodb.com), create a free **M0** cluster in **AWS / Mumbai (ap-south-1)**, the region closest to Lucknow.
+1. At [cloud.mongodb.com](https://cloud.mongodb.com), create a free **M0** cluster in **AWS / Singapore (ap-southeast-1)**, next to the Render API (every request queries the database, so it should sit close to the API, not the visitors). Mumbai (ap-south-1) also works, with a little more latency.
 2. **Database Access > Add New Database User**: password authentication with **Autogenerate Secure Password** (copy it), and under **Database User Privileges** choose **Specific Privileges** > `readWrite` on the database `sumedha_agro`.
 3. **Network Access > Add IP Address > Allow Access from Anywhere** (`0.0.0.0/0`). Render's free plan has no fixed outbound IP address, so the cluster can't be limited to Render. The database user's password is then the only protection, which is why it must be a long generated one.
 4. **Connect > Drivers**: copy the connection string, `mongodb+srv://<user>:<password>@<cluster>.mongodb.net/?retryWrites=true&w=majority`, and put the user's password in it. This is `MONGODB_URI`.
-5. On Render set `DB_DRIVER=mongodb`, `MONGODB_URI=<connection string>` and `MONGODB_DB=sumedha_agro`, then redeploy. `GET <render-url>/api/health` returns `{"ok":true,"db":{"driver":"mongodb","status":"up"}}`, the same shape as for PostgreSQL.
+5. On Render set `DB_DRIVER=mongodb`, `MONGODB_URI=<connection string>` and `MONGODB_DB=sumedha_agro`, then redeploy. `GET <render-url>/api/health` returns `{"ok":true,"db":{"driver":"mongodb","status":"up"}}`.
 
 Collections and indexes (unique `referenceId` on training applications and quote requests, unique `email` on subscribers) are created on first start. **Browse Collections** in Atlas shows the data. Backups: `mongodump --uri "$MONGODB_URI" --db sumedha_agro --out backup-$(date +%F)` ([MongoDB Database Tools](https://www.mongodb.com/try/download/database-tools)); restore with `mongorestore --uri "$MONGODB_URI" backup-<date>`.
 
 Atlas pauses an M0 cluster after about 60 days with no connections (resume it from the Atlas UI). `/api/ping`, which the keep-awake workflow calls, doesn't touch the database by design. While the Render service is running, the MongoDB driver keeps its own connections to the cluster open, and real traffic or an occasional `GET /api/health` also counts, so the cluster normally stays active.
-
-### 1b. Database (alternative): Neon (PostgreSQL)
-
-Only needed with `DB_DRIVER=postgres`.
-
-1. Create a free project at [neon.tech](https://neon.tech) (region: AWS Asia Pacific / Singapore).
-2. Copy the connection string (**Connection Details > Node.js**). This is `DATABASE_URL`.
-
-Tables are created automatically when the API starts. Render's own free PostgreSQL also works but is deleted after 30 days; Supabase works too.
 
 ### 2. Media: Cloudinary
 
@@ -82,25 +73,23 @@ At [resend.com](https://resend.com): **Domains > Add domain** `sumedhaagro.com` 
 
 ### 4. API: Render
 
-Either **New > Blueprint** and pick this repo (uses [`render.yaml`](render.yaml)), or **New > Web Service** with Root Directory `server`, Build Command `npm ci --omit=dev`, Start Command `npm start`, Health Check Path `/api/ping` (not `/api/health`, which queries the database and would keep Neon from sleeping).
+Either **New > Blueprint** and pick this repo (uses [`render.yaml`](render.yaml)), or **New > Web Service** with Root Directory `server`, Build Command `npm ci --omit=dev`, Start Command `npm start`, Health Check Path `/api/ping` (not `/api/health`, which queries the database, so a brief Atlas hiccup would make Render restart the API).
 
 | Variable | Required | Value |
 |---|---|---|
 | `NODE_ENV` | yes | `production` |
-| `MONGODB_URI` | for MongoDB | Atlas connection string |
-| `MONGODB_DB` | for MongoDB | `sumedha_agro` |
-| `DATABASE_URL` | for PostgreSQL | Neon connection string |
-| `DATABASE_SSL` | for Neon/Supabase | `true` |
+| `MONGODB_URI` | yes | Atlas connection string |
+| `MONGODB_DB` | no | `sumedha_agro` (the default) |
 | `CORS_ORIGIN` | yes | Comma-separated site URLs, e.g. `https://sumedhaagro.com,https://www.sumedhaagro.com,https://<project>.vercel.app` |
 | `ADMIN_PASSWORD` | yes | Long passphrase for `/admin` |
 | `CLOUDINARY_URL` | for uploads | `cloudinary://<key>:<secret>@<cloud>` |
 | `RESEND_API_KEY`, `MAIL_FROM`, `COMPANY_EMAIL` | for email | see above |
 | `ADMIN_API_KEY` | no | For scripts calling `/api/admin` |
-| `DB_DRIVER` | yes | `mongodb` (as in `render.yaml`); `postgres` (the default when unset) or `memory` |
+| `DB_DRIVER` | no | `mongodb` (the default, as in `render.yaml`); `memory` only for local testing |
 
-The API refuses to start without a database URL, and logs a warning for anything else that's missing.
+The API refuses to start without `MONGODB_URI`, and logs a warning for anything else that's missing.
 
-**Keeping the free instance awake.** Render's free plan sleeps after 15 minutes without traffic (the next visitor waits 30–60 s). The GitHub Actions workflow [`keep-render-awake.yml`](.github/workflows/keep-render-awake.yml) pings `/api/ping` every 10 minutes. That endpoint never touches the database, so Neon still scales to zero between real visits (pinging `/api/health` instead would keep it awake about half of every hour and use most of Neon's 100 free CU-hours a month). To turn it on: GitHub repo **Settings > Secrets and variables > Actions > Variables > New repository variable** `RENDER_API_URL` = your Render URL (no trailing slash), then **Actions > Keep Render API awake > Run workflow** once to check. Notes: one always-on free service uses about 730 of Render's 750 free hours a month, so keep other free services off it; GitHub pauses scheduled workflows after 60 days without repository activity (re-enable from the Actions tab).
+**Keeping the free instance awake.** Render's free plan sleeps after 15 minutes without traffic (the next visitor waits 30–60 s). The GitHub Actions workflow [`keep-render-awake.yml`](.github/workflows/keep-render-awake.yml) pings `/api/ping` every 10 minutes. That endpoint never touches the database, so the pings add no load on Atlas. To turn it on: GitHub repo **Settings > Secrets and variables > Actions > Variables > New repository variable** `RENDER_API_URL` = your Render URL (no trailing slash), then **Actions > Keep Render API awake > Run workflow** once to check. Notes: one always-on free service uses about 730 of Render's 750 free hours a month, so keep other free services off it; GitHub pauses scheduled workflows after 60 days without repository activity (re-enable from the Actions tab).
 
 ### 5. Website: Vercel
 
@@ -167,15 +156,14 @@ Unknown fields are ignored. On a `400`, `errors` maps each field to the same mes
 
 Services talk to a small repository interface, never to a database directly. `DB_DRIVER` picks the driver:
 
-- `postgres` (default): [`server/src/db/drivers/postgres`](server/src/db/drivers/postgres/index.js)
-- `mongodb`: [`server/src/db/drivers/mongodb`](server/src/db/drivers/mongodb/index.js)
+- `mongodb` (default): [`server/src/db/drivers/mongodb`](server/src/db/drivers/mongodb/index.js)
 - `memory`: [`server/src/db/drivers/memory`](server/src/db/drivers/memory/index.js), for development and tests
 
 To add another database, implement the contract in [`server/src/db/README.md`](server/src/db/README.md), register it in `server/src/db/index.js`, and run the shared contract tests in `server/test/repository.contract.test.js`. No route, service or frontend changes are needed. Media storage is swappable the same way ([`server/src/storage/`](server/src/storage/index.js)).
 
 Run the test suite against a real database:
-`TEST_DB_DRIVER=postgres TEST_DATABASE_URL=<url> npm test` (or `TEST_DB_DRIVER=mongodb TEST_MONGODB_URI=<uri>`). Each test server uses its own schema, so a scratch database is enough.
-On MongoDB each test server uses its own `sumedha_test_*` database and drops it when it finishes. Against Atlas this needs a database user allowed to create those databases (e.g. **Read and write to any database**), so don't use the production user limited to `sumedha_agro`; a separate user, a separate cluster or a local MongoDB all work.
+`TEST_DB_DRIVER=mongodb TEST_MONGODB_URI=<uri> npm test`.
+Each test server uses its own `sumedha_test_*` database and drops it when it finishes. Against Atlas this needs a database user allowed to create those databases (e.g. **Read and write to any database**), so don't use the production user limited to `sumedha_agro`; a separate user, a separate cluster or a local MongoDB all work.
 
 ## Project layout
 
@@ -193,7 +181,7 @@ server/
   src/routes/                public.js, content.js, admin.js
   src/services/              business logic (database-agnostic)
   src/validation/            request validation
-  src/db/                    repository contract + drivers (postgres, mongodb, memory)
+  src/db/                    repository contract + drivers (mongodb, memory)
   src/storage/               media storage (Cloudinary)
   src/mail/                  Resend mailer and email templates
   test/                      node:test suites

@@ -4,8 +4,8 @@ export function publicRoutes({ services, db }) {
   const router = Router();
 
   // Liveness only: never touches the database. Used by the keep-awake workflow and Render's
-  // health check, so pinging the API doesn't wake a scale-to-zero database (e.g. Neon)
-  // and burn its free compute hours.
+  // health check, so frequent pings add no database load and a brief database outage
+  // doesn't make Render restart the API.
   router.get("/ping", (req, res) => {
     res.set("Cache-Control", "no-store");
     res.json({ ok: true });

@@ -7,6 +7,7 @@ import SectionHeading from "../components/SectionHeading";
 import HeadingCard from "../components/HeadingCard";
 import ButtonLink from "../components/ButtonLink";
 import Icon from "../components/Icon";
+import LinkContext from "../components/LinkContext";
 import { body, card, cardHover, container, heading, iconTile, muted, pillOnDark, sectionY } from "../components/styles";
 import { aboutCta, commitment, leadership, missionVision, stats, whoWeAre } from "../data/legacyContent";
 
@@ -192,6 +193,7 @@ export default function About() {
                   </ButtonLink>
                   <ButtonLink to={nav.links.training.to} variant="light">
                     {ui.readMore}
+                    <LinkContext>{training.heading}</LinkContext>
                   </ButtonLink>
                 </div>
               </div>

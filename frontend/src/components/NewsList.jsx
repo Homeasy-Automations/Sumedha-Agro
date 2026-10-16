@@ -3,6 +3,7 @@ import content from "../data/content";
 import useSiteContent from "../hooks/useSiteContent";
 import EmptyState from "./EmptyState";
 import Reveal from "./Reveal";
+import LinkContext from "./LinkContext";
 import RichText from "./RichText";
 import { body, card, cardHover, heading, muted } from "./styles";
 
@@ -55,6 +56,7 @@ export default function NewsList({ limit, compact = false, className = "" }) {
                   className="mt-auto inline-flex w-fit items-center gap-1.5 pt-3 text-sm font-bold text-text-side underline-offset-4 hover:underline"
                 >
                   {ui.readMore}
+                  <LinkContext>{item.title}</LinkContext>
                   <ExternalLink size={14} aria-hidden="true" />
                   <span className="sr-only">{ui.opensInNewTab}</span>
                 </a>

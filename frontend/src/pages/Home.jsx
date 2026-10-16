@@ -9,6 +9,7 @@ import ContactBlock from "../components/ContactBlock";
 import NewsList from "../components/NewsList";
 import MediaSection from "../components/MediaSection";
 import HeroCollage from "../components/HeroCollage";
+import LinkContext from "../components/LinkContext";
 import Icon from "../components/Icon";
 import { body, card, cardHover, container, heading, iconTile, pill, pillOnDark, sectionY } from "../components/styles";
 import PartnerCTA from "../components/PartnerCTA";
@@ -96,6 +97,7 @@ export default function Home() {
             <p className={`mt-6 text-base leading-relaxed md:text-lg ${body}`}>{about.paragraphs[0]}</p>
             <ButtonLink to={nav.links.about.to} variant="outline" icon={ArrowRight} className="mt-6">
               {ui.readMore}
+              <LinkContext>{about.heading}</LinkContext>
             </ButtonLink>
           </Reveal>
         </div>
@@ -185,6 +187,7 @@ export default function Home() {
               </ButtonLink>
               <ButtonLink to={nav.links.training.to} variant="light">
                 {ui.readMore}
+                <LinkContext>{training.heading}</LinkContext>
               </ButtonLink>
             </div>
           </Reveal>
@@ -237,6 +240,7 @@ export default function Home() {
                   className="mt-auto inline-flex w-fit items-center gap-2 text-sm font-bold text-text-side underline-offset-4 hover:underline"
                 >
                   {ui.readMore}
+                  <LinkContext>{spawnBooking.manual.title}</LinkContext>
                   <ArrowRight size={16} aria-hidden="true" />
                 </Link>
               </BookingCard>

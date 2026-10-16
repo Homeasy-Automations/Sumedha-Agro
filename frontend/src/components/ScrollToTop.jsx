@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 
 const MAX_WAIT_MS = 3000;
@@ -8,10 +8,16 @@ const POLL_MS = 50;
 // Pages are lazy-loaded, so the hash target is polled for briefly until it mounts.
 export default function ScrollToTop() {
   const { pathname, hash } = useLocation();
+  const firstPage = useRef(true);
 
   useEffect(() => {
+    const isFirstPage = firstPage.current;
+    firstPage.current = false;
+
     if (!hash) {
-      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      // A page that has just loaded already starts at the top (or where the browser restores
+      // it on reload); scrolling now would only force a layout of the freshly rendered page.
+      if (!isFirstPage) window.scrollTo({ top: 0, left: 0, behavior: "auto" });
       return;
     }
 

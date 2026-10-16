@@ -65,6 +65,8 @@ const content = {
 
   ui: {
     readMore: "Read more",
+    // Joins a short link label to the hidden text naming its target: "Read more about …".
+    linkAbout: "about",
     contactUs: "Contact us",
     photoCredits: "Photo credits",
     toBeAnnounced: "To be announced",

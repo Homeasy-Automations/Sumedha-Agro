@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import LinkContext from "./LinkContext";
 import { body, heading, pill, pillOnDark } from "./styles";
 
-// Section title block with optional eyebrow, description and a "Read more" style link.
+// Section title block with optional eyebrow, description and a "Read more" style link
+// (which names the section for screen readers and search engines).
 export default function SectionHeading({ id, eyebrow, title, description, action, tone = "light", center = false }) {
   const dark = tone === "dark";
   return (
@@ -29,6 +31,7 @@ export default function SectionHeading({ id, eyebrow, title, description, action
           className={`inline-flex shrink-0 items-center gap-2 text-sm font-bold underline-offset-4 hover:underline ${dark ? "text-primary" : "text-text-side"}`}
         >
           {action.label}
+          <LinkContext>{title}</LinkContext>
           <ArrowRight size={16} aria-hidden="true" />
         </Link>
       )}

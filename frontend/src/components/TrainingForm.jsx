@@ -1,17 +1,22 @@
 import { useEffect, useId, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { CalendarDays, ChevronDown, CircleAlert, CircleCheck, Info, LoaderCircle, Send } from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
+import { ArrowRight, CalendarDays, ChevronDown, CircleAlert, CircleCheck, Info, LoaderCircle, Send } from "lucide-react";
 import content from "../data/content";
 import { fields, formText, validationMessages } from "../data/trainingForm";
 import defaultTrainings from "../data/trainings";
 import useSiteContent from "../hooks/useSiteContent";
+import { batchDates } from "../lib/trainingDates";
+import { getTrainingStatus } from "../lib/trainingStatus";
 import ContactBlock from "./ContactBlock";
 
 const API_ENDPOINT = `${import.meta.env.VITE_API_URL}/api/training/apply`;
+const CALENDAR_HREF = `/training#${content.trainingCalendar.id}`;
 
-const initialValues = Object.fromEntries(
-  fields.flatMap((f) => (f.details ? [[f.name, ""], [f.details.name, ""]] : [[f.name, ""]])),
-);
+// trainingBatchId: the batch picked when more than one batch of the programme is open.
+const initialValues = {
+  ...Object.fromEntries(fields.flatMap((f) => (f.details ? [[f.name, ""], [f.details.name, ""]] : [[f.name, ""]]))),
+  trainingBatchId: "",
+};
 
 const stripSeparators = (value) => value.replace(/[\s-]/g, "");
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -31,20 +36,38 @@ const rules = {
   pastDate: (v) => v < todayISO(),
 };
 
-function validateField(field, values) {
+// `date`: the state of field 2 (see dateState in TrainingForm), which has no value of its own
+// when it is filled in from a batch.
+function validateField(field, values, date) {
+  if (field.type === "batch" && date.mode !== "manual") {
+    if (date.mode === "waiting") return ""; // field 1 reports the missing programme
+    if (date.mode === "closed") return formText.batchDate.notOpen;
+    return date.batch ? "" : validationMessages.required;
+  }
   const value = values[field.name];
   if (!value.trim()) return validationMessages.required;
   if (field.validate && !rules[field.validate](value)) return validationMessages[field.validate];
   return "";
 }
 
-function validateAll(values) {
+function validateAll(values, date) {
   const errors = {};
   for (const field of fields) {
-    const error = validateField(field, values);
+    const error = validateField(field, values, date);
     if (error) errors[field.name] = error;
   }
   return errors;
+}
+
+// Batches of `title` whose registration is open now (as on the Training Calendar's Apply
+// buttons), and the next one to open when none is.
+function batchesFor(trainings, title) {
+  const ofTitle = trainings.filter((t) => t.title === title);
+  const open = ofTitle.filter((t) => getTrainingStatus(t).canApply);
+  const next = ofTitle
+    .filter((t) => getTrainingStatus(t).kind === "upcoming")
+    .sort((a, b) => String(a.registrationStart).localeCompare(String(b.registrationStart)))[0];
+  return { open, next };
 }
 
 function buildPayload(values) {
@@ -60,7 +83,7 @@ const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 // Readable batch name saved with the application, e.g. "S. No. 6 · 16-27 Nov 2026".
 function batchLabel(batch) {
   const sNo = batch.sNo != null && String(batch.sNo).trim() !== "" ? `${content.trainingCalendar.columns.sNo} ${batch.sNo}` : "";
-  return [sNo, batch.dates].filter(Boolean).join(" · ");
+  return [sNo, batchDates(batch)].filter(Boolean).join(" · ");
 }
 
 function makeFallbackReference() {
@@ -112,24 +135,33 @@ export default function TrainingForm() {
   const statusRef = useRef(null);
   const uid = useId();
   const { items: trainings } = useSiteContent("trainings", defaultTrainings);
-  const trainingOptions = [...new Set(trainings.map((t) => t.title))];
+  const trainingOptions = [...new Set(trainings.map((t) => t.title).filter(Boolean))];
 
-  // Opened from a batch's Apply button on the Training Calendar (?training=<id>): pre-fill
-  // field 1 and the training date once that batch is known (the schedule may still be loading).
+  // Opened from a batch's Apply button on the Training Calendar (?training=<id>): pre-select
+  // that programme and batch once the schedule is known (it may still be loading).
   const [searchParams] = useSearchParams();
-  const batchId = searchParams.get("training");
-  const batch = batchId ? trainings.find((t) => t.id === batchId && t.title) : undefined;
+  const linkedId = searchParams.get("training");
+  const linked = linkedId ? trainings.find((t) => t.id === linkedId && t.title) : undefined;
   const [prefilledBatchId, setPrefilledBatchId] = useState(null);
-  if (batch && prefilledBatchId !== batch.id) {
-    setPrefilledBatchId(batch.id);
-    setValues((prev) => ({
-      ...prev,
-      trainingAppliedFor: prev.trainingAppliedFor || batch.title,
-      trainingDate: prev.trainingDate || (ISO_DATE.test(batch.startDate ?? "") ? batch.startDate : ""),
-    }));
+  if (linked && prefilledBatchId !== linked.id) {
+    setPrefilledBatchId(linked.id);
+    setValues((prev) => (prev.trainingAppliedFor ? prev : { ...prev, trainingAppliedFor: linked.title, trainingBatchId: linked.id }));
   }
-  // The batch is saved with the application only while field 1 still names its programme.
-  const selectedBatch = batch && values.trainingAppliedFor === batch.title ? batch : null;
+
+  // Field 2 (Date of training) comes from the Training Calendar:
+  //   waiting  no programme chosen yet
+  //   closed   none of the programme's batches is open for registration (`next` opens soonest)
+  //   single   one batch is open: its date is filled in
+  //   choose   several are open: the applicant picks one
+  //   manual   no calendar at all: a plain date input
+  const dateState = (() => {
+    if (trainingOptions.length === 0) return { mode: "manual" };
+    if (!values.trainingAppliedFor) return { mode: "waiting" };
+    const { open, next } = batchesFor(trainings, values.trainingAppliedFor);
+    if (open.length === 0) return { mode: "closed", next };
+    if (open.length === 1) return { mode: "single", open, batch: open[0] };
+    return { mode: "choose", open, batch: open.find((b) => b.id === values.trainingBatchId) ?? null };
+  })();
 
   const idFor = (name) => `${uid}-${name}`;
   const errorIdFor = (name) => `${uid}-${name}-error`;
@@ -145,18 +177,21 @@ export default function TrainingForm() {
 
   const setValue = (field, value) => {
     const next = { ...values, [field.name]: value };
+    // A new programme means a new batch: field 2 is worked out again from the calendar.
+    if (field.type === "training") next.trainingBatchId = "";
     setValues(next);
     // Re-check a field that is already showing an error so the message clears as soon as it's fixed.
-    if (errors[field.name]) setErrors((prev) => ({ ...prev, [field.name]: validateField(field, next) }));
+    if (errors[field.name]) setErrors((prev) => ({ ...prev, [field.name]: validateField(field, next, dateState) }));
+    if (field.type === "training" && errors.trainingDate) setErrors((prev) => ({ ...prev, trainingDate: "" }));
   };
 
-  const checkField = (field) => setErrors((prev) => ({ ...prev, [field.name]: validateField(field, values) }));
+  const checkField = (field) => setErrors((prev) => ({ ...prev, [field.name]: validateField(field, values, dateState) }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (status === "submitting") return;
 
-    const nextErrors = validateAll(values);
+    const nextErrors = validateAll(values, dateState);
     setErrors(nextErrors);
     setSubmitAttempted(true);
 
@@ -177,7 +212,12 @@ export default function TrainingForm() {
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
           ...buildPayload(values),
-          ...(selectedBatch && { trainingBatchId: selectedBatch.id, trainingBatch: batchLabel(selectedBatch) }),
+          // The batch applied for, with its start date as the training date.
+          ...(dateState.batch && {
+            trainingDate: ISO_DATE.test(dateState.batch.startDate ?? "") ? dateState.batch.startDate : "",
+            trainingBatchId: dateState.batch.id ?? "",
+            trainingBatch: batchLabel(dateState.batch),
+          }),
           clientReferenceId: fallbackReference,
         }),
       });
@@ -246,7 +286,112 @@ export default function TrainingForm() {
   const submitting = status === "submitting";
   const hasErrors = Object.values(errors).some(Boolean);
 
+  // Field 2: the date of the chosen programme's open batch (see dateState above).
+  const renderBatchDate = (field) => {
+    const id = idFor(field.name);
+    const hintId = `${id}-hint`;
+    const error = errors[field.name];
+    const text = formText.batchDate;
+    const hint = (message) => (
+      <p id={hintId} className="mt-2 text-xs text-[#5b735b]">
+        {message}
+      </p>
+    );
+    const shown = `${inputBase} pl-10`;
+    const icon = (
+      <CalendarDays size={18} aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-side" />
+    );
+
+    if (dateState.mode === "waiting") {
+      return (
+        <>
+          <div className="relative">
+            {icon}
+            <input id={id} readOnly value="" placeholder={text.chooseTrainingFirst} aria-describedby={hintId} className={`${shown} border-slate-300 bg-slate-50`} />
+          </div>
+          {hint(text.filledIn)}
+        </>
+      );
+    }
+
+    if (dateState.mode === "closed") {
+      const { next } = dateState;
+      return (
+        <div
+          id={id}
+          tabIndex={-1}
+          aria-live="polite"
+          className={`rounded-lg border p-4 text-sm focus:outline-none ${error ? "border-red-500 bg-red-50 text-red-800" : "border-amber-300 bg-amber-50 text-amber-900"}`}
+        >
+          <p className="flex items-start gap-2 font-semibold">
+            <CircleAlert size={16} aria-hidden="true" className="mt-0.5 shrink-0" />
+            {text.notOpen}
+          </p>
+          {next && (
+            <p className="mt-1.5 pl-6">
+              {text.nextBatch}: <strong>{batchDates(next) || content.ui.toBeAnnounced}</strong> · {text.registration}:{" "}
+              {getTrainingStatus(next).label}
+            </p>
+          )}
+          <Link to={CALENDAR_HREF} className="mt-2 inline-flex items-center gap-1 pl-6 font-bold text-text-side underline-offset-4 hover:underline">
+            {text.seeCalendar}
+            <ArrowRight size={14} aria-hidden="true" />
+          </Link>
+        </div>
+      );
+    }
+
+    if (dateState.mode === "single") {
+      return (
+        <>
+          <div className="relative">
+            {icon}
+            <input
+              id={id}
+              readOnly
+              value={batchDates(dateState.batch) || content.ui.toBeAnnounced}
+              aria-describedby={hintId}
+              className={`${shown} border-primary/40 bg-primary/5 font-semibold`}
+            />
+          </div>
+          {hint(text.filledIn)}
+        </>
+      );
+    }
+
+    // Several batches open: the applicant picks one.
+    return (
+      <>
+        <div className="relative">
+          {icon}
+          <select
+            id={id}
+            value={dateState.batch?.id ?? ""}
+            required
+            aria-invalid={error ? true : undefined}
+            aria-describedby={error ? errorIdFor(field.name) : hintId}
+            onChange={(e) => {
+              setValues((prev) => ({ ...prev, trainingBatchId: e.target.value }));
+              if (errors.trainingDate) setErrors((prev) => ({ ...prev, trainingDate: "" }));
+            }}
+            className={`${shown} ${inputBorder(error)} appearance-none pr-10`}
+          >
+            <option value="">{formText.selectPlaceholder}</option>
+            {dateState.open.map((b) => (
+              <option key={b.id} value={b.id}>
+                {batchLabel(b)}
+              </option>
+            ))}
+          </select>
+          <ChevronDown size={18} aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500" />
+        </div>
+        {hint(text.chooseBatch)}
+      </>
+    );
+  };
+
   const renderControl = (field) => {
+    if (field.type === "batch" && dateState.mode !== "manual") return renderBatchDate(field);
     const id = idFor(field.name);
     const error = errors[field.name];
     const common = {
@@ -310,7 +455,7 @@ export default function TrainingForm() {
     return (
       <input
         {...common}
-        type={field.type === "training" ? "text" : field.type}
+        type={{ training: "text", batch: "date" }[field.type] ?? field.type}
         inputMode={field.inputMode}
         autoComplete={field.autoComplete}
         max={field.validate === "pastDate" ? MAX_BIRTH_DATE : undefined}
@@ -402,12 +547,9 @@ export default function TrainingForm() {
             <div key={field.name} className={field.wide ? "md:col-span-2" : ""}>
               <Label field={field} htmlFor={idFor(field.name)} />
               {renderControl(field)}
-              <FieldError id={errorIdFor(field.name)} message={errors[field.name]} />
-              {field.type === "training" && selectedBatch && (
-                <p className="mt-2 flex items-center gap-1.5 text-sm font-semibold text-text-side">
-                  <CalendarDays size={15} aria-hidden="true" />
-                  {formText.batchLabel}: {batchLabel(selectedBatch)}
-                </p>
+              {/* When no batch is open, the panel itself says so (and turns red after a submit). */}
+              {!(field.type === "batch" && dateState.mode === "closed") && (
+                <FieldError id={errorIdFor(field.name)} message={errors[field.name]} />
               )}
             </div>
           ),

@@ -22,7 +22,6 @@ const FIELDS = [
   ["referenceId", "Reference number"],
   ["trainingAppliedFor", "Training applied for"],
   ["trainingBatch", "Batch"],
-  ["trainingModuleNo", "Training Module No"],
   ["trainingDate", "Date of training"],
   ["name", "Name"],
   ["gender", "Gender"],
@@ -43,6 +42,9 @@ const FIELDS = [
   ["createdAt", "Submitted", "datetime"],
 ];
 
+// No longer asked for by the form; still shown for older applications that have it.
+const LEGACY_FIELDS = [["trainingModuleNo", "Training Module No"]];
+
 function Detail({ id }) {
   const { data, error } = useAdminData(`/training-applications/${id}`);
   if (error) return <Notice tone="error">{error}</Notice>;
@@ -50,7 +52,7 @@ function Detail({ id }) {
   const item = data.item;
   return (
     <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
-      {FIELDS.map(([key, label]) => (
+      {[...FIELDS, ...LEGACY_FIELDS.filter(([key]) => item[key])].map(([key, label]) => (
         <div key={key} className={key === "postalAddress" || key === "previousTrainingDetails" ? "sm:col-span-2" : ""}>
           <dt className="text-xs font-semibold text-[#5b735b]">{label}</dt>
           <dd className="whitespace-pre-line text-sm text-[#0d1b0d]">

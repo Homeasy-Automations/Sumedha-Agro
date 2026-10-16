@@ -18,6 +18,13 @@ export const maskAadhar = (aadhar) => (aadhar ? `XXXX XXXX ${String(aadhar).slic
 // Fields the admin search box looks in.
 const APPLICATION_SEARCH_FIELDS = ["referenceId", "name", "email", "mobile", "trainingAppliedFor", "trainingBatch", "state"];
 
+// With a batch named, the training date may be empty (the batch label carries the dates).
+const APPLICATION_WITH_BATCH = {
+  ...trainingApplicationSchema,
+  trainingDate: { ...trainingApplicationSchema.trainingDate, required: false },
+};
+const hasBatch = (input) => typeof input?.trainingBatch === "string" && input.trainingBatch.trim() !== "";
+
 // A phone number typed as "98765 43210" or "98765-43210" finds the stored "9876543210".
 function searchText(q) {
   const text = typeof q === "string" ? q.trim() : "";
@@ -35,7 +42,8 @@ function createTrainingService({ repository, mailer, templates }) {
 
   return {
     async apply(input) {
-      const { clientReferenceId, ...fields } = validate(input, trainingApplicationSchema);
+      const schema = hasBatch(input) ? APPLICATION_WITH_BATCH : trainingApplicationSchema;
+      const { clientReferenceId, ...fields } = validate(input, schema);
       if (fields.previousTraining !== "Yes") fields.previousTrainingDetails = "";
 
       const record = await createWithReference(repository, PREFIXES.training, { ...fields, status: "new" }, clientReferenceId);

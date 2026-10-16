@@ -121,7 +121,6 @@ export async function startTestServer(overrides = {}, options = {}) {
 export function validApplication(overrides = {}) {
   return {
     trainingAppliedFor: "Spawn Production Training",
-    trainingModuleNo: "2",
     trainingDate: "2026-11-20",
     name: "Test Applicant",
     gender: "Female",

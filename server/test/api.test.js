@@ -105,14 +105,42 @@ describe("API", () => {
       assert.match(bad.body.referenceId, /^SAG-TR-[A-Z2-9]{5}$/);
     });
 
-    it("returns 400 with a message for each of the 17 required fields", async () => {
+    it("returns 400 with a message for each of the 16 required fields", async () => {
       const res = await t.api("POST", "/api/training/apply", { body: {} });
       assert.equal(res.status, 400);
       assert.equal(res.body.ok, false);
       assert.equal(res.body.message, "Please correct the highlighted fields.");
-      assert.equal(Object.keys(res.body.errors).length, 17);
+      assert.equal(Object.keys(res.body.errors).length, 16);
       assert.equal(res.body.errors.name, "This field is required.");
+      assert.equal(res.body.errors.trainingDate, "This field is required.");
       assert.equal(res.body.errors.previousTrainingDetails, undefined);
+    });
+
+    it("no longer stores a training module number", async () => {
+      const res = await t.api("POST", "/api/training/apply", {
+        body: validApplication({ trainingModuleNo: "2" }),
+      });
+      assert.equal(res.status, 201);
+      const stored = await t.db.repositories.trainingApplications.findOne({ referenceId: res.body.referenceId });
+      assert.equal(stored.trainingModuleNo, undefined);
+    });
+
+    it("needs the training date only when no batch is named", async () => {
+      const withBatch = await t.api("POST", "/api/training/apply", {
+        body: validApplication({ trainingDate: "", trainingBatch: "S. No. 5 · 2026" }),
+      });
+      assert.equal(withBatch.status, 201, JSON.stringify(withBatch.body));
+      const stored = await t.db.repositories.trainingApplications.findOne({ referenceId: withBatch.body.referenceId });
+      assert.equal(stored.trainingDate, "");
+
+      const neither = await t.api("POST", "/api/training/apply", { body: validApplication({ trainingDate: "" }) });
+      assert.equal(neither.status, 400);
+      assert.deepEqual(neither.body.errors, { trainingDate: "This field is required." });
+
+      const badDate = await t.api("POST", "/api/training/apply", {
+        body: validApplication({ trainingDate: "2026-02-31", trainingBatch: "S. No. 1 · 25-30 Oct 2026" }),
+      });
+      assert.equal(badDate.body.errors.trainingDate, "Enter a valid date.", "a date that is sent must still be valid");
     });
 
     it("validates formats and options", async () => {

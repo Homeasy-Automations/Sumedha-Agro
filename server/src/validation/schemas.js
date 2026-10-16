@@ -16,10 +16,11 @@ export const TRAINING_STATUSES = ["new", "reviewed", "accepted", "rejected"];
 
 export const trainingApplicationSchema = {
   trainingAppliedFor: { required: true, max: 200 },
-  trainingModuleNo: { required: true, max: 50 },
+  // The batch's start date, filled in by the form from the chosen batch. Optional when a
+  // batch is named (a batch without a start date yet still carries its dates in the label).
   trainingDate: { required: true, check: "date" },
-  // Batch picked on the Training Calendar (its Apply link), if any: the batch's id and a
-  // readable label such as "S. No. 6 · 16-27 Nov 2026", saved as sent.
+  // The Training Calendar batch applied for: its id and a readable label such as
+  // "S. No. 6 · 16-27 Nov 2026", saved as sent.
   trainingBatchId: { max: 100 },
   trainingBatch: { max: 300 },
   name: { required: true, max: 150 },

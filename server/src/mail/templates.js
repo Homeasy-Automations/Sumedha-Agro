@@ -59,7 +59,6 @@ const trainingRows = (a, maskedAadhar) => [
   ["Reference number", a.referenceId],
   ["Training applied for", a.trainingAppliedFor],
   ["Batch", a.trainingBatch],
-  ["Training Module No", a.trainingModuleNo],
   ["Date of training", a.trainingDate],
   ["Name", a.name],
   ["Gender", a.gender],

@@ -121,8 +121,8 @@ Base URL: `VITE_API_URL`. Bodies are JSON. Errors look like
 
 | Field | Rule |
 |---|---|
-| `trainingAppliedFor`, `trainingModuleNo`, `name`, `postalAddress`, `education`, `livingPlace`, `employment` | required text |
-| `trainingDate` | required, `YYYY-MM-DD` |
+| `trainingAppliedFor`, `name`, `postalAddress`, `education`, `livingPlace`, `employment` | required text |
+| `trainingDate` | `YYYY-MM-DD`; the chosen batch's start date (the form fills it in). Required unless `trainingBatch` is sent |
 | `dateOfBirth` | required, `YYYY-MM-DD`, in the past |
 | `gender` | `Male` \| `Female` |
 | `category` | `SC` \| `ST` \| `OBC` \| `General` |
@@ -133,7 +133,7 @@ Base URL: `VITE_API_URL`. Bodies are JSON. Errors look like
 | `previousTraining`, `cultivatedBefore` | `Yes` \| `No` |
 | `previousTrainingDetails` | optional; cleared unless `previousTraining` is `Yes` |
 | `clientReferenceId` | optional `SAG-TR-XXXXX` from the browser; used if free, otherwise a new one is issued |
-| `trainingBatchId`, `trainingBatch` | optional (max 100 / 300 characters): the Training Calendar batch the form was opened from (`?training=<id>`) and its label, e.g. `S. No. 6 · 16-27 Nov 2026`; sent only while field 1 still names that batch's programme |
+| `trainingBatchId`, `trainingBatch` | optional (max 100 / 300 characters): the Training Calendar batch applied for and its label, e.g. `S. No. 6 · 16-27 Nov 2026`. The form offers only batches whose registration is open (the one linked with `?training=<id>` is pre-selected) |
 
 Unknown fields are ignored. On a `400`, `errors` maps each field to the same message the form shows inline.
 

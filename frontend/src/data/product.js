@@ -1,7 +1,7 @@
 import m1 from "../assets/m1.jpg";
 import m2 from "../assets/m2.jpg";
-import m3 from "../assets/m3.webp";  
- 
+import m3 from "../assets/m3.webp";
+
 export const products = [
   {
     id: "1",
@@ -96,7 +96,7 @@ export const products = [
   {
     id: "10",
     slug: "pleurotus-ostreatus",
-    name: "Pleurotus ostreatus Spawn",
+    name: "Grey oyster mushroom spawn – (Pleurotus ostreatus)",
     price: 100,
     category: "Spawn",
     image: "https://images.openai.com/static-rsc-4/6jodHqUyxYtp_MPUEjffNQCjSUlae4OcWEvIwQIgLrRjiFySMLDyINSe_L81o5Tzvgy3j1PDxCCABRcehssyE3lScTsMJHpCSvqU0Eu81vcIhBjb7DYRlGyLpacBihHhCxMpr90CjSc6nDCeiCHJnS5_Y3LeYCL7W_SXRMx7jufbw1-Xx61ZZcXHMpz_PPF9?purpose=inline",

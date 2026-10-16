@@ -5,6 +5,10 @@ import content from "../data/content";
 import { fields, formText, validationMessages } from "../data/trainingForm";
 import defaultTrainings from "../data/trainings";
 import useSiteContent from "../hooks/useSiteContent";
+import { apiRequest } from "../lib/api";
+import { prepareImage } from "../lib/prepareImage";
+import { uploadFile } from "../lib/uploadFile";
+import TrainingPayment from "./TrainingPayment";
 import { batchDates } from "../lib/trainingDates";
 import { getTrainingStatus } from "../lib/trainingStatus";
 import ContactBlock from "./ContactBlock";
@@ -102,7 +106,7 @@ function Label({ field, htmlFor, id, as = "label" }) {
     <Tag
       id={id}
       htmlFor={htmlFor}
-      className="mb-2 flex items-start gap-2.5 text-sm font-semibold leading-snug text-[#0d1b0d]"
+      className="flex items-start gap-2.5 text-sm font-semibold leading-snug text-[#0d1b0d]"
     >
       <span
         aria-hidden="true"
@@ -114,6 +118,11 @@ function Label({ field, htmlFor, id, as = "label" }) {
     </Tag>
   );
 }
+
+// A field's cell: label row and control row. On two-column screens the rows are shared with
+// the field beside it (subgrid), so the controls line up even when one label wraps.
+const fieldCell = (field) =>
+  `grid content-start gap-y-2 md:row-span-2 md:grid-rows-subgrid ${field.wide ? "md:col-span-2" : ""}`;
 
 function FieldError({ id, message }) {
   if (!message) return null;
@@ -129,6 +138,7 @@ export default function TrainingForm() {
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [attempts, setAttempts] = useState(0); // submit attempts, for the payment step
   const [status, setStatus] = useState("idle"); // idle | submitting | success | error
   const [referenceId, setReferenceId] = useState("");
   const [serverMessage, setServerMessage] = useState("");
@@ -136,6 +146,12 @@ export default function TrainingForm() {
   const uid = useId();
   const { items: trainings } = useSiteContent("trainings", defaultTrainings);
   const trainingOptions = [...new Set(trainings.map((t) => t.title).filter(Boolean))];
+
+  // Field 17: the payment screenshot, uploaded on submit. `uploaded` remembers the upload so
+  // a resubmit (e.g. after a server-side error) doesn't send the same file again.
+  const [screenshot, setScreenshot] = useState(null);
+  const [uploaded, setUploaded] = useState(null); // { file, id }
+  const [uploadingScreenshot, setUploadingScreenshot] = useState(false);
 
   // Opened from a batch's Apply button on the Training Calendar (?training=<id>): pre-select
   // that programme and batch once the schedule is known (it may still be loading).
@@ -192,8 +208,10 @@ export default function TrainingForm() {
     if (status === "submitting") return;
 
     const nextErrors = validateAll(values, dateState);
+    if (!screenshot) nextErrors.paymentScreenshotId = formText.payment.required;
     setErrors(nextErrors);
     setSubmitAttempted(true);
+    setAttempts((n) => n + 1);
 
     const firstInvalid = fields.find((f) => nextErrors[f.name]);
     if (firstInvalid) {
@@ -201,10 +219,38 @@ export default function TrainingForm() {
       document.getElementById(target)?.focus();
       return;
     }
+    if (nextErrors.paymentScreenshotId) {
+      // The upload sits in the QR panel, which this attempt opens: focus it once it's shown.
+      window.requestAnimationFrame(() => {
+        const input = document.getElementById(idFor("paymentScreenshot"));
+        input?.focus({ preventScroll: true });
+        input?.closest("label")?.scrollIntoView({ block: "center" });
+      });
+      return;
+    }
 
     const fallbackReference = makeFallbackReference();
     setStatus("submitting");
     setServerMessage("");
+
+    // Upload the payment screenshot first (shrunk, location data removed), straight to media storage.
+    let paymentScreenshotId = uploaded?.file === screenshot ? uploaded.id : "";
+    if (!paymentScreenshotId) {
+      setUploadingScreenshot(true);
+      try {
+        const prepared = await prepareImage(screenshot);
+        const { upload } = await apiRequest("/api/training/payment-upload", { method: "POST" });
+        paymentScreenshotId = (await uploadFile(upload, prepared.blob, { filename: prepared.filename })).public_id;
+        setUploaded({ file: screenshot, id: paymentScreenshotId });
+      } catch (err) {
+        setErrors((prev) => ({ ...prev, paymentScreenshotId: err.message }));
+        setServerMessage(err.message);
+        setStatus("error");
+        return;
+      } finally {
+        setUploadingScreenshot(false);
+      }
+    }
 
     try {
       const res = await fetch(API_ENDPOINT, {
@@ -218,6 +264,7 @@ export default function TrainingForm() {
             trainingBatchId: dateState.batch.id ?? "",
             trainingBatch: batchLabel(dateState.batch),
           }),
+          paymentScreenshotId,
           clientReferenceId: fallbackReference,
         }),
       });
@@ -247,6 +294,8 @@ export default function TrainingForm() {
     setServerMessage("");
     setStatus("idle");
     setPrefilledBatchId(null); // pre-fill the same batch again for the next application
+    setScreenshot(null);
+    setUploaded(null);
   };
 
   if (status === "success") {
@@ -471,49 +520,56 @@ export default function TrainingForm() {
     const showDetails = field.details && values[field.name] === field.details.showWhen;
 
     return (
-      <fieldset
+      <div
         key={field.name}
-        className={field.wide ? "md:col-span-2" : ""}
+        className={fieldCell(field)}
         onBlur={(e) => {
           if (!e.currentTarget.contains(e.relatedTarget)) checkField(field);
         }}
       >
-        <Label field={field} as="legend" id={legendId} />
-        <div className="flex flex-wrap gap-3">
-          {field.options.map((option, i) => (
-            <label
-              key={option}
-              className={`flex cursor-pointer items-center gap-2.5 rounded-lg border bg-white px-4 py-2.5 text-sm font-medium text-[#0d1b0d] transition has-[:checked]:border-text-side has-[:checked]:bg-primary/10 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-text-side/40 ${inputBorder(error)}`}
-            >
-              <input
-                type="radio"
-                id={`${id}-${i}`}
-                name={field.name}
-                value={option}
-                checked={values[field.name] === option}
-                required
-                aria-invalid={error ? true : undefined}
-                aria-describedby={error ? errorIdFor(field.name) : undefined}
-                onChange={(e) => setValue(field, e.target.value)}
-                className="h-4 w-4 accent-[#006400]"
-              />
-              {option}
-            </label>
-          ))}
-        </div>
-        <FieldError id={errorIdFor(field.name)} message={error} />
-        {showDetails && (
-          <textarea
-            id={idFor(field.details.name)}
-            name={field.details.name}
+        <Label field={field} as="p" id={legendId} />
+        <div>
+          {/* Options sit in one row; more than two of them form a 2 × 2 grid on phones. */}
+          <div
+            role="radiogroup"
             aria-labelledby={legendId}
-            rows={4}
-            value={values[field.details.name]}
-            onChange={(e) => setValues((prev) => ({ ...prev, [field.details.name]: e.target.value }))}
-            className={`${inputBase} ${inputBorder(false)} mt-4 resize-y`}
-          />
-        )}
-      </fieldset>
+            className={field.options.length > 2 ? "grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3" : "flex flex-wrap gap-3"}
+          >
+            {field.options.map((option, i) => (
+              <label
+                key={option}
+                className={`flex cursor-pointer items-center gap-2.5 rounded-lg border bg-white px-4 py-3 text-sm font-medium text-[#0d1b0d] transition has-[:checked]:border-text-side has-[:checked]:bg-primary/10 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-text-side/40 ${inputBorder(error)}`}
+              >
+                <input
+                  type="radio"
+                  id={`${id}-${i}`}
+                  name={field.name}
+                  value={option}
+                  checked={values[field.name] === option}
+                  required
+                  aria-invalid={error ? true : undefined}
+                  aria-describedby={error ? errorIdFor(field.name) : undefined}
+                  onChange={(e) => setValue(field, e.target.value)}
+                  className="h-4 w-4 accent-[#006400]"
+                />
+                {option}
+              </label>
+            ))}
+          </div>
+          <FieldError id={errorIdFor(field.name)} message={error} />
+          {showDetails && (
+            <textarea
+              id={idFor(field.details.name)}
+              name={field.details.name}
+              aria-labelledby={legendId}
+              rows={4}
+              value={values[field.details.name]}
+              onChange={(e) => setValues((prev) => ({ ...prev, [field.details.name]: e.target.value }))}
+              className={`${inputBase} ${inputBorder(false)} mt-4 resize-y`}
+            />
+          )}
+        </div>
+      </div>
     );
   };
 
@@ -544,17 +600,33 @@ export default function TrainingForm() {
           field.type === "radio" ? (
             renderRadioGroup(field)
           ) : (
-            <div key={field.name} className={field.wide ? "md:col-span-2" : ""}>
+            <div key={field.name} className={fieldCell(field)}>
               <Label field={field} htmlFor={idFor(field.name)} />
-              {renderControl(field)}
-              {/* When no batch is open, the panel itself says so (and turns red after a submit). */}
-              {!(field.type === "batch" && dateState.mode === "closed") && (
-                <FieldError id={errorIdFor(field.name)} message={errors[field.name]} />
-              )}
+              <div>
+                {renderControl(field)}
+                {/* When no batch is open, the panel itself says so (and turns red after a submit). */}
+                {!(field.type === "batch" && dateState.mode === "closed") && (
+                  <FieldError id={errorIdFor(field.name)} message={errors[field.name]} />
+                )}
+              </div>
             </div>
           ),
         )}
       </div>
+
+      <TrainingPayment
+        id={idFor("paymentScreenshot")}
+        fee={dateState.batch?.fees}
+        file={screenshot}
+        onFileChange={(file) => {
+          setScreenshot(file);
+          setErrors((prev) => ({ ...prev, paymentScreenshotId: "" }));
+        }}
+        error={errors.paymentScreenshotId}
+        errorId={errorIdFor("paymentScreenshot")}
+        onError={(message) => setErrors((prev) => ({ ...prev, paymentScreenshotId: message }))}
+        attempt={attempts}
+      />
 
       {status === "error" && (
         <div
@@ -582,7 +654,7 @@ export default function TrainingForm() {
           {submitting ? (
             <>
               <LoaderCircle size={18} aria-hidden="true" className="animate-spin" />
-              {formText.submitting}
+              {uploadingScreenshot ? formText.payment.uploading : formText.submitting}
             </>
           ) : (
             <>

@@ -17,12 +17,14 @@ const statusStyle = {
   rejected: "bg-red-50 text-red-700",
 };
 
-// Same order and labels as the application form.
+// Same order and labels as the application form, except the payment screenshot, which comes
+// right after the batch so it can be checked first.
 const FIELDS = [
   ["referenceId", "Reference number"],
   ["trainingAppliedFor", "Training applied for"],
   ["trainingBatch", "Batch"],
   ["trainingDate", "Date of training"],
+  ["paymentScreenshotUrl", "Payment screenshot"],
   ["name", "Name"],
   ["gender", "Gender"],
   ["category", "Category"],
@@ -53,10 +55,24 @@ function Detail({ id }) {
   return (
     <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
       {[...FIELDS, ...LEGACY_FIELDS.filter(([key]) => item[key])].map(([key, label]) => (
-        <div key={key} className={key === "postalAddress" || key === "previousTrainingDetails" ? "sm:col-span-2" : ""}>
+        <div key={key} className={["postalAddress", "previousTrainingDetails", "paymentScreenshotUrl"].includes(key) ? "sm:col-span-2" : ""}>
           <dt className="text-xs font-semibold text-[#5b735b]">{label}</dt>
           <dd className="whitespace-pre-line text-sm text-[#0d1b0d]">
-            {key === "createdAt" ? <DateTime value={item.createdAt} /> : item[key] || "—"}
+            {key === "createdAt" ? (
+              <DateTime value={item.createdAt} />
+            ) : key === "paymentScreenshotUrl" && item.paymentScreenshotUrl ? (
+              <a
+                href={item.paymentScreenshotUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Open full size"
+                className="mt-1 inline-block rounded-lg border border-border-light p-1 hover:border-text-side"
+              >
+                <img src={item.paymentScreenshotUrl} alt={`Payment screenshot from ${item.name}`} className="max-h-80 w-auto rounded" />
+              </a>
+            ) : (
+              item[key] || "—"
+            )}
           </dd>
         </div>
       ))}
@@ -216,10 +232,10 @@ export default function ApplicationsAdmin() {
         </Empty>
       ) : (
         <div className="overflow-x-auto rounded-2xl border border-border-light bg-white shadow-sm">
-          <table className="w-full min-w-[900px]">
+          <table className="w-full min-w-[980px]">
             <thead className="border-b border-border-light bg-background-light">
               <tr>
-                {["Reference", "Name", "Training / batch", "Date of training", "Mobile", "Submitted", "Status", ""].map((h) => (
+                {["Reference", "Name", "Training / batch", "Date of training", "Payment", "Mobile", "Submitted", "Status", ""].map((h) => (
                   <th key={h} scope="col" className={th}>
                     {h}
                   </th>
@@ -241,6 +257,26 @@ export default function ApplicationsAdmin() {
                     )}
                   </td>
                   <td className={`${td} whitespace-nowrap`}>{item.trainingDate}</td>
+                  <td className={td}>
+                    {item.paymentScreenshotUrl ? (
+                      <a
+                        href={item.paymentScreenshotUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Open the payment screenshot"
+                        className="block h-12 w-12 overflow-hidden rounded-md border border-border-light transition hover:border-text-side"
+                      >
+                        <img
+                          src={item.paymentScreenshotThumbUrl || item.paymentScreenshotUrl}
+                          alt={`Payment screenshot from ${item.name}`}
+                          loading="lazy"
+                          className="h-full w-full object-cover"
+                        />
+                      </a>
+                    ) : (
+                      <span className="whitespace-nowrap rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-900">None</span>
+                    )}
+                  </td>
                   <td className={td}>
                     <a href={`tel:${item.mobile}`} className="hover:text-text-side">
                       {item.mobile}

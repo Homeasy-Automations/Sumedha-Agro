@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { Pencil, Trash2, Upload } from "lucide-react";
 import { invalidateSiteContent } from "../../hooks/useSiteContent";
-import { prepareImage } from "../prepareImage";
+import { prepareImage } from "../../lib/prepareImage";
 import ProgressBar from "../ProgressBar";
 import { useAdmin } from "../session";
 import { fieldProps } from "../styles";

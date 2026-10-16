@@ -23,58 +23,58 @@ export default function CTA() {
     });
   };
   const validateCTA = () => {
-  let newErrors = {};
+    let newErrors = {};
 
-  if (!formData.name.trim()) {
-    newErrors.name = "Name is required";
-  }
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    }
 
-  if (!formData.email.trim()) {
-    newErrors.email = "Email is required";
-  } else if (!formData.email.includes("@")) {
-    newErrors.email = "Enter valid email";
-  }
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!formData.email.includes("@")) {
+      newErrors.email = "Enter valid email";
+    }
 
-  setErrors(newErrors);
+    setErrors(newErrors);
 
-  return Object.keys(newErrors).length === 0;
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateCTA()) return;
 
-  // your existing fetch code here
+    // your existing fetch code here
 
-try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/contact`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      alert("Inquiry sent successfully!");
-      setFormData({
-        name: "",
-        email: "",
-        company: "",
-        interest: "",
-        message: "",
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/contact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
       });
-    } else {
-      alert(data.error);
-    }
 
-  } catch (error) {
-    console.error(error);
-    alert("Server error");
-  }
-};
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Inquiry sent successfully!");
+        setFormData({
+          name: "",
+          email: "",
+          company: "",
+          interest: "",
+          message: "",
+        });
+      } else {
+        alert(data.error);
+      }
+
+    } catch (error) {
+      console.error(error);
+      alert("Server error");
+    }
+  };
   return (
     <section
       className="py-20 px-4 md:px-20 lg:px-40 flex justify-center bg-background-light border-t border-gray-200"
@@ -86,7 +86,7 @@ try {
           <div className="absolute -right-10 -bottom-10 opacity-10">
             <span
               className="material-symbols-outlined text-[200px]"
-              // style="font-size: 200px"
+            // style="font-size: 200px"
             >
               agriculture
             </span>
@@ -117,7 +117,7 @@ try {
                   <FaLocationDot size={20} />
                 </span>
                 <span className="font-bold">
-                  982 Village Andpurdev, Banthra, Sarojni Nagar Lucknow 226401,
+                  982 Village Andpurdev, Banthra, Sarojni Nagar, Lucknow 226401,
                   Uttar Pradesh, India
                 </span>
               </div>
@@ -133,7 +133,7 @@ try {
                 target="_blank"
                 aria-label="Visit our LinkedIn page"
               >
-              <FaLinkedinIn />
+                <FaLinkedinIn />
               </a>
               <a
                 className="hover:opacity-75 transition-opacity font-bold text-xl"
@@ -141,7 +141,7 @@ try {
                 target="_blank"
                 aria-label="Visit our Twitter page"
               >
-              <FaXTwitter />
+                <FaXTwitter />
               </a>
               <a
                 className="hover:opacity-75 transition-opacity font-bold text-xl"
@@ -149,7 +149,7 @@ try {
                 target="_blank"
                 aria-label="Visit our Instagram page"
               >
-              <FaInstagram />
+                <FaInstagram />
               </a>
             </div>
           </div>

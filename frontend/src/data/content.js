@@ -11,11 +11,12 @@ import shiitakeImage from "../assets/shiitake.webp";
 import oysterImage from "../assets/m7.jpg";
 import spawnImage from "../assets/Seeds.jpg";
 import trainingImage from "../assets/hero.jpg";
+import aboutTrainingImage from "../assets/Aboutpage training.jpeg";
 
 const contact = {
   heading: "Contact us",
   address:
-    "982 Village Andpurdev, Banthra, Sarojni Nagar Lucknow 226401, Uttar Pradesh, India",
+    "982 Village Andpurdev, Banthra, Sarojni Nagar, Lucknow 226401, Uttar Pradesh, India",
   phonePrefix: "Mob. ",
   phones: ["+91 9473896285", "+91 9125591178"],
   emailPrefix: "E-mailID-",
@@ -25,7 +26,7 @@ const contact = {
   webUrl: "https://www.sumedhaagro.com",
   mapEmbedUrl:
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1135.3949008647573!2d80.81553268106272!3d26.712050608067102!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399bf9ed1fb228ab%3A0x78ecca2da48580d!2sSumedha%20Agro!5e0!3m2!1sen!2sin!4v1791981556950!5m2!1sen!2sin",
-  mapTitle: "Map: 982 Village Andpurdev, Banthra, Sarojni Nagar Lucknow 226401, Uttar Pradesh, India",
+  mapTitle: "Map: 982 Village Andpurdev, Banthra, Sarojni Nagar, Lucknow 226401, Uttar Pradesh, India",
   mapLinkUrl:
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1135.3949008647573!2d80.81553268106272!3d26.712050608067102!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399bf9ed1fb228ab%3A0x78ecca2da48580d!2sSumedha%20Agro!5e0!3m2!1sen!2sin!4v1791981556950!5m2!1sen!2sin",
   mapLinkLabel: "Google Maps",
@@ -103,6 +104,11 @@ const content = {
       src: trainingImage,
       alt: "Trainees in white coats seated along a laboratory bench during a mushroom cultivation session",
     },
+    // About page, beside "What we do".
+    aboutTraining: {
+      src: aboutTrainingImage,
+      alt: "Trainees gathered around a pile of straw, filling bags with substrate during a hands-on mushroom cultivation session",
+    },
   },
 
   home: {
@@ -113,12 +119,45 @@ const content = {
   about: {
     label: "About Us",
     eyebrow: "ABOUT US",
-    heading: "Mushroom Seed (Spawn) Production Laboratory (SAMSPL)",
+    heading: "Mushroom Seed (Spawn) Production Laboratory",
     paragraphs: [
       "The SAMSPL operated for Quality Mushroom Spawn production and training program. With a clear mission to integrate mushrooms into mainstream Indian diets and contribute to the farmer’s double income with rural and urban economy, the lab’s efforts are strategically aligned to address some of the most pressing the challenges faced by society today such as youth unemployment, malnutrition, women’s empowerment, and management of agricultural waste.",
       "For thousands of years, mushrooms—one of nature's oldest and most varied organisms—have been valued for their gastronomic, medicinal, and even cultural and spiritual qualities. Psilocybin mushrooms were referred to as Teonanácatl \"Flesh of the God\" by ancient Mesoamerican tribes such as the Maya and Aztecs, who used them in holy rites to converse with gods. The red-and-white Amanita muscaria (Glückspilz) mushroom is considered lucky in German and other European mythology.",
       "We are striving to make mushrooms generally available, economically feasible, and socially acceptable through cutting-edge facilities, community-based training, and knowledge-sharing programs. This guarantees that they can make a significant contribution to grassroots entrepreneurship as well as national and nutritional goals.",
     ],
+    // Heading above the Our Mission / Our Vision cards.
+    missionVisionHeading: "Our Mission & Vision",
+    // Short summary under the paragraphs above, linking to the pages with the details.
+    // Drafted October 2026 at the site owner's request from the site's own pages (not client-supplied text): confirm with the client.
+    highlights: {
+      heading: "What we do",
+      items: [
+        {
+          icon: "FlaskConical",
+          title: "Quality spawn production",
+          text: "Pure culture, mother spawn and G1/G2 spawn produced in our own laboratory.",
+          to: nav.spawnBooking.to,
+        },
+        {
+          icon: "GraduationCap",
+          title: "Hands-on training",
+          text: "Practical courses in mushroom cultivation and spawn production for farmers and entrepreneurs.",
+          to: nav.training.to,
+        },
+        {
+          icon: "Sprout",
+          title: "Incubation facilities",
+          text: "On-site spawn incubation and RTF bag incubation for growers.",
+          to: nav.incubation.to,
+        },
+        {
+          icon: "ShoppingBag",
+          title: "Value-added products",
+          text: "Mushroom pickles, protein powder and more products that add value to every harvest.",
+          to: nav.valueAdded.to,
+        },
+      ],
+    },
     focus: {
       heading: "Our Focus Area",
       statement:
@@ -492,7 +531,7 @@ const content = {
     contact: {
       title: "Contact us",
       description:
-        "982 Village Andpurdev, Banthra, Sarojni Nagar Lucknow 226401, Uttar Pradesh, India",
+        "982 Village Andpurdev, Banthra, Sarojni Nagar, Lucknow 226401, Uttar Pradesh, India",
     },
   },
 };

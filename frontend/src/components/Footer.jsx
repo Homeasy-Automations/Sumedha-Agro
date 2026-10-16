@@ -134,7 +134,9 @@ export default function Footer() {
               <span className="text-xl font-bold tracking-tight text-[#0d1b0d]">{site.name}</span>
             </Link>
             {/* Justified like the site's other paragraphs; the last line stays centred under the logo. */}
-            <p className="text-justify text-sm leading-relaxed text-gray-600 hyphens-auto [text-align-last:center]">{footer.tagline}</p>
+            <p className="max-w-56 text-justify text-sm leading-7 text-gray-600 hyphens-auto [text-align-last:center]">
+              {footer.tagline}
+            </p>
           </div>
 
           <LinkColumn title={footer.quickLinksHeading} links={footer.quickLinks} />
@@ -142,7 +144,7 @@ export default function Footer() {
 
           <div>
             <h2 className="mb-5 text-base font-bold text-[#0d1b0d]">{footer.contactHeading}</h2>
-            <ContactBlock parts={["address", "phone", "email"]} />
+            <ContactBlock parts={["address", "phone", "email"]} addressClassName="max-w-50" />
           </div>
 
           <Newsletter />

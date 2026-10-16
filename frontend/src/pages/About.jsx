@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import content from "../data/content";
@@ -6,7 +7,8 @@ import Reveal from "../components/Reveal";
 import SectionHeading from "../components/SectionHeading";
 import HeadingCard from "../components/HeadingCard";
 import ButtonLink from "../components/ButtonLink";
-import { body, card, cardHover, container, heading, muted, pillOnDark, sectionY } from "../components/styles";
+import Icon from "../components/Icon";
+import { body, card, cardHover, container, heading, iconTile, muted, pillOnDark, sectionY } from "../components/styles";
 import { aboutCta, commitment, leadership, missionVision, stats, whoWeAre } from "../data/legacyContent";
 
 const { about, training, images, nav, ui, meta } = content;
@@ -65,8 +67,40 @@ export default function About() {
         </div>
       </section>
 
-      <section className={`bg-white ${sectionY}`}>
-        <div className={`${container} grid gap-8 lg:grid-cols-12 lg:gap-10`}>
+      {/* Mission & Vision (restored) */}
+      <section className={`bg-background-light ${sectionY}`} aria-labelledby="mission-vision-heading">
+        <div className={container}>
+          <Reveal>
+            <SectionHeading id="mission-vision-heading" title={about.missionVisionHeading} center />
+          </Reveal>
+          <div className="mt-8 grid gap-6 md:mt-10 md:grid-cols-2">
+            {missionVision.map((entry, i) => {
+              const CardIcon = entry.icon;
+              return (
+                <Reveal key={entry.title} delay={i * 0.1} className="h-full">
+                  <article className={`group ${card} ${cardHover} relative isolate flex h-full flex-col gap-5 overflow-hidden p-6 md:p-10`}>
+                    <div
+                      aria-hidden="true"
+                      className={`absolute -z-10 h-64 w-64 rounded-full bg-primary/10 blur-3xl ${i === 0 ? "-right-16 -top-16" : "-bottom-16 -left-16"}`}
+                    />
+                    <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/20 text-text-side transition-colors group-hover:bg-primary group-hover:text-[#0d1b0d]">
+                      <CardIcon size={28} aria-hidden="true" />
+                    </span>
+                    <h3 className={`text-2xl font-bold leading-tight ${heading}`}>{entry.title}</h3>
+                    <p className={`text-base leading-relaxed ${body}`}>{entry.text}</p>
+                  </article>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className={`bg-white ${sectionY}`} aria-labelledby="samspl-heading">
+        <Reveal className={container}>
+          <SectionHeading id="samspl-heading" eyebrow={about.eyebrow} title={about.heading} center />
+        </Reveal>
+        <div className={`${container} mt-8 grid gap-8 md:mt-10 lg:grid-cols-12 lg:gap-10`}>
           <Reveal className="space-y-6 lg:col-span-7">
             <p className={`text-lg font-medium leading-relaxed md:text-xl ${heading}`}>{lead}</p>
             {rest.map((paragraph) => (
@@ -74,6 +108,33 @@ export default function About() {
                 {paragraph}
               </p>
             ))}
+
+            {/* What we do: a short summary linking to the pages with the details. */}
+            <div className="pt-2">
+              <h3 className={`text-xl font-bold md:text-2xl ${heading}`}>{about.highlights.heading}</h3>
+              <ul className="mt-4 grid gap-4 sm:grid-cols-2">
+                {about.highlights.items.map((item) => (
+                  <li key={item.title} className="text-left">
+                    <Link to={item.to} className={`group ${card} ${cardHover} flex h-full items-start gap-4 p-4`}>
+                      <span className={`${iconTile} transition-colors group-hover:bg-primary group-hover:text-[#0d1b0d]`}>
+                        <Icon name={item.icon} size={22} />
+                      </span>
+                      <span className="min-w-0">
+                        <span className={`flex items-center gap-1.5 font-bold ${heading}`}>
+                          {item.title}
+                          <ArrowRight
+                            size={15}
+                            aria-hidden="true"
+                            className="shrink-0 text-text-side opacity-0 transition-opacity group-hover:opacity-100 motion-reduce:transition-none"
+                          />
+                        </span>
+                        <span className={`mt-1 block text-sm leading-relaxed ${body}`}>{item.text}</span>
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </Reveal>
           <Reveal delay={0.1} className="lg:col-span-5">
             <div className="grid gap-6 sm:grid-cols-2 lg:sticky lg:top-36 lg:grid-cols-1">
@@ -86,11 +147,11 @@ export default function About() {
                 className="aspect-[4/3] w-full rounded-3xl object-cover shadow-xl"
               />
               <img
-                src={images.training.src}
-                alt={images.training.alt}
+                src={images.aboutTraining.src}
+                alt={images.aboutTraining.alt}
                 loading="lazy"
-                width="751"
-                height="583"
+                width="1024"
+                height="768"
                 className="aspect-[4/3] w-full rounded-3xl object-cover shadow-xl"
               />
             </div>
@@ -177,30 +238,6 @@ export default function About() {
               );
             })}
           </ul>
-        </div>
-      </section>
-
-      {/* Mission & Vision (restored) */}
-      <section className={`bg-background-light ${sectionY}`}>
-        <div className={`${container} grid gap-6 md:grid-cols-2`}>
-          {missionVision.map((entry, i) => {
-            const CardIcon = entry.icon;
-            return (
-              <Reveal key={entry.title} delay={i * 0.1} className="h-full">
-                <article className={`group ${card} ${cardHover} relative isolate flex h-full flex-col gap-5 overflow-hidden p-6 md:p-10`}>
-                  <div
-                    aria-hidden="true"
-                    className={`absolute -z-10 h-64 w-64 rounded-full bg-primary/10 blur-3xl ${i === 0 ? "-right-16 -top-16" : "-bottom-16 -left-16"}`}
-                  />
-                  <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/20 text-text-side transition-colors group-hover:bg-primary group-hover:text-[#0d1b0d]">
-                    <CardIcon size={28} aria-hidden="true" />
-                  </span>
-                  <h2 className={`text-2xl font-bold leading-tight ${heading}`}>{entry.title}</h2>
-                  <p className={`text-base leading-relaxed ${body}`}>{entry.text}</p>
-                </article>
-              </Reveal>
-            );
-          })}
         </div>
       </section>
 

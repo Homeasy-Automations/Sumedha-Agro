@@ -15,12 +15,14 @@ const tones = {
 // Renders the client's contact details line by line, exactly as supplied,
 // with phone numbers as tel: links and emails as mailto: links. A group's prefix
 // ("Mob. ", "E-mailID-") sits in its own column so every number/address lines up under the first.
-// parts: which groups to show; layout "stack" (one column) or "grid".
+// parts: which groups to show; layout "stack" (one column) or "grid";
+// addressClassName: extra classes for the address text (e.g. a narrower width in the footer).
 export default function ContactBlock({
   tone = "light",
   layout = "stack",
   parts = ["address", "phone", "email", "web"],
   className = "",
+  addressClassName = "",
 }) {
   const t = tones[tone];
 
@@ -28,6 +30,7 @@ export default function ContactBlock({
     address: {
       icon: MapPin,
       lines: [contact.address],
+      className: addressClassName,
     },
     phone: {
       icon: Phone,
@@ -64,7 +67,7 @@ export default function ContactBlock({
   return (
     <address className={`not-italic ${layoutClass} ${className}`}>
       {parts.map((key) => {
-        const { icon: Icon, prefix, lines } = groups[key];
+        const { icon: Icon, prefix, lines, className: linesClass = "" } = groups[key];
         return (
           <div key={key} className="flex items-start gap-3">
             <span className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${t.icon}`}>
@@ -72,7 +75,7 @@ export default function ContactBlock({
             </span>
             <div className={`flex min-w-0 text-sm leading-relaxed ${t.text}`}>
               {prefix && <span className="shrink-0 whitespace-pre">{prefix}</span>}
-              <ul className="flex min-w-0 flex-col gap-1">
+              <ul className={`flex min-w-0 flex-col gap-1 ${linesClass}`}>
                 {lines.map((line, i) => (
                   <li key={i}>{line}</li>
                 ))}

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Newspaper } from "lucide-react";
 import content from "../data/content";
 import usePageMeta from "../hooks/usePageMeta";
 import Reveal from "../components/Reveal";
@@ -310,19 +310,25 @@ export default function Home() {
         </div>
       </section>
 
-      {/* News & Media */}
+      {/* News & Media. On large screens both columns share a heading row and a content row
+          (subgrid), so "Latest updates", "Mushroom Videos" and "Gallery" start on one line even
+          when a heading wraps, and the news cards, video and gallery all end on one line. */}
       <section className={`bg-white ${sectionY}`}>
-        <div className={`${container} grid gap-8 lg:grid-cols-2`}>
-          <Reveal>
+        <div className={`${container} grid gap-8 lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-y-6`}>
+          <Reveal className="flex flex-col gap-6 lg:row-span-2 lg:grid lg:grid-rows-subgrid">
             <SectionHeading title={news.heading} action={{ label: ui.readMore, to: nav.links.news.to }} />
-            <div className="mt-6">
-              <NewsList limit={3} compact />
+            <div className="flex flex-col">
+              <h3 className={`mb-4 flex items-center gap-2 text-lg font-bold ${heading}`}>
+                <Newspaper size={18} aria-hidden="true" className="text-text-side" />
+                {news.latestHeading}
+              </h3>
+              <NewsList limit={2} compact className="flex-1" />
             </div>
           </Reveal>
-          <Reveal delay={0.1}>
+          <Reveal delay={0.1} className="flex flex-col gap-6 lg:row-span-2 lg:grid lg:grid-rows-subgrid">
             <SectionHeading title={media.heading} action={{ label: ui.readMore, to: nav.links.media.to }} />
-            <div className="mt-6">
-              <MediaSection compact headingLevel="h3" />
+            <div className="flex flex-col">
+              <MediaSection compact headingLevel="h3" className="flex-1" />
             </div>
           </Reveal>
         </div>

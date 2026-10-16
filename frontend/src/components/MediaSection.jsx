@@ -38,7 +38,7 @@ function VideoCard({ video }) {
   const src = playing && video.thumbnailUrl ? `${video.embedUrl}?autoplay=1` : video.embedUrl;
 
   return (
-    <figure className={`overflow-hidden rounded-2xl border border-border-light bg-white ${cardHover}`}>
+    <figure className={`flex h-full flex-col overflow-hidden rounded-2xl border border-border-light bg-white ${cardHover}`}>
       <div className="relative aspect-video bg-black">
         {video.provider === "upload" ? (
           <UploadedVideo video={video} />
@@ -67,7 +67,7 @@ function VideoCard({ video }) {
           </button>
         )}
       </div>
-      <figcaption className={`p-4 text-sm font-semibold ${heading}`}>{video.title}</figcaption>
+      <figcaption className={`flex flex-1 items-center p-4 text-sm font-semibold ${heading}`}>{video.title}</figcaption>
     </figure>
   );
 }
@@ -75,7 +75,8 @@ function VideoCard({ video }) {
 function VideoGrid({ compact }) {
   const { items, loading } = useSiteContent("videos", VIDEO_FALLBACK);
   const shown = compact ? items.slice(0, 1) : items;
-  const gridClass = compact ? "grid gap-4" : "grid gap-6 sm:grid-cols-2 lg:grid-cols-3";
+  // Compact: the one video card stretches to the height of the gallery beside it.
+  const gridClass = compact ? "grid flex-1 gap-4" : "grid gap-6 sm:grid-cols-2 lg:grid-cols-3";
 
   if (loading && items.length === 0) {
     return <ul className={gridClass}><Skeleton count={compact ? 1 : 3} className="aspect-video" /></ul>;
@@ -85,7 +86,7 @@ function VideoGrid({ compact }) {
     <ul className={gridClass}>
       {shown.map((video, i) => (
         <li key={video.id ?? video.embedUrl}>
-          <Reveal delay={Math.min(i, 5) * 0.06}>
+          <Reveal delay={Math.min(i, 5) * 0.06} className="h-full">
             <VideoCard video={video} />
           </Reveal>
         </li>
@@ -152,10 +153,13 @@ function GalleryGrid({ compact }) {
   const { items, loading } = useSiteContent("gallery", GALLERY_FALLBACK);
   const [open, setOpen] = useState(null);
   const shown = compact ? items.slice(0, 4) : items;
-  const gridClass = compact ? "grid grid-cols-2 gap-3" : "grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4";
+  const gridClass = compact ? "grid flex-1 grid-cols-2 gap-3" : "grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4";
+  // Compact tiles start at 4:3, so the 2×2 grid is about as tall as the video card beside it,
+  // and stretch (cropping a little more) when the row is taller.
+  const tileAspect = compact ? "aspect-[4/3]" : "aspect-square";
 
   if (loading && items.length === 0) {
-    return <ul className={gridClass}><Skeleton count={4} className="aspect-square" /></ul>;
+    return <ul className={gridClass}><Skeleton count={4} className={tileAspect} /></ul>;
   }
   if (shown.length === 0) return <EmptyState icon={Images} compact={compact} />;
 
@@ -164,18 +168,18 @@ function GalleryGrid({ compact }) {
       <ul className={gridClass}>
         {shown.map((image, i) => (
           <li key={image.id ?? image.src}>
-            <Reveal delay={Math.min(i, 7) * 0.05}>
+            <Reveal delay={Math.min(i, 7) * 0.05} className="h-full">
               <button
                 type="button"
                 onClick={() => setOpen(i)}
-                className={`group block w-full overflow-hidden rounded-2xl border border-border-light ${cardHover}`}
+                className={`group block h-full w-full overflow-hidden rounded-2xl border border-border-light ${cardHover}`}
                 aria-label={image.alt || image.caption ? `${ui.viewImage}: ${image.alt || image.caption}` : `${ui.viewImage} ${i + 1}`}
               >
                 <img
                   src={image.thumbnailSrc ?? image.src}
                   alt={image.alt}
                   loading="lazy"
-                  className="aspect-square w-full object-cover transition duration-300 group-hover:scale-105 motion-reduce:group-hover:scale-100"
+                  className={`${tileAspect} h-full w-full object-cover transition duration-300 group-hover:scale-105 motion-reduce:group-hover:scale-100`}
                 />
               </button>
             </Reveal>
@@ -193,8 +197,9 @@ function GalleryGrid({ compact }) {
 }
 
 // "Mushroom Videos" and "Gallery" blocks, managed in the admin panel.
-// compact: home-page preview (one video, four images).
-export default function MediaSection({ compact = false, headingLevel = "h2" }) {
+// compact: home-page preview (one video, four images); the two blocks stretch to the same height,
+// and to the section's height when a className such as flex-1 makes it taller.
+export default function MediaSection({ compact = false, headingLevel = "h2", className = "" }) {
   const Heading = headingLevel;
   const blocks = [
     { ...media.videos, icon: Video, Grid: VideoGrid },
@@ -202,11 +207,11 @@ export default function MediaSection({ compact = false, headingLevel = "h2" }) {
   ];
 
   return (
-    <div className={compact ? "grid gap-6 sm:grid-cols-2" : "grid gap-8"}>
+    <div className={`${compact ? "grid gap-6 sm:grid-cols-2" : "grid gap-8"} ${className}`}>
       {blocks.map((block) => {
         const { id, title, icon: BlockIcon, Grid } = block;
         return (
-          <section key={id} id={id} aria-labelledby={`${id}-heading`} className="scroll-mt-36">
+          <section key={id} id={id} aria-labelledby={`${id}-heading`} className="flex scroll-mt-36 flex-col">
             <Heading
               id={`${id}-heading`}
               className={`mb-4 flex items-center gap-2 font-bold ${compact ? "text-lg" : "text-2xl"} ${heading}`}

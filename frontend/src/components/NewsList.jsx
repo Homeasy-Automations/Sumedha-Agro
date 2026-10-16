@@ -11,9 +11,12 @@ const NEWS_FALLBACK = news.items;
 const dateFormat = new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 
 // News & announcements, managed in the admin panel (latest first).
-export default function NewsList({ limit, compact = false }) {
+// compact: home-page preview. The cards fill the list's height (pass a className such as flex-1
+// to stretch it); a single item shows a longer excerpt, several show only date and headline.
+export default function NewsList({ limit, compact = false, className = "" }) {
   const { items: all, loading } = useSiteContent("news", NEWS_FALLBACK);
   const items = limit ? all.slice(0, limit) : all;
+  const showBody = !compact || items.length === 1;
 
   if (loading && items.length === 0) {
     return (
@@ -27,18 +30,18 @@ export default function NewsList({ limit, compact = false }) {
   if (items.length === 0) return <EmptyState icon={Newspaper} compact={compact} />;
 
   return (
-    <ul className="flex flex-col gap-4">
+    <ul className={`flex flex-col gap-4 ${className}`}>
       {items.map((item, i) => (
-        <li key={item.id ?? `${item.date}-${item.title}`}>
-          <Reveal delay={Math.min(i, 5) * 0.06}>
-            <article className={`${card} ${cardHover} p-5 md:p-6`}>
+        <li key={item.id ?? `${item.date}-${item.title}`} className={compact ? "flex-1" : undefined}>
+          <Reveal delay={Math.min(i, 5) * 0.06} className="h-full">
+            <article className={`${card} ${cardHover} flex h-full flex-col ${compact ? "p-4 md:p-5" : "p-5 md:p-6"}`}>
               {item.date && (
                 <time dateTime={item.date} className={`text-xs font-semibold ${muted}`}>
                   {dateFormat.format(new Date(`${item.date}T00:00:00Z`))}
                 </time>
               )}
-              <h3 className={`mt-1 text-lg font-bold ${heading}`}>{item.title}</h3>
-              {item.body && (
+              <h3 className={`mt-1 text-lg font-bold ${heading} ${compact ? "line-clamp-2" : ""}`}>{item.title}</h3>
+              {showBody && item.body && (
                 <p className={`mt-2 whitespace-pre-line text-sm leading-relaxed ${body} ${compact ? "line-clamp-3" : ""}`}>
                   {item.body}
                 </p>
@@ -48,7 +51,7 @@ export default function NewsList({ limit, compact = false }) {
                   href={item.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-text-side underline-offset-4 hover:underline"
+                  className="mt-auto inline-flex w-fit items-center gap-1.5 pt-3 text-sm font-bold text-text-side underline-offset-4 hover:underline"
                 >
                   {ui.readMore}
                   <ExternalLink size={14} aria-hidden="true" />

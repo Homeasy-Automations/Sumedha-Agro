@@ -445,6 +445,8 @@ const content = {
 
   news: {
     heading: "News and Announcement",
+    // Small heading above the latest news on the home page (beside "Mushroom Videos" and "Gallery").
+    latestHeading: "Latest updates",
     // Managed in the admin panel (/admin). These static items are only shown if the API is
     // unreachable or has no news yet: { date: "YYYY-MM-DD", title, body?, link? }
     items: [],

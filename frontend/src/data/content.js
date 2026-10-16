@@ -3,6 +3,11 @@
 // capitalisation). Edit layout in the components, not the words here.
 
 import heroImage from "../assets/m1.jpg";
+import buttonImage from "../assets/m2.jpg";
+import milkyImage from "../assets/m3.webp";
+import bulkImage from "../assets/Bulk.jpg";
+import labImage from "../assets/live-from-lab.jpg";
+import shiitakeImage from "../assets/shiitake.webp";
 import oysterImage from "../assets/m7.jpg";
 import spawnImage from "../assets/Seeds.jpg";
 import trainingImage from "../assets/hero.jpg";
@@ -80,7 +85,15 @@ const content = {
   },
 
   images: {
-    hero: { src: heroImage, alt: "Cluster of oyster mushrooms on a dark background" },
+    // Home hero collage, in reading order (three columns of two; layout in HeroCollage.jsx).
+    heroCollage: [
+      { src: heroImage, alt: "Cluster of oyster mushrooms on a dark background" },
+      { src: bulkImage, alt: "Crates of fresh button and brown mushrooms ready for bulk supply" },
+      { src: labImage, alt: "Close up of fresh oyster mushrooms growing in a controlled environment farm" },
+      { src: shiitakeImage, alt: "Sumedha Agro shiitake mushroom spawn bag with fresh shiitake mushrooms" },
+      { src: milkyImage, alt: "Fresh milky mushrooms on a white background" },
+      { src: buttonImage, alt: "Basket of fresh white button mushrooms" },
+    ],
     oyster: { src: oysterImage, alt: "White oyster mushrooms growing from substrate" },
     spawn: {
       src: spawnImage,

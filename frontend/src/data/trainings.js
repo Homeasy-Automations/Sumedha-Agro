@@ -30,7 +30,7 @@ const SPAWN = {
   fees: "Rs.4500/- per trainee",
   language: "English/ Hindi",
   duration: "3 Days",
-  coordinator: "Dr. Prem Chandra (9125591178: only for Spawn Query) Call all days 10 AM to 12 PM",
+  coordinator: "Dr. Prem Chandra & Dr. Rekha Singh (9125591178: only for Spawn Query) Call all days 10 AM to 12 PM",
   note: "",
 };
 
@@ -130,7 +130,7 @@ const trainings = [
     registrationDates: "01-10 November 2026",
     registrationStart: "2026-11-01",
     registrationEnd: "2026-11-10",
-    coordinator: "Dr. Enespa, Dr. Rekha Singh",
+    coordinator: "Dr. Enespa, Dr. Rekha Singh & Mr. Nilesh Srivastava ",
     note: "",
     admissionStatus: "Upcoming",
   },

@@ -9,6 +9,7 @@ import HeadingCard from "../components/HeadingCard";
 import ContactBlock from "../components/ContactBlock";
 import NewsList from "../components/NewsList";
 import MediaSection from "../components/MediaSection";
+import HeroCollage from "../components/HeroCollage";
 import Icon from "../components/Icon";
 import { body, card, cardHover, container, heading, iconTile, pill, pillOnDark, sectionY } from "../components/styles";
 import PartnerCTA from "../components/PartnerCTA";
@@ -29,8 +30,8 @@ export default function Home() {
       <section className="on-dark relative isolate overflow-hidden bg-background-dark text-white">
         <div aria-hidden="true" className="absolute -top-40 -left-40 -z-10 h-[480px] w-[480px] rounded-full bg-primary/15 blur-[140px]" />
         <div aria-hidden="true" className="absolute -bottom-40 right-0 -z-10 h-[420px] w-[420px] rounded-full bg-primary/10 blur-[140px]" />
-        <div className={`${container} grid items-center gap-12 py-16 md:py-24 lg:grid-cols-12 lg:gap-16`}>
-          <Reveal className="lg:col-span-7">
+        <div className={`${container} grid items-center gap-12 py-16 md:py-24 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]`}>
+          <Reveal>
             <p className={pillOnDark}>
               <span className="h-2 w-2 animate-pulse rounded-full bg-primary shadow-[0_0_10px_#13ec13]" aria-hidden="true" />
               {site.subtitle}
@@ -50,19 +51,9 @@ export default function Home() {
               </ButtonLink>
             </div>
           </Reveal>
-          <Reveal delay={0.15} className="lg:col-span-5">
-            <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-              <div aria-hidden="true" className="absolute inset-6 -z-10 rounded-[2rem] bg-primary/30 blur-3xl" />
-              <img
-                src={images.hero.src}
-                alt={images.hero.alt}
-                fetchPriority="high"
-                width="512"
-                height="512"
-                className="aspect-square w-full rounded-[2rem] border border-white/10 object-cover shadow-2xl"
-              />
-            </div>
-          </Reveal>
+          <div className="mx-auto w-full max-w-lg lg:max-w-none">
+            <HeroCollage />
+          </div>
         </div>
       </section>
 

@@ -162,14 +162,16 @@ export default function Home() {
       {/* Spawn Production Training strip */}
       <section className={`on-dark relative isolate overflow-hidden bg-background-dark text-white ${sectionY}`}>
         <div aria-hidden="true" className="absolute -right-32 top-0 -z-10 h-[420px] w-[420px] rounded-full bg-primary/15 blur-[140px]" />
-        <div className={`${container} grid items-center gap-8 lg:grid-cols-2 lg:gap-10`}>
+        {/* The text side is a little wider, so each module fits on one line in two columns
+            (xl); between lg and xl the modules are listed in one column for the same reason. */}
+        <div className={`${container} grid items-center gap-8 lg:grid-cols-[1.3fr_1fr] lg:gap-10`}>
           <Reveal>
             <SectionHeading tone="dark" title={training.heading} description={training.sentence} />
-            <ol className="mt-6 grid gap-3 sm:grid-cols-2">
+            <ol className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
               {training.modules.map((module, i) => (
                 <li
                   key={module}
-                  className={`flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-gray-100 ${i === training.modules.length - 1 ? "sm:col-span-2" : ""}`}
+                  className={`flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-4 text-left text-sm text-gray-100 ${i === training.modules.length - 1 ? "sm:col-span-2 lg:col-span-1 xl:col-span-2" : ""}`}
                 >
                   <span aria-hidden="true" className="font-mono font-bold text-primary">
                     {String(i + 1).padStart(2, "0")}

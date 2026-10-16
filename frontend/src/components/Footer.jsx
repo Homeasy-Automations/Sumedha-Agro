@@ -121,7 +121,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-border-light bg-white text-[#3f5f3f]">
       <div className={`${containerWide} pb-6 pt-10`}>
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-[1.2fr_0.9fr_1.1fr_1.6fr_1.2fr]">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-[1.4fr_0.9fr_1.1fr_1.5fr_1.2fr]">
           <div className="flex flex-col items-center gap-5 text-center">
             <Link to="/" className="flex w-fit flex-col items-center gap-3">
               <img
@@ -133,7 +133,8 @@ export default function Footer() {
               />
               <span className="text-xl font-bold tracking-tight text-[#0d1b0d]">{site.name}</span>
             </Link>
-            <p className="text-sm leading-relaxed text-gray-600">{footer.tagline}</p>
+            {/* Justified like the site's other paragraphs; the last line stays centred under the logo. */}
+            <p className="text-justify text-sm leading-relaxed text-gray-600 hyphens-auto [text-align-last:center]">{footer.tagline}</p>
           </div>
 
           <LinkColumn title={footer.quickLinksHeading} links={footer.quickLinks} />
@@ -147,45 +148,45 @@ export default function Footer() {
           <Newsletter />
         </div>
 
-        {/* Copyright left, visitor count centred, legal links right (stacked on small screens). */}
+        {/* Copyright left, visitor count centred, legal links and the developer credit right
+            (stacked on small screens). */}
         <div className="mt-8 flex flex-col items-center gap-4 border-t border-border-light pt-6 text-sm text-gray-600 md:grid md:grid-cols-[1fr_auto_1fr]">
           <p className="md:justify-self-start">
             © {YEAR} {footer.copyright}
           </p>
           <VisitorCount />
-          <ul className="flex gap-6 md:justify-self-end">
-            {footer.legal.map((link) => (
-              <li key={link.to}>
-                <Link to={link.to} className="transition-colors hover:text-text-side">
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Developer credit, centred under the visitor count. */}
-        <div className="mt-5 flex justify-center">
-          <a
-            href="https://kynyx.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.16em] text-gray-500 transition-colors hover:text-text-side"
-          >
-            <span>Made with</span>
-            <Heart
-              size={12}
-              aria-hidden="true"
-              fill="currentColor"
-              className="text-rose-500 transition-transform duration-200 group-hover:scale-125 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-            />
-            <span className="sr-only">love</span>
-            <span>
-              by{" "}
-              <span className="font-bold text-[#0d1b0d] transition-colors group-hover:text-text-side">KYNYX</span>
-            </span>
-            <span className="sr-only">{ui.opensInNewTab}</span>
-          </a>
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 md:justify-self-end md:justify-end">
+            <a
+              href="https://kynyx.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.16em] text-gray-500 transition-colors hover:text-text-side"
+            >
+              <span>Made with</span>
+              <Heart
+                size={12}
+                aria-hidden="true"
+                fill="currentColor"
+                className="text-rose-500 transition-transform duration-200 group-hover:scale-125 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+              />
+              <span className="sr-only">love</span>
+              <span>
+                by{" "}
+                <span className="font-bold text-[#0d1b0d] transition-colors group-hover:text-text-side">KYNYX</span>
+              </span>
+              <span className="sr-only">{ui.opensInNewTab}</span>
+            </a>
+            <span aria-hidden="true" className="hidden h-4 w-px bg-slate-300 sm:block" />
+            <ul className="flex gap-6">
+              {footer.legal.map((link) => (
+                <li key={link.to}>
+                  <Link to={link.to} className="transition-colors hover:text-text-side">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </footer>

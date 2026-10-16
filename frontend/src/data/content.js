@@ -12,6 +12,7 @@ import oysterImage from "../assets/m7.jpg";
 import spawnImage from "../assets/Seeds.jpg";
 import trainingImage from "../assets/hero.jpg";
 import aboutTrainingImage from "../assets/Aboutpage training.jpeg";
+import homeTrainingImage from "../assets/home training image.jpeg";
 
 const contact = {
   heading: "Contact us",
@@ -108,6 +109,11 @@ const content = {
     aboutTraining: {
       src: aboutTrainingImage,
       alt: "Trainees gathered around a pile of straw, filling bags with substrate during a hands-on mushroom cultivation session",
+    },
+    // Home page, Spawn Production Training section.
+    homeTraining: {
+      src: homeTrainingImage,
+      alt: "Trainer explaining a lesson to trainees taking notes at laboratory benches set with flasks and test tubes",
     },
   },
 

@@ -191,11 +191,11 @@ export default function Home() {
           </Reveal>
           <Reveal delay={0.15}>
             <img
-              src={images.training.src}
-              alt={images.training.alt}
+              src={images.homeTraining.src}
+              alt={images.homeTraining.alt}
               loading="lazy"
-              width="751"
-              height="583"
+              width="1600"
+              height="901"
               className="w-full rounded-3xl border border-white/10 object-cover shadow-2xl"
             />
           </Reveal>

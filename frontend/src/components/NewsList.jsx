@@ -3,6 +3,7 @@ import content from "../data/content";
 import useSiteContent from "../hooks/useSiteContent";
 import EmptyState from "./EmptyState";
 import Reveal from "./Reveal";
+import RichText from "./RichText";
 import { body, card, cardHover, heading, muted } from "./styles";
 
 const { news, ui } = content;
@@ -42,8 +43,8 @@ export default function NewsList({ limit, compact = false, className = "" }) {
               )}
               <h3 className={`mt-1 text-lg font-bold ${heading} ${compact ? "line-clamp-2" : ""}`}>{item.title}</h3>
               {showBody && item.body && (
-                <p className={`mt-2 whitespace-pre-line text-sm leading-relaxed ${body} ${compact ? "line-clamp-3" : ""}`}>
-                  {item.body}
+                <p className={`mt-2 whitespace-pre-line text-base font-medium leading-relaxed ${body} ${compact ? "line-clamp-3" : "md:text-[17px]"}`}>
+                  <RichText text={item.body} />
                 </p>
               )}
               {item.link && (

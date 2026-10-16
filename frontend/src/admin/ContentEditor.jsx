@@ -2,16 +2,18 @@ import { useId, useRef, useState } from "react";
 import { Copy, Pencil, Plus, Trash2 } from "lucide-react";
 import { invalidateSiteContent } from "../hooks/useSiteContent";
 import { useAdmin } from "./session";
+import LinkTextarea from "./LinkTextarea";
 import { fieldProps } from "./styles";
 import useAdminData from "./useAdminData";
 import { Button, Card, Empty, Field, Loading, Modal, Notice } from "./ui";
 
 // Form + list for one kind of website content (videos, news, training calendar).
 //   kind:       public content key, e.g. "news" (GET /api/content/news, admin /api/admin/news)
-//   fields:     [{ name, label, type?, options?, required?, hint?, placeholder?, maxLength?, wide? }]
+//   fields:     [{ name, label, type?, options?, required?, hint?, placeholder?, maxLength?, wide?, links? }]
 //               type: "text" (default), "textarea", "select" (with options: [{ value, label }]),
 //               or any <input> type ("date", "url", ...). placeholder may be a function of the
-//               form's values. { section: "Title" } entries are headings between fields.
+//               form's values. links: a textarea gets an "Add link" tool and a preview
+//               (LinkTextarea). { section: "Title" } entries are headings between fields.
 //   editFields: fields editable after creation (defaults to `fields`)
 //   initial:    () => default values for a new item
 //   summary:    (item) => JSX describing an item in the list
@@ -45,7 +47,9 @@ function ItemForm({ fields, values, errors, onChange, idPrefix }) {
           onChange: (e) => onChange(f.name, e.target.value),
         };
         let control;
-        if (f.type === "textarea") control = <textarea {...props} rows={5} />;
+        if (f.type === "textarea") {
+          control = f.links ? <LinkTextarea {...props} onValue={(v) => onChange(f.name, v)} /> : <textarea {...props} rows={5} />;
+        }
         else if (f.type === "select") {
           // A saved value that is no longer one of the options (e.g. older free text) stays selectable.
           const current = props.value;

@@ -37,6 +37,35 @@ body {
     color: #0d1b0d;
 }
 
+/* Text that wraps onto several lines is justified: paragraphs, quotes, captions and plain-text
+   list items. The last line stays left-aligned, so one-line text looks the same. Not justified:
+   bold text (titles and labels, where wide gaps look wrong) and list items that hold cards
+   (a heading or paragraph inside), so nothing passes justification down to their titles.
+   In the base layer and specificity-free, so any text-left / text-center / text-right class
+   still wins, and text inside a centred or right-aligned block keeps that alignment. */
+@layer base {
+    :where(
+        :is(p, blockquote, dd, figcaption, li:not(:has(h1, h2, h3, h4, h5, h6, p, div, ul, ol))):not(
+                [class*="font-bold"],
+                [class*="font-semibold"],
+                [class*="font-extrabold"],
+                [class*="font-black"]
+            )
+    ) {
+        text-align: justify;
+    }
+    :where([class*="text-center"], [class*="text-right"], [class*="text-end"]) :where(p, li, blockquote, dd, figcaption) {
+        text-align: inherit;
+    }
+    /* Narrow phone columns: long words may break at line ends, so justified lines don't
+       open up wide gaps. The words themselves are unchanged. */
+    @media (width < 40rem) {
+        :where(p, li, blockquote, dd, figcaption) {
+            hyphens: auto;
+        }
+    }
+}
+
 /* Visible keyboard focus: dark green on light surfaces, brand green on dark ones. */
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
     outline: 2px solid var(--color-text-side);

@@ -106,7 +106,7 @@ function Label({ field, htmlFor, id, as = "label" }) {
     <Tag
       id={id}
       htmlFor={htmlFor}
-      className="flex items-start gap-2.5 text-sm font-semibold leading-snug text-[#0d1b0d]"
+      className="flex items-start gap-2.5 text-left text-sm font-semibold leading-snug text-[#0d1b0d]"
     >
       <span
         aria-hidden="true"

@@ -18,6 +18,7 @@ const disabled = {
   },
   isOwnAsset: () => false,
   imageUrls: () => ({ src: "", thumbnailSrc: "" }),
+  screenshotUrls: () => ({ src: "", thumbnailSrc: "", file: "" }),
   videoUrls: () => ({ videoUrl: "", posterUrl: "" }),
   async destroy() {
     return false;

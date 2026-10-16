@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
-import { Check, CircleAlert, Copy, Download, ImageUp, Info, QrCode, RefreshCw, Smartphone, X } from "lucide-react";
+import { Check, CircleAlert, Copy, Download, FileText, ImageUp, Info, QrCode, RefreshCw, Smartphone, X } from "lucide-react";
 import { formText } from "../data/trainingForm";
+import { isPdf } from "../lib/uploadFile";
 
 const t = formText.payment;
-const ACCEPT = ["image/jpeg", "image/png", "image/webp"];
+// Any image, or a PDF receipt. Some systems give HEIC/HEIF photos no type, hence the extensions.
+const ACCEPT = "image/*,application/pdf,.heic,.heif,.pdf";
+const IMAGE_OR_PDF = /\.(jpe?g|png|webp|gif|bmp|tiff?|heic|heif|avif|pdf)$/i;
+const isAccepted = (file) => file.type.startsWith("image/") || isPdf(file) || IMAGE_OR_PDF.test(file.name);
 
 // Opens the phone's UPI apps with the payee filled in (the amount is typed in the app).
 const UPI_LINK = `upi://pay?pa=${t.upiId}&pn=${encodeURIComponent(t.payeeName)}&cu=INR`;
@@ -44,7 +48,8 @@ function Step({ no, title, badge, invalid = false, children }) {
 export default function TrainingPayment({ id, fee, file, onFileChange, error, errorId, onError, attempt }) {
   const [showQr, setShowQr] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [preview, setPreview] = useState("");
+  const [preview, setPreview] = useState(""); // object URL of an image screenshot
+  const [previewFailed, setPreviewFailed] = useState(false); // an image the browser can't show (e.g. HEIC)
   const [dragging, setDragging] = useState(false);
   const headingId = `${id}-heading`;
   const qrId = `${id}-qr`;
@@ -61,11 +66,12 @@ export default function TrainingPayment({ id, fee, file, onFileChange, error, er
 
   const choose = (selected) => {
     if (!selected) return;
-    if (!ACCEPT.includes(selected.type)) {
+    if (!isAccepted(selected)) {
       onError(t.notImage);
       return;
     }
-    setPreview(URL.createObjectURL(selected));
+    setPreview(isPdf(selected) ? "" : URL.createObjectURL(selected));
+    setPreviewFailed(false);
     onFileChange(selected);
   };
 
@@ -73,6 +79,9 @@ export default function TrainingPayment({ id, fee, file, onFileChange, error, er
     setPreview("");
     onFileChange(null);
   };
+
+  // A PDF, or an image the browser can't display, is shown as a file card instead of a preview.
+  const fileCard = file && (!preview || previewFailed);
 
   const copyUpiId = async () => {
     try {
@@ -187,13 +196,25 @@ export default function TrainingPayment({ id, fee, file, onFileChange, error, er
                     ? "border-text-side bg-primary/10"
                     : error
                       ? "border-red-400 bg-red-50/50"
-                      : preview
+                      : file
                         ? "border-primary/40 bg-background-light"
                         : "border-slate-300 bg-background-light/60 hover:border-text-side hover:bg-primary/5"
                 }`}
               >
-                {preview ? (
-                  <img src={preview} alt="" className="max-h-72 w-auto rounded-lg object-contain shadow-sm" />
+                {fileCard ? (
+                  <>
+                    <span className="flex h-16 w-14 items-center justify-center rounded-lg border border-border-light bg-white text-text-side shadow-sm">
+                      <FileText size={28} aria-hidden="true" />
+                    </span>
+                    <span className="text-sm font-bold text-[#0d1b0d]">{isPdf(file) ? t.pdfChosen : file.name}</span>
+                  </>
+                ) : preview ? (
+                  <img
+                    src={preview}
+                    alt=""
+                    onError={() => setPreviewFailed(true)}
+                    className="max-h-72 w-auto rounded-lg object-contain shadow-sm"
+                  />
                 ) : (
                   <>
                     <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 text-text-side">
@@ -207,7 +228,7 @@ export default function TrainingPayment({ id, fee, file, onFileChange, error, er
                 <input
                   id={id}
                   type="file"
-                  accept={ACCEPT.join(",")}
+                  accept={ACCEPT}
                   required
                   aria-invalid={error ? true : undefined}
                   aria-describedby={error ? `${errorId} ${hintId}` : hintId}

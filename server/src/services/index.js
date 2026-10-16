@@ -11,7 +11,7 @@ import {
   subscriberSchema,
   trainingApplicationSchema,
 } from "../validation/schemas.js";
-import { stripSeparators, validate } from "../validation/validate.js";
+import { stripSeparators, validate, ValidationError } from "../validation/validate.js";
 
 export const maskAadhar = (aadhar) => (aadhar ? `XXXX XXXX ${String(aadhar).slice(-4)}` : "");
 
@@ -32,22 +32,60 @@ function searchText(q) {
   return /^\d+$/.test(digits) ? digits : text;
 }
 
-function createTrainingService({ repository, mailer, templates }) {
+// The payment screenshot the applicant must upload while media storage is set up.
+function paymentScreenshotError(input, storage) {
+  if (!storage.enabled) return "";
+  const id = typeof input?.paymentScreenshotId === "string" ? input.paymentScreenshotId.trim() : "";
+  if (!id) return "Upload a screenshot of your payment.";
+  return storage.isOwnAsset("screenshot", id) ? "" : "Upload the payment screenshot again.";
+}
+
+// `storage` holds the applicants' payment screenshots.
+function createTrainingService({ repository, mailer, templates, storage, logger }) {
+  // Links to the payment screenshot (a PDF receipt is shown by its first page; `file` is the PDF).
+  const screenshot = (record) =>
+    record.paymentScreenshotId
+      ? storage.screenshotUrls(record.paymentScreenshotId, record.paymentScreenshotFormat)
+      : { src: "", thumbnailSrc: "", file: "" };
+
   // Lists, CSV exports and emails show only the last 4 Aadhar digits;
   // the full number appears only in the admin detail view.
-  const toAdminView = (record, { reveal = false } = {}) => ({
-    ...record,
-    aadhar: reveal ? record.aadhar : maskAadhar(record.aadhar),
-  });
+  const toAdminView = (record, { reveal = false } = {}) => {
+    const shot = screenshot(record);
+    return {
+      ...record,
+      aadhar: reveal ? record.aadhar : maskAadhar(record.aadhar),
+      paymentScreenshotUrl: shot.src,
+      paymentScreenshotThumbUrl: shot.thumbnailSrc, // small square, for the admin list
+      paymentScreenshotFileUrl: shot.file, // the uploaded file itself (the PDF, for a PDF)
+    };
+  };
 
   return {
     async apply(input) {
       const schema = hasBatch(input) ? APPLICATION_WITH_BATCH : trainingApplicationSchema;
-      const { clientReferenceId, ...fields } = validate(input, schema);
-      if (fields.previousTraining !== "Yes") fields.previousTrainingDetails = "";
+      // The screenshot is reported together with the other fields' errors.
+      const errors = {};
+      let fields;
+      try {
+        fields = validate(input, schema);
+      } catch (err) {
+        if (!(err instanceof ValidationError)) throw err;
+        Object.assign(errors, err.errors);
+      }
+      const screenshotError = paymentScreenshotError(input, storage);
+      if (screenshotError) errors.paymentScreenshotId = screenshotError;
+      if (Object.keys(errors).length > 0) throw new ValidationError(errors);
 
-      const record = await createWithReference(repository, PREFIXES.training, { ...fields, status: "new" }, clientReferenceId);
-      mailer.sendInBackground(templates.trainingApplication(record, maskAadhar(record.aadhar)));
+      const { clientReferenceId, ...values } = fields;
+      if (values.previousTraining !== "Yes") values.previousTrainingDetails = "";
+      if (!storage.enabled) {
+        values.paymentScreenshotId = "";
+        values.paymentScreenshotFormat = "";
+      }
+
+      const record = await createWithReference(repository, PREFIXES.training, { ...values, status: "new" }, clientReferenceId);
+      mailer.sendInBackground(templates.trainingApplication({ ...record, paymentScreenshotUrl: screenshot(record).file }, maskAadhar(record.aadhar)));
       return record;
     },
 
@@ -72,7 +110,18 @@ function createTrainingService({ repository, mailer, templates }) {
       return record ? toAdminView(record) : null;
     },
 
-    delete: (id) => repository.delete(id),
+    // Also removes the payment screenshot from media storage. A failure there only leaves an
+    // unused file behind, so it is logged rather than reported.
+    async delete(id) {
+      const record = await repository.findById(id);
+      if (!record || !(await repository.delete(id))) return false;
+      if (record.paymentScreenshotId) {
+        await storage
+          .destroy("screenshot", record.paymentScreenshotId)
+          .catch((err) => logger.error(`[storage] could not delete ${record.paymentScreenshotId}: ${err.message}`));
+      }
+      return true;
+    },
   };
 }
 
@@ -132,7 +181,7 @@ export function createServices({ db, storage, mailer, templates, logger = consol
   const shared = { mailer, templates, logger };
 
   const services = {
-    training: createTrainingService({ repository: repositories.trainingApplications, ...shared }),
+    training: createTrainingService({ repository: repositories.trainingApplications, storage, ...shared }),
     contact: createContactService({ repository: repositories.contactMessages, ...shared }),
     quotes: createQuoteService({ repository: repositories.quoteRequests, ...shared }),
     subscribers: createSubscriberService({ repository: repositories.subscribers, ...shared }),

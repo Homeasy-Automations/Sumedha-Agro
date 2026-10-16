@@ -19,13 +19,16 @@ export const escapeHtml = (value) =>
 
 const nl2br = (value) => escapeHtml(value).replace(/\r?\n/g, "<br/>");
 
-// rows: [label, value][]; paragraphs: plain-text strings.
+// rows: [label, value, "link"?][]; paragraphs: plain-text strings. Only rows marked "link"
+// (URLs this server built, never user input) become links.
 function render({ title, paragraphs = [], rows = [] }) {
+  const cell = (value, kind) =>
+    kind === "link" ? `<a href="${escapeHtml(value)}" style="color:#006400">${escapeHtml(value)}</a>` : nl2br(value);
   const tableRows = rows
     .filter(([, value]) => value !== undefined && value !== null && value !== "")
     .map(
-      ([label, value]) =>
-        `<tr><td style="padding:6px 12px 6px 0;color:#5b735b;vertical-align:top;white-space:nowrap">${escapeHtml(label)}</td><td style="padding:6px 0;color:#0d1b0d">${nl2br(value)}</td></tr>`,
+      ([label, value, kind]) =>
+        `<tr><td style="padding:6px 12px 6px 0;color:#5b735b;vertical-align:top;white-space:nowrap">${escapeHtml(label)}</td><td style="padding:6px 0;color:#0d1b0d">${cell(value, kind)}</td></tr>`,
     )
     .join("");
 
@@ -60,6 +63,7 @@ const trainingRows = (a, maskedAadhar) => [
   ["Training applied for", a.trainingAppliedFor],
   ["Batch", a.trainingBatch],
   ["Date of training", a.trainingDate],
+  ["Payment screenshot", a.paymentScreenshotUrl, "link"],
   ["Name", a.name],
   ["Gender", a.gender],
   ["Category", a.category],

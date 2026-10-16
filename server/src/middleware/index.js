@@ -24,6 +24,30 @@ export function errorHandler(logger = console) {
   };
 }
 
+// Fixed-window limit per client address, kept in memory (the API runs as one instance).
+// Enough to stop a script from asking for thousands of upload signatures.
+export function rateLimit({ windowMs, max, message = "Too many attempts. Please try again later." }) {
+  const hits = new Map(); // ip -> { count, resetAt }
+  return (req, res, next) => {
+    const now = Date.now();
+    if (hits.size > 10_000) {
+      for (const [ip, entry] of hits) if (entry.resetAt <= now) hits.delete(ip);
+    }
+    const key = req.ip ?? "unknown";
+    const entry = hits.get(key);
+    if (!entry || entry.resetAt <= now) {
+      hits.set(key, { count: 1, resetAt: now + windowMs });
+      return next();
+    }
+    entry.count += 1;
+    if (entry.count > max) {
+      res.set("Retry-After", String(Math.ceil((entry.resetAt - now) / 1000)));
+      return fail(res, 429, message);
+    }
+    return next();
+  };
+}
+
 // Protects /api/admin. Accepts either
 //   - a session token from POST /api/admin/login (admin panel): "Authorization: Bearer <token>", or
 //   - ADMIN_API_KEY (scripts): "x-admin-key: <key>" or "Authorization: Bearer <key>".

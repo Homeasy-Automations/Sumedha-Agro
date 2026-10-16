@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Download, Eye, FileSpreadsheet, Search, Trash2 } from "lucide-react";
+import { Download, ExternalLink, Eye, FileSpreadsheet, Search, Trash2 } from "lucide-react";
 import { downloadCsv, fetchAll, toCsv, today } from "../csv";
 import { downloadXlsx } from "../xlsx";
 import { useAdmin } from "../session";
@@ -47,6 +47,53 @@ const FIELDS = [
 // No longer asked for by the form; still shown for older applications that have it.
 const LEGACY_FIELDS = [["trainingModuleNo", "Training Module No"]];
 
+// The applicant's payment screenshot, or the first page of a PDF receipt with a link to the PDF.
+function PaymentScreenshot({ item }) {
+  const [failed, setFailed] = useState(false);
+  const pdf = item.paymentScreenshotFormat === "pdf";
+  const fileLink = (
+    <a
+      href={item.paymentScreenshotFileUrl || item.paymentScreenshotUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-1.5 text-xs font-semibold text-text-side hover:underline"
+    >
+      <ExternalLink size={13} aria-hidden="true" />
+      {pdf ? "Open the PDF" : "Open full size"}
+    </a>
+  );
+  if (failed) {
+    return (
+      <div className="mt-1 flex flex-col gap-1.5 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+        <p>
+          The preview could not be loaded.
+          {pdf && " For PDF receipts, turn on “Allow delivery of PDF and ZIP files” in Cloudinary’s Security settings."}
+        </p>
+        {fileLink}
+      </div>
+    );
+  }
+  return (
+    <div className="mt-1 flex flex-col items-start gap-1.5">
+      <a
+        href={item.paymentScreenshotFileUrl || item.paymentScreenshotUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        title={pdf ? "Open the PDF" : "Open full size"}
+        className="inline-block rounded-lg border border-border-light p-1 hover:border-text-side"
+      >
+        <img
+          src={item.paymentScreenshotUrl}
+          alt={`Payment ${pdf ? "receipt (first page)" : "screenshot"} from ${item.name}`}
+          onError={() => setFailed(true)}
+          className="max-h-80 w-auto rounded"
+        />
+      </a>
+      {fileLink}
+    </div>
+  );
+}
+
 function Detail({ id }) {
   const { data, error } = useAdminData(`/training-applications/${id}`);
   if (error) return <Notice tone="error">{error}</Notice>;
@@ -61,15 +108,7 @@ function Detail({ id }) {
             {key === "createdAt" ? (
               <DateTime value={item.createdAt} />
             ) : key === "paymentScreenshotUrl" && item.paymentScreenshotUrl ? (
-              <a
-                href={item.paymentScreenshotUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Open full size"
-                className="mt-1 inline-block rounded-lg border border-border-light p-1 hover:border-text-side"
-              >
-                <img src={item.paymentScreenshotUrl} alt={`Payment screenshot from ${item.name}`} className="max-h-80 w-auto rounded" />
-              </a>
+              <PaymentScreenshot item={item} />
             ) : (
               item[key] || "—"
             )}

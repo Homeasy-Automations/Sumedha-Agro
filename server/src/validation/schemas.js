@@ -23,6 +23,10 @@ export const trainingApplicationSchema = {
   // "S. No. 6 · 16-27 Nov 2026", saved as sent.
   trainingBatchId: { max: 100 },
   trainingBatch: { max: 300 },
+  // Screenshot (or PDF receipt) of the fee payment, uploaded by the applicant to media storage:
+  // its public_id and the format Cloudinary reported (e.g. "webp", "pdf").
+  paymentScreenshotId: { max: 300 },
+  paymentScreenshotFormat: { max: 10, normalize: (v) => v.toLowerCase() },
   name: { required: true, max: 150 },
   gender: { required: true, oneOf: ["Male", "Female"] },
   category: { required: true, oneOf: ["SC", "ST", "OBC", "General"] },

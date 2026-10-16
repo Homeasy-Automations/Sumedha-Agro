@@ -105,12 +105,13 @@ describe("API", () => {
       assert.match(bad.body.referenceId, /^SAG-TR-[A-Z2-9]{5}$/);
     });
 
-    it("returns 400 with a message for each of the 16 required fields", async () => {
+    it("returns 400 with a message for each of the 17 required fields", async () => {
       const res = await t.api("POST", "/api/training/apply", { body: {} });
       assert.equal(res.status, 400);
       assert.equal(res.body.ok, false);
       assert.equal(res.body.message, "Please correct the highlighted fields.");
-      assert.equal(Object.keys(res.body.errors).length, 16);
+      assert.equal(Object.keys(res.body.errors).length, 17);
+      assert.equal(res.body.errors.paymentScreenshotId, "Upload a screenshot of your payment.");
       assert.equal(res.body.errors.name, "This field is required.");
       assert.equal(res.body.errors.trainingDate, "This field is required.");
       assert.equal(res.body.errors.previousTrainingDetails, undefined);

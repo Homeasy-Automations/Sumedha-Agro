@@ -122,6 +122,7 @@ export function validApplication(overrides = {}) {
   return {
     trainingAppliedFor: "Spawn Production Training",
     trainingDate: "2026-11-20",
+    paymentScreenshotId: `${CLOUDINARY.folder}/payment-screenshots/0123456789abcdef01234567`,
     name: "Test Applicant",
     gender: "Female",
     category: "OBC",

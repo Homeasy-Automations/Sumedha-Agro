@@ -2,6 +2,8 @@
 // parameters an API endpoint returned ({ uploadUrl, fields, maxBytes }), so files never pass
 // through the API server. Resolves with Cloudinary's response ({ public_id, width, height, ... }).
 
+export const isPdf = (file) => file.type === "application/pdf" || /\.pdf$/i.test(file.name ?? "");
+
 export function uploadFile(upload, file, { filename, onProgress } = {}) {
   if (file.size > upload.maxBytes) {
     return Promise.reject(

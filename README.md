@@ -107,6 +107,7 @@ Base URL: `VITE_API_URL`. Bodies are JSON. Errors look like
 | `GET /api/ping` | — | `200 { ok: true }`; never touches the database (keep-awake pings, Render health check) |
 | `GET /api/health` | — | `200 { ok, db: { driver, status } }` (`503` if the database is down); wakes the database, so use it for manual checks |
 | `POST /api/training/apply` | Training application (below) | `201 { ok: true, referenceId: "SAG-TR-XXXXX" }` |
+| `POST /api/training/payment-upload` | — | `{ upload }`: signed parameters for uploading one payment screenshot straight to Cloudinary (`payment-screenshots` folder); 20 per hour per visitor |
 | `POST /api/contact` | `name` (or `fullName`), `email`, optional `phone`, `company`, `interest`, `message` | `201 { ok: true, message }` |
 | `POST /api/quote` | `product`, `name`, `email`, optional quote fields | `201 { ok: true, referenceId: "SAG-QT-XXXXX" }` |
 | `POST /api/subscribe` | `email` | `201` new, `200` already subscribed |
@@ -134,6 +135,7 @@ Base URL: `VITE_API_URL`. Bodies are JSON. Errors look like
 | `previousTrainingDetails` | optional; cleared unless `previousTraining` is `Yes` |
 | `clientReferenceId` | optional `SAG-TR-XXXXX` from the browser; used if free, otherwise a new one is issued |
 | `trainingBatchId`, `trainingBatch` | optional (max 100 / 300 characters): the Training Calendar batch applied for and its label, e.g. `S. No. 6 · 16-27 Nov 2026`. The form offers only batches whose registration is open (the one linked with `?training=<id>` is pre-selected) |
+| `paymentScreenshotId`, `paymentScreenshotFormat` | the uploaded payment screenshot's `public_id` (from `/api/training/payment-upload`) and the format Cloudinary reported; any image format or a PDF receipt (up to 10 MB), required while Cloudinary is configured. A PDF is shown to admins by its first page, which needs **Allow delivery of PDF and ZIP files** turned on in Cloudinary's Security settings. Admins see it with the application (`paymentScreenshotUrl`), the company email links to it, and deleting the application deletes it. The QR code shown on the form is `frontend/public/payment-qr.jpg` |
 
 Unknown fields are ignored. On a `400`, `errors` maps each field to the same message the form shows inline.
 

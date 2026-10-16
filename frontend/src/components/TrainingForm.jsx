@@ -7,7 +7,7 @@ import defaultTrainings from "../data/trainings";
 import useSiteContent from "../hooks/useSiteContent";
 import { apiRequest } from "../lib/api";
 import { prepareImage } from "../lib/prepareImage";
-import { uploadFile } from "../lib/uploadFile";
+import { isPdf, uploadFile } from "../lib/uploadFile";
 import TrainingPayment from "./TrainingPayment";
 import { batchDates } from "../lib/trainingDates";
 import { getTrainingStatus } from "../lib/trainingStatus";
@@ -150,7 +150,7 @@ export default function TrainingForm() {
   // Field 17: the payment screenshot, uploaded on submit. `uploaded` remembers the upload so
   // a resubmit (e.g. after a server-side error) doesn't send the same file again.
   const [screenshot, setScreenshot] = useState(null);
-  const [uploaded, setUploaded] = useState(null); // { file, id }
+  const [uploaded, setUploaded] = useState(null); // { file, id, format }
   const [uploadingScreenshot, setUploadingScreenshot] = useState(false);
 
   // Opened from a batch's Apply button on the Training Calendar (?training=<id>): pre-select
@@ -233,15 +233,26 @@ export default function TrainingForm() {
     setStatus("submitting");
     setServerMessage("");
 
-    // Upload the payment screenshot first (shrunk, location data removed), straight to media storage.
-    let paymentScreenshotId = uploaded?.file === screenshot ? uploaded.id : "";
+    // Upload the payment screenshot first, straight to media storage. Images the browser can read
+    // are shrunk (location data removed); a PDF, or an image it can't read (e.g. HEIC), goes as is.
+    let { id: paymentScreenshotId = "", format: paymentScreenshotFormat = "" } = uploaded?.file === screenshot ? uploaded : {};
     if (!paymentScreenshotId) {
       setUploadingScreenshot(true);
       try {
-        const prepared = await prepareImage(screenshot);
+        let file = screenshot;
+        let filename = screenshot.name;
+        if (!isPdf(screenshot)) {
+          try {
+            ({ blob: file, filename } = await prepareImage(screenshot));
+          } catch {
+            // Not readable here: Cloudinary converts it instead.
+          }
+        }
         const { upload } = await apiRequest("/api/training/payment-upload", { method: "POST" });
-        paymentScreenshotId = (await uploadFile(upload, prepared.blob, { filename: prepared.filename })).public_id;
-        setUploaded({ file: screenshot, id: paymentScreenshotId });
+        const result = await uploadFile(upload, file, { filename });
+        paymentScreenshotId = result.public_id;
+        paymentScreenshotFormat = result.format ?? "";
+        setUploaded({ file: screenshot, id: paymentScreenshotId, format: paymentScreenshotFormat });
       } catch (err) {
         setErrors((prev) => ({ ...prev, paymentScreenshotId: err.message }));
         setServerMessage(err.message);
@@ -265,6 +276,7 @@ export default function TrainingForm() {
             trainingBatch: batchLabel(dateState.batch),
           }),
           paymentScreenshotId,
+          paymentScreenshotFormat,
           clientReferenceId: fallbackReference,
         }),
       });

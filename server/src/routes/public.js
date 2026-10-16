@@ -1,6 +1,10 @@
 import { Router } from "express";
+import { rateLimit } from "../middleware/index.js";
 
-export function publicRoutes({ services, db }) {
+// An applicant needs one upload per submission; retries and a few mistakes fit well within this.
+const SCREENSHOT_UPLOADS = { windowMs: 60 * 60 * 1000, max: 20 };
+
+export function publicRoutes({ services, db, storage }) {
   const router = Router();
 
   // Liveness only: never touches the database. Used by the keep-awake workflow and Render's
@@ -20,6 +24,12 @@ export function publicRoutes({ services, db }) {
   router.post("/training/apply", async (req, res) => {
     const application = await services.training.apply(req.body);
     res.status(201).json({ ok: true, referenceId: application.referenceId });
+  });
+
+  // Signed parameters for uploading the applicant's payment screenshot straight to media
+  // storage (one file per signature); its public_id is then sent as paymentScreenshotId.
+  router.post("/training/payment-upload", rateLimit(SCREENSHOT_UPLOADS), (req, res) => {
+    res.json({ ok: true, upload: storage.createUpload("screenshot") });
   });
 
   router.post("/contact", async (req, res) => {

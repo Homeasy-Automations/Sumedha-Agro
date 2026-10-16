@@ -32,7 +32,7 @@ export function createApp({ config, db, mailer, storage, logger = console }) {
 
   app.get("/", (req, res) => res.json({ ok: true, name: "Sumedha Agro API" }));
   app.use("/api/admin", adminRoutes({ services, config, sessions }));
-  app.use("/api", publicRoutes({ services, db }));
+  app.use("/api", publicRoutes({ services, db, storage }));
   app.use("/api", contentRoutes({ services }));
 
   app.use(notFound);

@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import content from "../data/content";
 import defaultTrainings from "../data/trainings";
-import usePageMeta from "../hooks/usePageMeta";
 import useSiteContent from "../hooks/useSiteContent";
 import useTrainingPage from "../hooks/useTrainingPage";
 import Reveal from "../components/Reveal";
@@ -13,10 +12,9 @@ import { hasTrainingDetails } from "../lib/trainingPage";
 import IncubationSections from "../components/IncubationSections";
 import { anchorOffset, card, cardHover, container, heading, sectionY } from "../components/styles";
 
-const { training, trainingCalendar, trainingDetails, incubation, technologies, images, nav, meta } = content;
+const { training, trainingCalendar, trainingDetails, incubation, technologies, images, nav } = content;
 
 export default function Training() {
-  usePageMeta(meta.training);
   const { items: trainings } = useSiteContent("trainings", defaultTrainings);
   const page = useTrainingPage();
   // Shortcuts to the page's main sections, kept in view below the site header.

@@ -1,5 +1,4 @@
 import content from "../data/content";
-import usePageMeta from "../hooks/usePageMeta";
 import PageHeader from "../components/PageHeader";
 import Reveal from "../components/Reveal";
 import NewsList from "../components/NewsList";
@@ -7,10 +6,9 @@ import SectionHeading from "../components/SectionHeading";
 import MediaSection from "../components/MediaSection";
 import { container, sectionY } from "../components/styles";
 
-const { news, media, nav, meta } = content;
+const { news, media, nav } = content;
 
 export default function News() {
-  usePageMeta(meta.news);
 
   return (
     <main>

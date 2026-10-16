@@ -1,15 +1,13 @@
 import content from "../data/content";
 import { formText } from "../data/trainingForm";
-import usePageMeta from "../hooks/usePageMeta";
 import PageHeader from "../components/PageHeader";
 import TrainingForm from "../components/TrainingForm";
 import ContactBlock from "../components/ContactBlock";
 import { card, container, heading } from "../components/styles";
 
-const { contact, nav, meta } = content;
+const { contact, nav } = content;
 
 export default function TrainingApply() {
-  usePageMeta(meta.trainingApply);
 
   return (
     <main>

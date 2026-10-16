@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { m } from "framer-motion";
 import content from "../data/content";
-import usePageMeta from "../hooks/usePageMeta";
 import Reveal from "../components/Reveal";
 import SectionHeading from "../components/SectionHeading";
 import HeadingCard from "../components/HeadingCard";
@@ -11,7 +10,7 @@ import Icon from "../components/Icon";
 import { body, card, cardHover, container, heading, iconTile, muted, pillOnDark, sectionY } from "../components/styles";
 import { aboutCta, commitment, leadership, missionVision, stats, whoWeAre } from "../data/legacyContent";
 
-const { about, training, images, nav, ui, meta } = content;
+const { about, training, images, nav, ui } = content;
 
 const MotionDiv = m.div;
 const BadgeIcon = whoWeAre.badge.icon;
@@ -24,7 +23,6 @@ const focusSpans = {
 };
 
 export default function About() {
-  usePageMeta(meta.about);
   const [lead, ...rest] = about.paragraphs;
 
   return (

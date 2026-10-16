@@ -4,6 +4,7 @@ import { LazyMotion, MotionConfig } from "framer-motion";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
+import Seo from "./components/Seo";
 import Home from "./pages/Home";
 import content from "./data/content";
 
@@ -20,6 +21,7 @@ const GetQuote = lazy(() => import("./pages/GetQuote"));
 const Showcase = lazy(() => import("./pages/Showcase"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Termsofservices = lazy(() => import("./pages/Termsofservices"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 const AdminApp = lazy(() => import("./admin/AdminApp"));
 
 // Animation code is fetched separately so it doesn't hold up the first render; `strict` makes
@@ -35,10 +37,11 @@ function PageFallback() {
   );
 }
 
-// Header and footer around every public page.
+// Header and footer around every public page, and its search/social tags (Seo).
 function PublicLayout() {
   return (
     <>
+      <Seo />
       <Header />
       <div id="main-content" tabIndex={-1} className="focus:outline-none">
         <Suspense fallback={<PageFallback />}>
@@ -79,6 +82,8 @@ export default function App() {
               <Route path="/showcase" element={<Showcase />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/termsofservices" element={<Termsofservices />} />
+              {/* Any other address: "Page not found" (marked noindex). */}
+              <Route path="*" element={<NotFound />} />
             </Route>
             {/* Staff-only content management; not linked from the site and excluded from search engines. */}
             <Route

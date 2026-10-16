@@ -38,9 +38,9 @@ export default function FormThird({ handlePrevious, handleSubmit, goToStep, form
             // linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.7) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCO5qZceNACJnnfdyx1ooFgH_Wo6NOCnp2H5QJSovXmqd3w5d5TzX2qrn1nDewvHGdzPqQiy7fDDgzsylZmQQMRq6HnO3AyEmnnbjdfI9C6KCuNgyz4oxM734Dm9FHJOBc8sQV19EjyV-5gYAkCivqIpL47zhS3QdTosEmqyLw-opbtB64CusaPl0Ka4dYrNDx1z9uhJGnb9DKFb8od3q9K5HlqHMjHMhiZ_KvR9hb-jzt9Y91BMKPPnOKQHTg4YhalSHh9idPOLFg");'
           ></div>
           <div className="absolute bottom-0 left-0 p-8">
-            <h2 className="text-3xl font-extrabold text-white leading-tight">
+            <h1 className="text-3xl font-extrabold text-white leading-tight">
               Review Your Request
-            </h2>
+            </h1>
             <p className="text-gray-200 mt-1 max-w-xl">
               Please confirm all details before submitting your wholesale quote
               request.

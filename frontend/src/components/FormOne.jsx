@@ -74,9 +74,9 @@ useEffect(() => {
             <span className="inline-block bg-primary text-white text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">
               Wholesale Partners
             </span>
-            <h2 className="text-4xl font-extrabold text-white leading-tight">
+            <h1 className="text-4xl font-extrabold text-white leading-tight">
               Request a Custom Quote
-            </h2>
+            </h1>
             <p className="text-gray-200 mt-2 max-w-xl">
               Scale your business with high-quality mushroom spawn and bulk
               fresh produce directly from our agro-facility.

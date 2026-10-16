@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Newspaper } from "lucide-react";
 import content from "../data/content";
-import usePageMeta from "../hooks/usePageMeta";
 import Reveal from "../components/Reveal";
 import ButtonLink from "../components/ButtonLink";
 import SectionHeading from "../components/SectionHeading";
@@ -15,14 +14,13 @@ import { body, card, cardHover, container, heading, iconTile, pill, pillOnDark, 
 import PartnerCTA from "../components/PartnerCTA";
 import { services, trustStrip, whyMushrooms } from "../data/legacyContent";
 
-const { site, home, about, training, spawnBooking, incubation, news, media, images, nav, ui, meta } = content;
+const { site, home, about, training, spawnBooking, incubation, news, media, images, nav, ui } = content;
 
 // Focus-area cards on the home page link to the full text on /about,
 // or to /contact for items that have no body text.
 const focusLayout = ["lg:col-span-2", "", "", "", "", "", ""];
 
 export default function Home() {
-  usePageMeta(meta.home);
 
   return (
     <main>

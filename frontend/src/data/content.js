@@ -514,41 +514,89 @@ const content = {
     ],
   },
 
-  // Per-page <title> and meta description, built from the copy above.
+  // Per-page <title>, meta description and breadcrumb name (used by src/seo). Titles get
+  // " | Sumedha Agro" added unless they already name it; keep descriptions under ~160 characters.
   meta: {
     home: {
-      title: "Sumedha Agro — Mushroom Seed (Spawn) Production Laboratory",
+      title: "Sumedha Agro | Mushroom Spawn Production & Training, Lucknow",
       description:
-        "Sumedha Agro specializes in mushroom research, spawn production and hands-on training to promote sustainable cultivation and nutrition.",
+        "Quality mushroom spawn, hands-on mushroom cultivation and spawn production training, and value-added mushroom products from Sumedha Agro, Lucknow.",
     },
     about: {
-      title: "About Us",
+      title: "About Us — Mushroom Spawn Laboratory, Lucknow",
+      crumb: "About Us",
       description:
-        "The SAMSPL operated for Quality Mushroom Spawn production and training program.",
+        "Sumedha Agro's Mushroom Seed (Spawn) Production Laboratory (SAMSPL) in Lucknow produces quality spawn and trains farmers and entrepreneurs in mushroom growing.",
     },
     training: {
-      title: "Spawn Production Training",
+      title: "Mushroom Cultivation & Spawn Training",
+      crumb: "Training",
       description:
-        "Pure tissue culture production, mother spawn production, G1 and G2 spawn production, cultivation spawn, spawn unit layout, mechanization of spawn production, and incorporation of solar energy into the spawn production system.",
+        "Hands-on mushroom cultivation and spawn production training in Lucknow: tissue culture, mother and G1/G2 spawn, unit layout and mechanization. Dates and fees.",
     },
     trainingApply: {
-      title: "Apply for Training",
+      title: "Apply for Mushroom Training",
+      crumb: "Apply",
       description:
-        "Application for training on mushroom cultivation technology at Sumedha Agro",
+        "Apply online for mushroom cultivation or spawn production training at Sumedha Agro, Lucknow: choose your batch, pay the fee by UPI and upload the receipt.",
     },
     spawnBooking: {
-      title: "Mushroom Seed (Spawn) Booking",
+      title: "Mushroom Spawn (Seed) Booking",
+      crumb: "Spawn Booking",
       description:
-        "Manual Spawn Booking and Online Spawn Booking: Trainings, Spawn, Compost, RTF bags, Growing kits. Mushroom Value added Products Technologies: Mechanized Quality Spawn Production and Crop waste to food plate.",
+        "Book quality mushroom spawn, compost, RTF bags and growing kits from Sumedha Agro, Lucknow, online or offline, plus value-added mushroom product technologies.",
     },
     news: {
-      title: "News and Announcement",
-      description: "News and Announcement from Sumedha Agro, with Mushroom Videos and Gallery.",
+      title: "News & Announcements",
+      crumb: "News & Announcements",
+      description:
+        "Training announcements, news, mushroom videos and the photo gallery from Sumedha Agro's mushroom spawn laboratory in Lucknow.",
     },
     contact: {
-      title: "Contact us",
+      title: "Contact Us",
+      crumb: "Contact Us",
       description:
-        "982 Village Andpurdev, Banthra, Sarojni Nagar, Lucknow 226401, Uttar Pradesh, India",
+        "Contact Sumedha Agro, Banthra, Sarojni Nagar, Lucknow 226401, Uttar Pradesh. Call +91 9473896285 or e-mail info@sumedhaagro.com.",
+    },
+    products: {
+      title: "Mushroom Spawn, Fresh & Value-Added Products",
+      crumb: "Products",
+      description:
+        "Oyster, button, milky, shiitake and other mushroom spawn, fresh mushrooms, and value-added products such as pickle, chips, papad and protein powder.",
+    },
+    shop: {
+      title: "Mushroom Product Catalogue",
+      crumb: "Shop",
+      description:
+        "Browse every Sumedha Agro mushroom product by category: mushroom spawn, value-added mushroom products and fresh mushrooms.",
+    },
+    getQuote: {
+      title: "Request a Bulk Quote",
+      crumb: "Get a Quote",
+      description:
+        "Request a quote for bulk mushroom spawn, fresh mushrooms or value-added mushroom products from Sumedha Agro, Lucknow.",
+    },
+    showcase: {
+      title: "Premium Organic Oyster Mushrooms",
+      crumb: "Oyster Mushrooms",
+      description:
+        "Oyster mushrooms grown in sterile, climate-controlled conditions at Sumedha Agro: nutrition facts, varieties and recipe ideas.",
+    },
+    privacy: {
+      title: "Privacy Policy",
+      crumb: "Privacy Policy",
+      description: "How Sumedha Agro collects, uses and protects the information you share through this website.",
+    },
+    termsofservices: {
+      title: "Terms of Service",
+      crumb: "Terms of Service",
+      description: "The terms for using the Sumedha Agro website and its services.",
+    },
+    // Product pages: the product's name and description (src/data/product.js) plus this.
+    productSuffix: " From Sumedha Agro, Lucknow.",
+    notFound: {
+      title: "Page not found",
+      description: "This page doesn't exist on the Sumedha Agro website.",
     },
   },
 };

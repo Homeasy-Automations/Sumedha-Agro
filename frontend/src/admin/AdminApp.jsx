@@ -165,8 +165,11 @@ function AdminLayout() {
 export default function AdminApp() {
   const [session, setSession] = useState(readSession);
 
-  // Keep the admin panel out of search results.
+  // Keep the admin panel out of search results. The public page's search/social tags (canonical,
+  // robots "index", …) come with the HTML file, so they are removed; the public pages add theirs
+  // back when visited (components/Seo.jsx).
   useEffect(() => {
+    document.head.querySelectorAll("[data-seo]").forEach((el) => el.remove());
     const tag = document.createElement("meta");
     tag.name = "robots";
     tag.content = "noindex, nofollow";

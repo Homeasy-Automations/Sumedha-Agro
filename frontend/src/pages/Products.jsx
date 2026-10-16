@@ -226,14 +226,12 @@ const handleSubmit = () => {
                 {/* <!-- Product Card 1 --> */}
                 <div className="group flex flex-col bg-white rounded-xl border border-border-light overflow-hidden hover:shadow-lg hover:border-primary/50 transition-all duration-300">
                   <div className="aspect-4/3 w-full bg-gray-100 relative overflow-hidden">
-                    <div
-                      style={{
-                        backgroundImage:
-                          `url(${oysterMushroomSpawnImage})`,
-                      }}
-                      className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
-                      data-alt="Close up of white oyster mushrooms growing"
-                    ></div>
+                    <img
+                      src={oysterMushroomSpawnImage}
+                      alt="Close up of white oyster mushrooms growing"
+                      loading="lazy"
+                      className="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
                     <div className="absolute top-3 left-3 bg-primary text-text-main text-xs font-bold px-2 py-1 rounded-full">
                       High Yield
                     </div>
@@ -272,14 +270,12 @@ const handleSubmit = () => {
                 {/* <!-- Product Card 2 --> */}
                 <div className="group flex flex-col bg-white rounded-xl border border-border-light overflow-hidden hover:shadow-lg hover:border-primary/50 transition-all duration-300">
                   <div className="aspect-4/3 w-full bg-gray-100 relative overflow-hidden">
-                    <div
-                      style={{
-                        backgroundImage:
-                          `url(${buttonMushroomSpawnImage})`,
-                      }}
-                      className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
-                      data-alt="Close up of white button mushrooms in soil"
-                    ></div>
+                    <img
+                      src={buttonMushroomSpawnImage}
+                      alt="Close up of white button mushrooms in soil"
+                      loading="lazy"
+                      className="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
                     <div className="absolute top-3 left-3 bg-white/90 text-text-main text-xs font-bold px-2 py-1 rounded-full">
                       Commercial Grade
                     </div>
@@ -316,14 +312,12 @@ const handleSubmit = () => {
                 {/* <!-- Product Card 3 --> */}
                 <div className="group flex flex-col bg-white rounded-xl border border-border-light overflow-hidden hover:shadow-lg hover:border-primary/50 transition-all duration-300">
                   <div className="aspect-4/3 w-full bg-gray-100 relative overflow-hidden">
-                    <div
-                      style={{
-                        backgroundImage:
-                          `url(${milkyMushroomSpawnImage})`,
-                      }}
-                      className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
-                      data-alt="Large white milky mushrooms"
-                    ></div>
+                    <img
+                      src={milkyMushroomSpawnImage}
+                      alt="Large white milky mushrooms"
+                      loading="lazy"
+                      className="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
                   </div>
                   <div className="p-5 flex flex-col flex-1">
                     <h3 className="text-lg font-bold text-text-main mb-2 group-hover:text-primary transition-colors">
@@ -377,14 +371,12 @@ const handleSubmit = () => {
                 {/* <!-- Product Card 4 --> */}
                 <div className="group flex flex-col bg-white rounded-xl border border-border-light overflow-hidden hover:shadow-lg hover:border-primary/50 transition-all duration-300">
                   <div className="aspect-4/3 w-full bg-gray-100 relative overflow-hidden">
-                    <div
-                      style={{
-                        backgroundImage:
-                          `url(${spicyMushroomPickleImage})`,
-                      }}
-                      className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
-                      data-alt="Jar of spicy red pickle"
-                    ></div>
+                    <img
+                      src={spicyMushroomPickleImage}
+                      alt="Jar of spicy red pickle"
+                      loading="lazy"
+                      className="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
                     <div className="absolute top-3 left-3 bg-primary text-text-main text-xs font-bold px-2 py-1 rounded-full">
                       Bestseller
                     </div>
@@ -421,14 +413,12 @@ const handleSubmit = () => {
                 {/* <!-- Product Card 5 --> */}
                 <div className="group flex flex-col bg-white rounded-xl border border-border-light overflow-hidden hover:shadow-lg hover:border-primary/50 transition-all duration-300">
                   <div className="aspect-4/3 w-full bg-gray-100 relative overflow-hidden">
-                    <div
-                      style={{
-                        backgroundImage:
-                          `url(${mushroomProteinPowderImage})`,
-                      }}
-                      className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
-                      data-alt="Spoonful of protein powder"
-                    ></div>
+                    <img
+                      src={mushroomProteinPowderImage}
+                      alt="Spoonful of protein powder"
+                      loading="lazy"
+                      className="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
                   </div>
                   <div className="p-5 flex flex-col flex-1">
                     <h3 className="text-lg font-bold text-text-main mb-2 group-hover:text-primary transition-colors">
@@ -494,11 +484,11 @@ const handleSubmit = () => {
 
                       {/* IMAGE */}
                       <div className="relative aspect-[4/3] overflow-hidden">
-                        <div
-                          style={{
-                            backgroundImage: `url(${m7})`,
-                          }}
-                          className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
+                        <img
+                          src={m7}
+                          alt="Fresh oyster mushrooms"
+                          loading="lazy"
+                          className="absolute inset-0 h-full w-full object-cover group-hover:scale-110 transition-transform duration-700"
                         />
 
                         {/* overlay gradient */}
@@ -556,12 +546,11 @@ const handleSubmit = () => {
                     <div className="group relative flex flex-col rounded-2xl overflow-hidden border border-border-light bg-white/80 backdrop-blur-xl hover:shadow-2xl hover:border-primary/40 transition-all duration-500">
 
                       <div className="relative aspect-[4/3] overflow-hidden">
-                        <div
-                          style={{
-                            backgroundImage:
-                              `url(${m2})`,
-                          }}
-                          className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
+                        <img
+                          src={m2}
+                          alt="Fresh white button mushrooms"
+                          loading="lazy"
+                          className="absolute inset-0 h-full w-full object-cover group-hover:scale-110 transition-transform duration-700"
                         />
 
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-80" />
@@ -610,12 +599,11 @@ const handleSubmit = () => {
                     <div className="group relative flex flex-col rounded-2xl overflow-hidden border border-border-light bg-white/80 backdrop-blur-xl hover:shadow-2xl hover:border-primary/40 transition-all duration-500">
 
                       <div className="relative aspect-[4/3] overflow-hidden">
-                        <div
-                          style={{
-                            backgroundImage:
-                              `url(${m3})`,
-                          }}
-                          className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
+                        <img
+                          src={m3}
+                          alt="Fresh milky mushrooms"
+                          loading="lazy"
+                          className="absolute inset-0 h-full w-full object-cover group-hover:scale-110 transition-transform duration-700"
                         />
 
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-80" />

@@ -1,6 +1,5 @@
 import { ArrowRight } from "lucide-react";
 import content from "../data/content";
-import usePageMeta from "../hooks/usePageMeta";
 import PageHeader from "../components/PageHeader";
 import Reveal from "../components/Reveal";
 import ButtonLink from "../components/ButtonLink";
@@ -10,7 +9,7 @@ import ContactBlock from "../components/ContactBlock";
 import Icon from "../components/Icon";
 import { card, cardHover, container, heading, iconTile, sectionY } from "../components/styles";
 
-const { spawnBooking, valueAdded, images, nav, meta } = content;
+const { spawnBooking, valueAdded, images, nav } = content;
 
 function BookingCard({ item, children }) {
   return (
@@ -31,7 +30,6 @@ function BookingCard({ item, children }) {
 }
 
 export default function SpawnBooking() {
-  usePageMeta(meta.spawnBooking);
   const { manual, online } = spawnBooking;
 
   return (

@@ -4,14 +4,12 @@ import { ExternalLink } from "lucide-react";
 import { IoSend } from "react-icons/io5";
 import { MdOutlineExpandMore } from "react-icons/md";
 import content from "../data/content";
-import usePageMeta from "../hooks/usePageMeta";
 import PageHeader from "../components/PageHeader";
 import ContactBlock from "../components/ContactBlock";
 
-const { contact, nav, ui, meta } = content;
+const { contact, nav, ui } = content;
 
 export default function Contact() {
-  usePageMeta(meta.contact);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     fullName: "",

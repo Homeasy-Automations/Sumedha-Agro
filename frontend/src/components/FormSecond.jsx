@@ -72,9 +72,9 @@ const validate = () => {
             <span className="inline-block bg-primary text-white text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">
               Supply Chain
             </span>
-            <h2 className="text-4xl font-extrabold text-white leading-tight">
+            <h1 className="text-4xl font-extrabold text-white leading-tight">
               Logistics &amp; Delivery
-            </h2>
+            </h1>
             <p className="text-gray-200 mt-2 max-w-xl">
               Specify your delivery requirements to ensure fresh, on-time
               arrival of your mushroom supply.

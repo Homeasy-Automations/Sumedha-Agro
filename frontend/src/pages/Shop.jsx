@@ -56,6 +56,7 @@ import React, { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { products } from "../data/product";
 import Reveal from "../components/Reveal";
+import PhotoCredits from "../components/PhotoCredits";
 
 export default function Shop() {
   const navigate = useNavigate();
@@ -157,6 +158,7 @@ export default function Shop() {
           ) : (
             renderProducts(filteredProducts)
           )}
+          <PhotoCredits items={filteredProducts} className="mt-8" />
       </div>
     </div>
   );

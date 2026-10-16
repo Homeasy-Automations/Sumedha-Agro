@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { products } from "../data/product"; // adjust path if needed
+import PhotoCredits from "../components/PhotoCredits";
 
 export default function ProductDetails() {
   const { slug } = useParams();
@@ -45,9 +46,10 @@ export default function ProductDetails() {
         <div>
           <img
             src={product.image}
-            alt={product.name}
+            alt={product.imageAlt ?? product.name}
             className="aspect-4/3 rounded-xl shadow-lg object-cover"
           />
+          <PhotoCredits items={[product]} className="mt-3" />
         </div>
 
         {/* Product Details */}

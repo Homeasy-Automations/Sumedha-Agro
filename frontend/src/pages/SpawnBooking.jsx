@@ -97,39 +97,6 @@ export default function SpawnBooking() {
               </Reveal>
             ))}
           </div>
-
-          {/* Value added products: photo cards, with the credits the CC BY photos require. */}
-          <Reveal>
-            <h3 className={`mt-12 text-2xl font-bold leading-tight md:mt-16 md:text-3xl ${heading}`}>
-              {valueAdded.products.heading}
-            </h3>
-          </Reveal>
-          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {valueAdded.products.items.map((item, i) => (
-              <Reveal key={item.id} delay={(i % 3) * 0.08} className="h-full">
-                <HeadingCard id={item.id} icon={item.icon} title={item.title} image={item.image} index={i + 1} level={4} />
-              </Reveal>
-            ))}
-          </div>
-          <p className="mt-6 text-left text-xs leading-relaxed text-gray-500">
-            {valueAdded.products.creditsLabel}:{" "}
-            {valueAdded.products.items
-              .filter((item) => item.image?.credit)
-              .map(({ title, image: { credit } }, i) => (
-                <span key={title}>
-                  {i > 0 && "; "}
-                  {title}: “
-                  <a href={credit.url} className="underline underline-offset-2 hover:text-text-side">
-                    {credit.title}
-                  </a>
-                  ” by {credit.author},{" "}
-                  <a href={credit.licenseUrl} rel="license" className="underline underline-offset-2 hover:text-text-side">
-                    {credit.license}
-                  </a>
-                </span>
-              ))}
-            .
-          </p>
         </div>
       </section>
     </main>

@@ -14,6 +14,84 @@ import pinkOysterDjamorImage from "../assets/products/pink-oyster-djamor.webp";
 import elmOysterUlmariusImage from "../assets/products/elm-oyster-ulmarius.webp";
 import lionsManeHericiumImage from "../assets/products/lions-mane-hericium.webp";
 import shiitakeEdodesImage from "../assets/products/shiitake-edodes.webp";
+import mushroomChipsImage from "../assets/value-added/mushroom-chips.webp";
+import mushroomPapadImage from "../assets/value-added/mushroom-papad.webp";
+import mushroomDriedPacksImage from "../assets/value-added/mushroom-dried-packs.webp";
+import mushroomKetchupImage from "../assets/value-added/mushroom-ketchup.webp";
+import mushroomTeaCoffeeImage from "../assets/value-added/mushroom-tea-and-coffee.webp";
+import mushroomJerkyImage from "../assets/value-added/mushroom-jerky-crisps.webp";
+
+// Creative Commons licences of the stock photos below.
+const CC_BY_2 = { license: "CC BY 2.0", licenseUrl: "https://creativecommons.org/licenses/by/2.0/" };
+const CC_BY_3 = { license: "CC BY 3.0", licenseUrl: "https://creativecommons.org/licenses/by/3.0/" };
+
+// Value added products shown as their own cards on the Products page (and in /shop and on
+// /products/<slug>). Their photos are illustrative stock images (Openverse), not Sumedha Agro's
+// own: `credit` is required by CC BY photos and is shown with them (PhotoCredits); CC0 needs none.
+// No price: they are quoted on request.
+const credit = (title, author, url, license) => ({ title, author, url, ...license });
+export const valueAddedProducts = [
+  {
+    id: "17",
+    slug: "mushroom-chips",
+    name: "Mushroom Chips",
+    category: "Value Added",
+    image: mushroomChipsImage,
+    imageAlt: "Crispy fried mushroom slices in a bowl",
+    credit: credit("fried mushrooms", "bee wolf ray", "https://www.flickr.com/photos/9673663@N08/4218184594", CC_BY_2),
+    description: "A crunchy, ready-to-eat mushroom snack.",
+  },
+  {
+    id: "18",
+    slug: "mushroom-papad",
+    name: "Mushroom Papad",
+    category: "Value Added",
+    image: mushroomPapadImage,
+    imageAlt: "Roasted papads stacked on a plate",
+    credit: credit("Roasted Papad - Howrah 2013-11-02 4068", "Biswarup Ganguly", "https://commons.wikimedia.org/w/index.php?curid=29409079", CC_BY_3),
+    description: "Papad made with mushroom, to roast or fry and serve with any meal.",
+  },
+  {
+    id: "19",
+    slug: "mushroom-dried-packs",
+    name: "Mushroom Dried Packs",
+    category: "Value Added",
+    image: mushroomDriedPacksImage,
+    imageAlt: "Open bag full of dried shiitake mushrooms",
+    credit: credit("Dried Mushrooms", "cuthbert8", "https://www.flickr.com/photos/108040444@N07/14450871782", CC_BY_2),
+    description: "Dried mushrooms with a long shelf life, ready to soak and cook.",
+  },
+  {
+    id: "20",
+    slug: "mushroom-ketchup",
+    name: "Mushroom Ketchup",
+    category: "Value Added",
+    image: mushroomKetchupImage,
+    imageAlt: "White bowl of thick red ketchup",
+    credit: credit("Ketchup-01", "idealisms", "https://commons.wikimedia.org/w/index.php?curid=19134606", CC_BY_2),
+    description: "A mushroom-based sauce for snacks and meals.",
+  },
+  {
+    id: "21",
+    slug: "mushroom-tea-and-coffee",
+    name: "Mushroom Tea and Coffee",
+    category: "Value Added",
+    image: mushroomTeaCoffeeImage,
+    // CC0 (public domain), from rawpixel: https://www.rawpixel.com/image/5902433
+    imageAlt: "Cup of milky coffee on a saucer with coffee beans",
+    description: "Everyday hot drinks blended with mushroom.",
+  },
+  {
+    id: "22",
+    slug: "mushroom-jerky-crisps",
+    name: "Mushroom Jerky / Crisps",
+    category: "Value Added",
+    image: mushroomJerkyImage,
+    imageAlt: "Strips of dark mushroom jerky in a bowl",
+    credit: credit("Mushroom jerky", "jamesonf", "https://www.flickr.com/photos/24314126@N05/20638491308", CC_BY_2),
+    description: "Chewy jerky and crispy mushroom bites for snacking.",
+  },
+];
 
 export const products = [
   {
@@ -175,4 +253,6 @@ export const products = [
     image: shiitakeEdodesImage,
     description: "Popular gourmet mushroom with strong flavor and health benefits.",
   },
+
+  ...valueAddedProducts,
 ];

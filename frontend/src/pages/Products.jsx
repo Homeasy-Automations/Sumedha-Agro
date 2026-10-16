@@ -11,6 +11,39 @@ import milkyMushroomSpawnImage from "../assets/products/milky-mushroom-spawn.web
 import spicyMushroomPickleImage from "../assets/products/spicy-mushroom-pickle.webp";
 import mushroomProteinPowderImage from "../assets/products/mushroom-protein-powder.webp";
 import productsHeroImage from "../assets/pages/products-hero.webp";
+import { valueAddedProducts } from "../data/product";
+import PhotoCredits from "../components/PhotoCredits";
+
+// Card for a value added product from src/data/product.js, in the same style as the cards below.
+function ValueAddedCard({ product, onDetails }) {
+  return (
+    <div className="group flex flex-col bg-white rounded-xl border border-border-light overflow-hidden hover:shadow-lg hover:border-primary/50 transition-all duration-300">
+      <div className="aspect-4/3 w-full bg-gray-100 relative overflow-hidden">
+        <img
+          src={product.image}
+          alt={product.imageAlt}
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+      </div>
+      <div className="p-5 flex flex-col flex-1">
+        <h3 className="text-lg font-bold text-text-main mb-2 group-hover:text-primary transition-colors">
+          {product.name}
+        </h3>
+        <p className="text-text-side text-sm line-clamp-2 mb-4">{product.description}</p>
+        <div className="mt-auto pt-4 border-t border-border-light flex items-center justify-end">
+          <button
+            onClick={onDetails}
+            className="text-sm font-bold text-primary flex items-center gap-1 hover:gap-2 transition-all"
+          >
+            Details
+            <FaArrowRightLong />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 export default function Products() {
   const navigate = useNavigate();
 
@@ -129,7 +162,7 @@ const handleSubmit = () => {
                       Value-Added
                     </p>
                     <p className="text-text-side text-xs font-normal leading-normal">
-                      Pickles, Powders
+                      Pickles, Powders, Chips & more
                     </p>
                   </div>
                 </label>
@@ -429,7 +462,11 @@ const handleSubmit = () => {
                     </div>
                   </div>
                 </div>
+                {valueAddedProducts.map((product) => (
+                  <ValueAddedCard key={product.slug} product={product} onDetails={() => navigate(`/products/${product.slug}`)} />
+                ))}
               </div>
+              <PhotoCredits items={valueAddedProducts} className="mt-4" />
             </section>
             )}
               {/* <!-- Section 3: Fresh --> */}

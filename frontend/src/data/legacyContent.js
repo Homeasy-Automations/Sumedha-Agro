@@ -11,7 +11,7 @@ import { IoMdArrowForward } from "react-icons/io";
 import { LuFlaskConical } from "react-icons/lu";
 import { MdEco, MdInventory, MdOutlineRecycling, MdOutlineVisibility, MdWaterDrop } from "react-icons/md";
 import { RiMicroscopeFill } from "react-icons/ri";
-import liveFromLabImage from "../assets/live-from-lab.jpg";
+import liveFromLabImage from "../assets/live-from-lab.webp";
 import surjeetSinghImage from "../assets/a1.png";
 import premChandraImage from "../assets/a2.png";
 import enespaSinghImage from "../assets/a3.png";

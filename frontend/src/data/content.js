@@ -2,17 +2,24 @@
 // Client-supplied text below must stay EXACTLY as written (spelling, punctuation,
 // capitalisation). Edit layout in the components, not the words here.
 
-import heroImage from "../assets/m1.jpg";
-import buttonImage from "../assets/m2.jpg";
+import heroImage from "../assets/m1.webp";
+import buttonImage from "../assets/m2.webp";
 import milkyImage from "../assets/m3.webp";
-import bulkImage from "../assets/Bulk.jpg";
-import labImage from "../assets/live-from-lab.jpg";
+import bulkImage from "../assets/Bulk.webp";
+import labImage from "../assets/live-from-lab.webp";
 import shiitakeImage from "../assets/shiitake.webp";
-import oysterImage from "../assets/m7.jpg";
+import oysterImage from "../assets/m7.webp";
 import spawnImage from "../assets/Seeds.jpg";
 import trainingImage from "../assets/hero.jpg";
 import aboutTrainingImage from "../assets/Aboutpage training.jpeg";
 import homeTrainingImage from "../assets/home training image.jpeg";
+// Smaller copies for the home hero collage's small tiles (picked by the browser via srcset).
+import heroImageSmall from "../assets/m1-256.webp";
+import buttonImageSmall from "../assets/m2-256.webp";
+import milkyImageSmall from "../assets/m3-256.webp";
+import bulkImageSmall from "../assets/Bulk-480.webp";
+import labImageSmall from "../assets/live-from-lab-256.webp";
+import shiitakeImageSmall from "../assets/shiitake-480.webp";
 
 const contact = {
   heading: "Contact us",
@@ -89,13 +96,14 @@ const content = {
 
   images: {
     // Home hero collage, in reading order (three columns of two; layout in HeroCollage.jsx).
+    // width/height: the full image's pixels; small/smallWidth: the smaller copy.
     heroCollage: [
-      { src: heroImage, alt: "Cluster of oyster mushrooms on a dark background" },
-      { src: bulkImage, alt: "Crates of fresh button and brown mushrooms ready for bulk supply" },
-      { src: labImage, alt: "Close up of fresh oyster mushrooms growing in a controlled environment farm" },
-      { src: shiitakeImage, alt: "Sumedha Agro shiitake mushroom spawn bag with fresh shiitake mushrooms" },
-      { src: milkyImage, alt: "Fresh milky mushrooms on a white background" },
-      { src: buttonImage, alt: "Basket of fresh white button mushrooms" },
+      { src: heroImage, width: 512, height: 512, small: heroImageSmall, smallWidth: 256, alt: "Cluster of oyster mushrooms on a dark background" },
+      { src: bulkImage, width: 728, height: 318, small: bulkImageSmall, smallWidth: 480, alt: "Crates of fresh button and brown mushrooms ready for bulk supply" },
+      { src: labImage, width: 512, height: 512, small: labImageSmall, smallWidth: 256, alt: "Close up of fresh oyster mushrooms growing in a controlled environment farm" },
+      { src: shiitakeImage, width: 768, height: 512, small: shiitakeImageSmall, smallWidth: 480, alt: "Sumedha Agro shiitake mushroom spawn bag with fresh shiitake mushrooms" },
+      { src: milkyImage, width: 512, height: 512, small: milkyImageSmall, smallWidth: 256, alt: "Fresh milky mushrooms on a white background" },
+      { src: buttonImage, width: 512, height: 512, small: buttonImageSmall, smallWidth: 256, alt: "Basket of fresh white button mushrooms" },
     ],
     oyster: { src: oysterImage, alt: "White oyster mushrooms growing from substrate" },
     spawn: {

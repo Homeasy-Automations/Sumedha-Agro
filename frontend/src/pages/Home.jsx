@@ -31,7 +31,8 @@ export default function Home() {
         <div aria-hidden="true" className="absolute -top-40 -left-40 -z-10 h-[480px] w-[480px] rounded-full bg-primary/15 blur-[140px]" />
         <div aria-hidden="true" className="absolute -bottom-40 right-0 -z-10 h-[420px] w-[420px] rounded-full bg-primary/10 blur-[140px]" />
         <div className={`${container} grid items-center gap-12 py-16 md:py-24 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]`}>
-          <Reveal>
+          {/* Not faded in: this text is the page's largest element (LCP), so it shows at once. */}
+          <div>
             <p className={pillOnDark}>
               <span className="h-2 w-2 animate-pulse rounded-full bg-primary shadow-[0_0_10px_#13ec13]" aria-hidden="true" />
               {site.subtitle}
@@ -50,7 +51,7 @@ export default function Home() {
                 {nav.links.spawnBooking.label}
               </ButtonLink>
             </div>
-          </Reveal>
+          </div>
           <div className="mx-auto w-full max-w-lg lg:max-w-none">
             <HeroCollage />
           </div>

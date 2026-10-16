@@ -9,7 +9,7 @@ import { MdLiquor } from "react-icons/md";
 import { MdOutlineTune } from "react-icons/md";
 import { IoMdBusiness } from "react-icons/io";
 import Seeds from "../assets/Seeds.jpg";
-import Bulk from "../assets/Bulk.jpg";
+import Bulk from "../assets/Bulk.webp";
 import Pickles from "../assets/Pickles.jpg";
 import quoteHeaderImage from "../assets/pages/quote-form-header.webp";
 

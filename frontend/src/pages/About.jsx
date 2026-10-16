@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import content from "../data/content";
 import usePageMeta from "../hooks/usePageMeta";
 import Reveal from "../components/Reveal";
@@ -13,7 +13,7 @@ import { aboutCta, commitment, leadership, missionVision, stats, whoWeAre } from
 
 const { about, training, images, nav, ui, meta } = content;
 
-const MotionDiv = motion.div;
+const MotionDiv = m.div;
 const BadgeIcon = whoWeAre.badge.icon;
 
 // Grid spans keep the seven focus cards in full rows: 3 columns on lg, 2 on md.

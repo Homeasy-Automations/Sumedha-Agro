@@ -1,5 +1,5 @@
-import m1 from "../assets/m1.jpg";
-import m2 from "../assets/m2.jpg";
+import m1 from "../assets/m1.webp";
+import m2 from "../assets/m2.webp";
 import m3 from "../assets/m3.webp";
 import oysterMushroomSpawnImage from "../assets/products/oyster-mushroom-spawn.webp";
 import buttonMushroomSpawnImage from "../assets/products/button-mushroom-spawn.webp";

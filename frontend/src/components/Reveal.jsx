@@ -1,6 +1,6 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
-const MotionDiv = motion.div;
+const MotionDiv = m.div;
 
 const variants = {
   hidden: { opacity: 0, y: 24 },

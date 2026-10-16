@@ -101,5 +101,21 @@ export function adminRoutes({ services, config, sessions }) {
   crudRoutes(router, "/news", services.news);
   crudRoutes(router, "/trainings", services.trainings);
 
+  // Several calendar batches at once (only while the calendar is empty).
+  router.post("/trainings/import", async (req, res) => {
+    res.status(201).json({ ok: true, items: await services.trainings.importMany(req.body) });
+  });
+
+  // Training page text: save (replaces the saved text) or reset to the website's defaults.
+  router.put("/training-page", async (req, res) => {
+    const page = await services.trainingPage.save(req.body);
+    res.json({ ok: true, item: page.content, updatedAt: page.updatedAt });
+  });
+
+  router.delete("/training-page", async (req, res) => {
+    await services.trainingPage.reset();
+    res.json({ ok: true });
+  });
+
   return router;
 }

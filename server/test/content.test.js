@@ -4,7 +4,7 @@ import { createHash, createHmac } from "node:crypto";
 import { createAdminSessions } from "../src/utils/adminSession.js";
 import { signParams } from "../src/storage/cloudinary.js";
 import { parseVideoUrl } from "../src/utils/media.js";
-import { ADMIN_PASSWORD, CLOUDINARY, startTestServer } from "./support/testServer.js";
+import { ADMIN_KEY, ADMIN_PASSWORD, CLOUDINARY, startTestServer } from "./support/testServer.js";
 
 describe("admin sessions", () => {
   const sessions = createAdminSessions({ password: "secret-password" });
@@ -111,6 +111,9 @@ describe("admin panel API", () => {
       assert.equal((await t.api("POST", "/api/admin/news", { body: { title: "x", date: "2026-01-01" } })).status, 401);
       assert.equal((await t.api("POST", "/api/admin/uploads", { body: { kind: "image" } })).status, 401);
       assert.equal((await t.api("DELETE", "/api/admin/videos/whatever")).status, 401);
+      assert.equal((await t.api("POST", "/api/admin/trainings/import", { body: { items: [{ title: "x" }] } })).status, 401);
+      assert.equal((await t.api("PUT", "/api/admin/training-page", { body: {} })).status, 401);
+      assert.equal((await t.api("DELETE", "/api/admin/training-page")).status, 401);
     });
   });
 
@@ -305,6 +308,152 @@ describe("admin panel API", () => {
       assert.equal(res.status, 400);
       assert.equal(res.body.errors.title, "This field is required.");
     });
+
+    it("saves every calendar field", async () => {
+      const batch = {
+        group: "cultivation",
+        sNo: "3",
+        title: "Training on mushroom cultivation technology for farmers",
+        dates: "",
+        startDate: "2026-11-13",
+        endDate: "2026-11-18",
+        registrationDates: "01-10 September 2026",
+        registrationStart: "2026-09-01",
+        registrationEnd: "2026-09-10",
+        registrationLink: "https://forms.gle/example",
+        fees: "3000/-",
+        language: "Hindi/English",
+        duration: "6 Days",
+        coordinator: "Dr. Enespa, Dr. Prem Chandra",
+        note: "",
+        admissionStatus: "",
+      };
+      const res = await t.api("POST", "/api/admin/trainings", { ...auth, body: { ...batch, unexpected: "dropped" } });
+      assert.equal(res.status, 201, JSON.stringify(res.body));
+      const { id, createdAt, ...saved } = res.body.item;
+      assert.ok(id && createdAt);
+      assert.deepEqual(saved, batch);
+    });
+
+    it("checks the calendar fields", async () => {
+      const bad = await t.api("POST", "/api/admin/trainings", {
+        ...auth,
+        body: { title: "x", group: "other", sNo: "first", startDate: "2026-02-30", registrationLink: "forms.gle/x" },
+      });
+      assert.equal(bad.status, 400);
+      assert.deepEqual(bad.body.errors, {
+        group: "Select a valid option.",
+        sNo: "Must be a whole number.",
+        startDate: "Enter a valid date.",
+        registrationLink: "Enter a full link starting with https://",
+      });
+
+      const ranges = await t.api("POST", "/api/admin/trainings", {
+        ...auth,
+        body: { title: "x", startDate: "2026-11-18", endDate: "2026-11-13", registrationStart: "2026-09-01" },
+      });
+      assert.equal(ranges.status, 400);
+      assert.deepEqual(ranges.body.errors, {
+        registrationEnd: "Enter both registration dates, or neither.",
+        endDate: "Must be on or after the start date.",
+      });
+
+      const closesFirst = await t.api("POST", "/api/admin/trainings", {
+        ...auth,
+        body: { title: "x", registrationStart: "2026-09-10", registrationEnd: "2026-09-01" },
+      });
+      assert.equal(closesFirst.body.errors.registrationEnd, "Must be on or after the opening date.");
+    });
+  });
+
+  describe("training calendar import and page text", () => {
+    let s;
+    const key = { headers: { "x-admin-key": ADMIN_KEY } };
+    before(async () => {
+      s = await startTestServer();
+    });
+    after(() => s.close());
+
+    it("imports several batches only while the calendar is empty, validating all of them first", async () => {
+      const bad = await s.api("POST", "/api/admin/trainings/import", {
+        ...key,
+        body: { items: [{ title: "Batch 1" }, { title: "", startDate: "soon" }] },
+      });
+      assert.equal(bad.status, 400);
+      assert.deepEqual(bad.body.errors, { "items.1.title": "This field is required.", "items.1.startDate": "Enter a valid date." });
+      assert.equal((await s.api("GET", "/api/content/trainings")).body.items.length, 0, "nothing is saved when a row is invalid");
+
+      const items = [1, 2, 3].map((n) => ({ group: "spawn", sNo: String(n), title: "Spawn production", dates: `Batch ${n}` }));
+      const res = await s.api("POST", "/api/admin/trainings/import", { ...key, body: { items } });
+      assert.equal(res.status, 201, JSON.stringify(res.body));
+      assert.equal(res.body.items.length, 3);
+      const list = (await s.api("GET", "/api/content/trainings")).body.items;
+      assert.deepEqual(list.map((r) => r.dates).sort(), ["Batch 1", "Batch 2", "Batch 3"]);
+
+      const again = await s.api("POST", "/api/admin/trainings/import", { ...key, body: { items } });
+      assert.equal(again.status, 400);
+      assert.match(again.body.errors.items, /already has batches/);
+    });
+
+    it("has no saved page text until the admin saves some", async () => {
+      const res = await s.api("GET", "/api/content/training-page");
+      assert.equal(res.status, 200);
+      assert.deepEqual(res.body, { ok: true, item: null, updatedAt: null });
+    });
+
+    it("saves the page text, keeping only known fields and dropping blank lines", async () => {
+      const res = await s.api("PUT", "/api/admin/training-page", {
+        ...key,
+        body: {
+          calendar: {
+            notice: { label: " Important Instruction: ", text: "Only Indian Citizens with valid ID Proof can apply", color: "red" },
+            notes: { specialNote: { items: [{ label: "Eligibility:", text: "Applied since August" }, { label: "", text: " " }] } },
+            terms: { note: { items: ["Fee is non-refundable.", "", "  "] } },
+          },
+          details: {
+            courseSections: [{ title: "(Entrepreneurs Training- Theory)", items: ["Mushrooms- An Agri-business", ""] }, { title: "", items: [] }],
+          },
+          extra: "dropped",
+        },
+      });
+      assert.equal(res.status, 200, JSON.stringify(res.body));
+      const expected = {
+        calendar: {
+          notice: { label: "Important Instruction:", text: "Only Indian Citizens with valid ID Proof can apply" },
+          notes: { specialNote: { items: [{ label: "Eligibility:", text: "Applied since August" }] } },
+          terms: { note: { items: ["Fee is non-refundable."] } },
+        },
+        details: { courseSections: [{ title: "(Entrepreneurs Training- Theory)", items: ["Mushrooms- An Agri-business"] }] },
+      };
+      assert.deepEqual(res.body.item, expected);
+
+      const read = await s.api("GET", "/api/content/training-page");
+      assert.deepEqual(read.body.item, expected);
+      assert.ok(read.body.updatedAt);
+
+      // Saving again replaces the saved text (one record, not a new one).
+      await s.api("PUT", "/api/admin/training-page", { ...key, body: { details: { heading: "Training Details" } } });
+      assert.deepEqual((await s.api("GET", "/api/content/training-page")).body.item, { details: { heading: "Training Details" } });
+      assert.equal((await s.api("GET", "/api/admin/stats", key)).body.totals.siteSettings, 1);
+    });
+
+    it("rejects page text that is too long or has too many entries", async () => {
+      const res = await s.api("PUT", "/api/admin/training-page", {
+        ...key,
+        body: { calendar: { notice: { text: "x".repeat(501) } }, details: { mushrooms: Array.from({ length: 31 }, (_, i) => `M${i}`) } },
+      });
+      assert.equal(res.status, 400);
+      assert.deepEqual(res.body.errors, {
+        "calendar.notice.text": "Must be at most 500 characters.",
+        "details.mushrooms": "At most 30 entries.",
+      });
+    });
+
+    it("resets the page text to the website's defaults", async () => {
+      assert.equal((await s.api("DELETE", "/api/admin/training-page", key)).status, 200);
+      assert.equal((await s.api("GET", "/api/content/training-page")).body.item, null);
+      assert.equal((await s.api("DELETE", "/api/admin/training-page", key)).status, 200, "resetting twice is fine");
+    });
   });
 
   describe("submissions", () => {
@@ -321,7 +470,7 @@ describe("admin panel API", () => {
       for (const key of ["trainingApplications", "galleryImages", "videos", "newsItems", "trainingPrograms", "visitors"]) {
         assert.equal(typeof totals[key], "number", key);
       }
-      assert.equal(totals.trainingPrograms, 2);
+      assert.equal(totals.trainingPrograms, 3); // added by the "training schedule" tests above
     });
   });
 

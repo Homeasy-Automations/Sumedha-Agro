@@ -115,12 +115,28 @@ export const newsItemSchema = {
   link: { max: 500, check: "url" },
 };
 
-// Empty schedule fields are shown as "To be announced" on the website.
+// Tables of the Training Calendar; a batch with no group is listed in a final table.
+export const TRAINING_GROUPS = ["cultivation", "spawn"];
+
+// One batch (row) of the Training Calendar. Empty text fields show "To be announced" on the
+// website. Dates are Indian dates (YYYY-MM-DD) and drive the registration status; `dates` and
+// `registrationDates` are optional display text (built from those dates when empty).
 export const trainingProgramSchema = {
+  group: { max: 40, oneOf: TRAINING_GROUPS },
+  sNo: { max: 5, check: "dimension" },
   title: { required: true, max: 200 },
   dates: { max: 100 },
-  duration: { max: 100 },
+  startDate: { check: "date" },
+  endDate: { check: "date" },
+  registrationDates: { max: 100 },
+  registrationStart: { check: "date" },
+  registrationEnd: { check: "date" },
+  registrationLink: { max: 500, check: "url" },
   fees: { max: 100 },
+  language: { max: 100 },
+  duration: { max: 100 },
+  coordinator: { max: 300 },
+  note: { max: 300 },
   admissionStatus: { max: 100 },
 };
 

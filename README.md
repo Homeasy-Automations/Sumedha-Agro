@@ -114,7 +114,8 @@ Base URL: `VITE_API_URL`. Bodies are JSON. Errors look like
 | `GET /api/content/gallery` | — | `{ items: [{ id, src, thumbnailSrc, alt, caption, width, height }] }` |
 | `GET /api/content/videos` | — | `{ items: [{ id, title, provider: "upload"\|"youtube"\|"vimeo", videoUrl? , embedUrl?, thumbnailUrl }] }` |
 | `GET /api/content/news` | — | `{ items: [{ id, title, date, body, link }] }` (latest date first) |
-| `GET /api/content/trainings` | — | `{ items: [{ id, title, dates, duration, fees, admissionStatus }] }` |
+| `GET /api/content/trainings` | — | `{ items: [{ id, group, sNo, title, dates, startDate, endDate, registrationDates, registrationStart, registrationEnd, registrationLink, fees, language, duration, coordinator, note, admissionStatus }] }` (Training Calendar batches; dates are `YYYY-MM-DD`, Indian dates) |
+| `GET /api/content/training-page` | — | `{ item, updatedAt }`: the Training page text saved in the admin panel (calendar notes, Training Details, Course Contents), or `item: null` while the website's defaults apply |
 
 ### Training application
 
@@ -151,6 +152,8 @@ Unknown fields are ignored. On a `400`, `errors` maps each field to the same mes
 | `POST /api/admin/videos` | `{ publicId, title }` (uploaded file) or `{ url, title }` (YouTube/Vimeo) |
 | `POST /api/admin/news`, `/trainings` | Item fields as listed above |
 | `PUT` / `DELETE /api/admin/{gallery,videos,news,trainings}/:id` | Edit / delete (deleting media also removes it from Cloudinary) |
+| `POST /api/admin/trainings/import` | `{ items: [batch, …] }` (up to 100): adds several batches in order, only while the calendar is empty; nothing is saved if any row is invalid (errors keyed `items.<n>.<field>`) |
+| `PUT` / `DELETE /api/admin/training-page` | Save the Training page text (shape in [`server/src/validation/trainingPage.js`](server/src/validation/trainingPage.js); keys left out keep the defaults) / reset to the defaults |
 
 ## Switching databases
 

@@ -11,6 +11,8 @@ export const entities = {
   videos: { unique: [] },
   newsItems: { unique: [] },
   trainingPrograms: { unique: [] },
+  // Editable page text, one record per `key` (e.g. "trainingPage"), stored as a JSON string.
+  siteSettings: { unique: ["key"] },
 };
 
 export const COUNTERS = { visitors: "visitors" };

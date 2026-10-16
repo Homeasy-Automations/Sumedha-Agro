@@ -13,5 +13,12 @@ export function contentRoutes({ services }) {
     });
   }
 
+  // Training page text saved in the admin panel; item is null while the website's defaults apply.
+  router.get("/content/training-page", async (req, res) => {
+    res.set("Cache-Control", "no-cache");
+    const page = await services.trainingPage.get();
+    res.json({ ok: true, item: page?.content ?? null, updatedAt: page?.updatedAt ?? null });
+  });
+
   return router;
 }

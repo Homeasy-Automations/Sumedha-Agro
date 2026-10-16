@@ -194,6 +194,8 @@ const content = {
 
   // Training Calendar section of the Training page. Batches come from src/data/trainings.js
   // (or the API); emails and phone numbers in these strings are turned into links on render.
+  // notice, tables' headings/notes, notes and terms are defaults: the admin panel can replace
+  // them (Training page text; see src/lib/trainingPage.js).
   trainingCalendar: {
     id: "training-calendar",
     heading: "TRAINING CALENDAR",
@@ -292,6 +294,59 @@ const content = {
       completed: "Completed",
       limitedSeats: "Limited Seats",
     },
+  },
+
+  // Training Details section of the Training page, after the calendar. Defaults: the admin
+  // panel can replace them (Training page text).
+  trainingDetails: {
+    id: "training-details",
+    heading: "Training Details",
+    intro:
+      "The Cultivation Technology of following types of Mushroom will be covered during the training course with emphasis on practical.",
+    mushrooms: [
+      "Cultivation Technology of White button mushroom",
+      "Cultivation Technology of Oyster mushroom",
+      "Cultivation Technology of Paddy straw and Milky mushrooms.",
+      "Cultivation technology of Specialty mushrooms - Shiitake, Ganoderma , Flammulina, Hericium",
+    ],
+    aspectsIntro:
+      "Besides the cultivation Technology of above mushrooms, training will cover following aspects in details:",
+    aspects: [
+      "Nutritional / Medicinal value of mushrooms and its relevance in healthy food",
+      "Seeds/spawn preparation technique for mushrooms",
+      "Substrate preparation technique for mushrooms",
+      "Infrastructure requirement for setting up of a composite mushroom farm",
+      "Crop raising of all above mushrooms including crop management",
+      "Pest/diseases management in mushrooms",
+      "Postharvest handling/value addition of mushrooms",
+    ],
+    closing:
+      "Apart from above aspects of cultivation technology, the other important related aspects viz; economics of mushrooms cultivation, marketing, financing, management of spent compost etc. will also be covered during the training course.",
+    courseHeading: "COURSE CONTENTS",
+    courseSections: [
+      {
+        title: "(Entrepreneurs Training- Theory)",
+        items: [
+          "Mushrooms- An Agri-business",
+          "Nutritional and medicinal value of mushrooms",
+          "Culture preparation and preservation techniques in mushrooms",
+          "Spawn production technology",
+          "Formulations and recent advances in compost production for button mushroom",
+          "Recent advances in crop management of white button mushroom",
+          "Farm-design and infrastructure for a commercial mushroom growing unit",
+          "Economics of button mushroom cultivation under controlled conditions",
+          "Cultivation of oyster mushroom (Pleurotus spp.)",
+          "Infrastructure requirement and economics of oyster mushroom",
+          "Cultivation & economics of paddy straw mushroom (Volvariella spp.)",
+          "Cultivation & economics of milky mushroom ( Calocybe indica )",
+          "Cultivation of Shiitake Mushrooms",
+          "Cultivation of speciality mushrooms like Ganoderma , Flammulina and Hericium",
+          "Competitor moulds/fungal and viral diseases of mushrooms",
+          "Bacterial diseases and abiotic disorders of mushrooms",
+          "Insect, pests & nematodes of mushrooms and their management",
+        ],
+      },
+    ],
   },
 
   spawnBooking: {

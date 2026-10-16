@@ -1,10 +1,12 @@
-// Default training calendar. The live schedule is managed in the admin panel (/admin);
-// these rows are only shown when the API is unreachable or no rows have been added there.
+// Default training calendar. The live calendar is managed in the admin panel (/admin, Training
+// calendar), which can import these rows into the database in one click ("Import the built-in
+// calendar"); they are only shown when the API is unreachable or no batches have been saved there.
 // Titles also populate field 1 ("Training applied for") of the application form;
 // if the schedule is empty the form falls back to a free-text input.
 //
 // Every row keeps the original fields (id, title, dates, duration, fees, admissionStatus).
-// The Training Calendar also reads these optional fields, so rows without them still render:
+// The Training Calendar also reads these optional fields, so rows without them still render
+// (all of them, plus registrationLink, are editable in the admin panel):
 //   group              "cultivation" | "spawn" (which calendar table the row goes in)
 //   sNo                S. No. within its table
 //   registrationDates  display text for "Online Registration Dates"
@@ -30,7 +32,7 @@ const SPAWN = {
   fees: "Rs.4500/- per trainee",
   language: "English/ Hindi",
   duration: "3 Days",
-  coordinator: "Dr. Prem Chandra & Dr. Rekha Singh (9125591178: only for Spawn Query) Call all days 10 AM to 12 PM",
+  coordinator: "Dr. Prem Chandra & Dr. Rekha Singh ;  (9125591178: only for Spawn Query) Call all days 10 AM to 12 PM",
   note: "",
 };
 

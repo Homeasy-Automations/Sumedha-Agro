@@ -6,7 +6,7 @@ export const products = [
   {
     id: "1",
     slug: "oyster-mushroom-spawn",
-    name: "Oyster Mushroom Spawn",
+    name: "Oyster Mushroom Spawn (Pleurotus spp.)",
     price: 180,
     category: "Spawn",
     image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBB8KOZYnOeIsynRjdgAzjtj9yoEhznvJ1GTpddc-0Lt8k77yK-AW8SS2429pGZyLwbJ6PvG-5kV0Sfwi4_3iWP_BFMqaBAvbeDnQwduOj3yU1owBuQWUX1Gg3hkeslF4Ge2MWxZfCJ8xj2ygJQMGuTva8zcKdbTUqjy_DCh9CyZibuasAPnW9AJq-AshVzPJnHdKQEioh1zpPrp9D9ogS0uvcQizA1qtoSr_gcTbaJiVGt_9Xqm1eSPjv_ohnkwD3UqKPd60rRCes",
@@ -16,7 +16,7 @@ export const products = [
   {
     id: "2",
     slug: "button-mushroom-spawn",
-    name: "Button Mushroom Spawn",
+    name: "Button Mushroom Spawn (Agaricus bisporus)",
     price: 220,
     category: "Spawn",
     image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAfzh2sJkOhKMFryv_h-QUg1sWt_Br7nABrRIt8jRBwQx59DJAwiH3eB9xhWXGomJMHICPijYlJtYjsyvHnWpkfESgyoG9DdELoKX10Ke3yjZVPEUacAqrfWGv6EN5PjMq23TC0huA_QSzgSdHiT7rST7FwXoxmIY1PDjHzDsWe7oTuuAmISk91INgVmL2rScEcnXUMHSFFxXLnvHAUFzvbY0EkCWJ052lL4svhRCOkX4WOLGUIoyJWkt9Xc6MGTkH65LGQyL8dm5Y",
@@ -26,7 +26,7 @@ export const products = [
   {
     id: "3",
     slug: "milky-mushroom-spawn",
-    name: "Milky Mushroom Spawn",
+    name: "Milky Mushroom Spawn (Calocybe indica)",
     price: 200,
     category: "Spawn",
     image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBjok_S7IEFEaLsVeamuv8eJ9iNidl_A6IxgNDGjsvE9bwiENau4kb8oRnW8dlNY0dIgahpSA_xLfFb3XUg-shr5NUrn5rEr1XSA-nvgZIUTqAKgTJG6TfrEYEs6tuEmQ5phCqMX4pwTdMetOmykKZxDPhvHQr4TUSo5LqG24oXA1p_uXlLmnrE6f7PVUBRa211tCqXz3bhnxpvBqJ7XisyTu-b1QfR0aLQxmb6OYmbo3W2xGHGvJg3kxQr3e223jyMJJ88CoFjTBs",
@@ -56,7 +56,7 @@ export const products = [
   {
     id: "6",
     slug: "fresh-oyster-mushroom",
-    name: "Fresh Oyster Mushrooms",
+    name: "Fresh Oyster Mushrooms (Pleurotus spp.)",
     price: 180,
     category: "Fresh",
     image: m1,
@@ -66,7 +66,7 @@ export const products = [
   {
     id: "7",
     slug: "fresh-button-mushroom",
-    name: "Fresh Button Mushrooms",
+    name: "Fresh Button Mushrooms (Agaricus bisporus)",
     price: 150,
     category: "Fresh",
     image: m2,
@@ -76,7 +76,7 @@ export const products = [
   {
     id: "8",
     slug: "fresh-milky-mushroom",
-    name: "Fresh Milky Mushrooms",
+    name: "Fresh Milky Mushrooms (Calocybe indica)",
     price: 200,
     category: "Fresh",
     image: m3,

@@ -202,7 +202,7 @@ const handleSubmit = () => {
                   <div className="p-5 flex flex-col flex-1">
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="text-lg font-bold text-text-main group-hover:text-primary transition-colors">
-                        Oyster Mushroom Spawn
+                        Oyster Mushroom Spawn (Pleurotus spp.)
                       </h3>
                     </div>
                     <p className="text-text-side text-sm line-clamp-2 mb-4">
@@ -247,7 +247,7 @@ const handleSubmit = () => {
                   </div>
                   <div className="p-5 flex flex-col flex-1">
                     <h3 className="text-lg text-xl font-bold mb-2 group-hover:text-primary transition-colors">
-                      Button Mushroom Spawn
+                      Button Mushroom Spawn (Agaricus bisporus)
                     </h3>
                     <p className="text-text-side text-sm line-clamp-2 mb-4">
                       Premium Agaricus bisporus strains designed for controlled
@@ -288,7 +288,7 @@ const handleSubmit = () => {
                   </div>
                   <div className="p-5 flex flex-col flex-1">
                     <h3 className="text-lg font-bold text-text-main mb-2 group-hover:text-primary transition-colors">
-                      Milky Mushroom Spawn
+                      Milky Mushroom Spawn (Calocybe indica)
                     </h3>
                     <p className="text-text-side text-sm line-clamp-2 mb-4">
                       Ideal for tropical climates. Robust growth and large
@@ -475,7 +475,7 @@ const handleSubmit = () => {
                       {/* CONTENT */}
                       <div className="p-5 flex flex-col flex-1">
                         <h3 className="text-lg font-bold text-text-main group-hover:text-primary transition-colors">
-                          Fresh Oyster Mushrooms
+                          Fresh Oyster Mushrooms (Pleurotus spp.)
                         </h3>
 
                         <p className="text-text-side text-sm mt-2 mb-4">
@@ -534,7 +534,7 @@ const handleSubmit = () => {
 
                       <div className="p-5 flex flex-col flex-1">
                         <h3 className="text-lg font-bold text-text-main group-hover:text-primary transition-colors">
-                          Fresh Button Mushrooms
+                          Fresh Button Mushrooms (Agaricus bisporus)
                         </h3>
 
                         <p className="text-text-side text-sm mt-2 mb-4">
@@ -587,7 +587,7 @@ const handleSubmit = () => {
 
                       <div className="p-5 flex flex-col flex-1">
                         <h3 className="text-lg font-bold text-text-main group-hover:text-primary transition-colors">
-                          Fresh Milky Mushrooms
+                          Fresh Milky Mushrooms (Calocybe indica)
                         </h3>
 
                         <p className="text-text-side text-sm mt-2 mb-4">

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, CircleAlert, Info, Phone, Users } from "lucide-react";
 import content from "../data/content";
+import { batchDates, batchRegistrationDates } from "../lib/trainingDates";
+import { TRAINING_PAGE_DEFAULTS } from "../lib/trainingPage";
 import { getTrainingStatus, nextStatusChange } from "../lib/trainingStatus";
 import { mailHref, telHref } from "../lib/links";
 import Reveal from "./Reveal";
@@ -110,13 +112,20 @@ const applyBase = "inline-flex items-center justify-center rounded-full px-5 py-
 
 function ApplyAction({ item, status }) {
   if (status.canApply) {
+    const label = `${cal.applyLabel}: ${[item.title, batchDates(item)].filter(hasText).join(", ")}`;
+    const className = `${applyBase} bg-primary text-[#0d1b0d] shadow-md shadow-primary/20 hover:bg-green-400 active:scale-[0.98]`;
+    // A batch with its own registration link (e.g. a Google Form) opens it; otherwise the
+    // website's application form, pre-filled for this batch.
+    if (hasText(item.registrationLink)) {
+      return (
+        <a href={item.registrationLink} target="_blank" rel="noopener noreferrer" aria-label={`${label} ${ui.opensInNewTab}`} className={className}>
+          {cal.applyLabel}
+        </a>
+      );
+    }
     const to = hasText(item.id) ? `${nav.links.apply.to}?training=${encodeURIComponent(item.id)}` : nav.links.apply.to;
     return (
-      <Link
-        to={to}
-        aria-label={`${cal.applyLabel}: ${[item.title, item.dates].filter(hasText).join(", ")}`}
-        className={`${applyBase} bg-primary text-[#0d1b0d] shadow-md shadow-primary/20 hover:bg-green-400 active:scale-[0.98]`}
-      >
+      <Link to={to} aria-label={label} className={className}>
         {cal.applyLabel}
       </Link>
     );
@@ -150,8 +159,8 @@ function toRow(item, index, table, now) {
     item,
     sNo: hasText(item.sNo) ? item.sNo : index + 1,
     programme: item.title,
-    date: item.dates,
-    registration: item.registrationDates,
+    date: batchDates(item),
+    registration: batchRegistrationDates(item),
     fee: item.fees,
     languageDuration: [item.language, item.duration].filter(hasText).join(table.languageDurationSeparator),
     coordinator: item.coordinator,
@@ -287,70 +296,101 @@ function CalendarTable({ table, items, now }) {
   );
 }
 
-function NotesPanel() {
-  const { query, seats, specialNote, howToRegister } = cal.notes;
+// Every piece of text below is editable in the admin panel; empty text is simply left out.
+const hasNotes = ({ query, seats, specialNote, howToRegister }) =>
+  [query, seats, specialNote.heading, specialNote.title, howToRegister.heading].some(hasText) ||
+  specialNote.items.length > 0 ||
+  howToRegister.sentences.length > 0;
+const hasTerms = ({ important, note }) => [important.label, important.text, note.label].some(hasText) || note.items.length > 0;
+
+function NotesPanel({ notes }) {
+  const { query, seats, specialNote, howToRegister } = notes;
+  const showSpecialNote = hasText(specialNote.heading) || hasText(specialNote.title) || specialNote.items.length > 0;
   return (
     <Reveal className={`${card} p-6 md:p-8`}>
-      <div className="flex flex-wrap items-center gap-3">
-        <p className={`flex items-start gap-2.5 text-sm font-semibold ${heading}`}>
-          <Phone size={17} aria-hidden="true" className="mt-0.5 shrink-0 text-text-side" />
-          <span>
-            <LinkedText text={query} />
-          </span>
-        </p>
-        <p className={pill}>
-          <Users size={14} aria-hidden="true" />
-          {seats}
-        </p>
-      </div>
+      {(hasText(query) || hasText(seats)) && (
+        <div className="flex flex-wrap items-center gap-3 not-last:mb-6">
+          {hasText(query) && (
+            <p className={`flex items-start gap-2.5 text-sm font-semibold ${heading}`}>
+              <Phone size={17} aria-hidden="true" className="mt-0.5 shrink-0 text-text-side" />
+              <span>
+                <LinkedText text={query} />
+              </span>
+            </p>
+          )}
+          {hasText(seats) && (
+            <p className={pill}>
+              <Users size={14} aria-hidden="true" />
+              {seats}
+            </p>
+          )}
+        </div>
+      )}
 
+      {/* Always present, so the "Limited Seats" links in the table have somewhere to go. */}
       <div
-        id={specialNote.id}
-        className={`mt-6 rounded-xl border-l-4 border-primary bg-primary/10 p-5 ${anchorOffset}`}
+        id={cal.notes.specialNote.id}
+        className={showSpecialNote ? `rounded-xl border-l-4 border-primary bg-primary/10 p-5 not-last:mb-6 ${anchorOffset}` : anchorOffset}
       >
-        <h4 className={`font-bold ${heading}`}>
-          {specialNote.heading} <span className="text-text-side">{specialNote.title}</span>
-        </h4>
-        <dl className={`mt-4 space-y-3 text-sm leading-relaxed ${body}`}>
-          {specialNote.items.map((entry) => (
-            <div key={entry.label}>
-              <dt className={`inline font-semibold ${heading}`}>{entry.label}</dt>{" "}
-              <dd className="inline">
-                <LinkedText text={entry.text} />
-              </dd>
-            </div>
-          ))}
-        </dl>
+        {(hasText(specialNote.heading) || hasText(specialNote.title)) && (
+          <h4 className={`font-bold ${heading}`}>
+            {specialNote.heading} <span className="text-text-side">{specialNote.title}</span>
+          </h4>
+        )}
+        {specialNote.items.length > 0 && (
+          <dl className={`mt-4 space-y-3 text-sm leading-relaxed first:mt-0 ${body}`}>
+            {specialNote.items.map((entry, i) => (
+              <div key={i}>
+                {hasText(entry.label) && (
+                  <>
+                    <dt className={`inline font-semibold ${heading}`}>{entry.label}</dt>{" "}
+                  </>
+                )}
+                <dd className="inline">
+                  <LinkedText text={entry.text} />
+                </dd>
+              </div>
+            ))}
+          </dl>
+        )}
       </div>
 
-      <h4 className={`mt-6 font-bold ${heading}`}>{howToRegister.heading}</h4>
-      <ul className={`mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed marker:text-text-side ${body}`}>
-        {howToRegister.sentences.map((sentence) => (
-          <li key={sentence}>
-            <LinkedText text={sentence} />
-          </li>
-        ))}
-      </ul>
+      {hasText(howToRegister.heading) && <h4 className={`font-bold ${heading}`}>{howToRegister.heading}</h4>}
+      {howToRegister.sentences.length > 0 && (
+        <ul className={`mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed marker:text-text-side first:mt-0 ${body}`}>
+          {howToRegister.sentences.map((sentence, i) => (
+            <li key={i}>
+              <LinkedText text={sentence} />
+            </li>
+          ))}
+        </ul>
+      )}
     </Reveal>
   );
 }
 
-function TermsPanel() {
-  const { important, note } = cal.terms;
+function TermsPanel({ terms }) {
+  const { important, note } = terms;
   return (
     <Reveal delay={0.05} className={`${card} p-6 md:p-8`}>
-      <p className="flex items-start gap-3 rounded-xl bg-amber-100 p-4 text-sm leading-relaxed text-amber-900">
-        <CircleAlert size={18} aria-hidden="true" className="mt-0.5 shrink-0" />
-        <span>
-          <strong className="font-bold">{important.label}</strong> <LinkedText text={important.text} />
-        </span>
-      </p>
-      <h4 className={`mt-6 font-bold ${heading}`}>{note.label}</h4>
-      <ul className={`mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed marker:text-text-side ${body}`}>
-        {note.items.map((text) => (
-          <li key={text}>{text}</li>
-        ))}
-      </ul>
+      {(hasText(important.label) || hasText(important.text)) && (
+        <p className="flex items-start gap-3 rounded-xl bg-amber-100 p-4 text-sm leading-relaxed text-amber-900 not-last:mb-6">
+          <CircleAlert size={18} aria-hidden="true" className="mt-0.5 shrink-0" />
+          <span>
+            <strong className="font-bold">{important.label}</strong> <LinkedText text={important.text} />
+          </span>
+        </p>
+      )}
+      {hasText(note.label) && <h4 className={`font-bold ${heading}`}>{note.label}</h4>}
+      {note.items.length > 0 && (
+        <ul className={`mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed marker:text-text-side first:mt-0 ${body}`}>
+          {note.items.map((text, i) => (
+            <li key={i}>
+              <LinkedText text={text} />
+            </li>
+          ))}
+        </ul>
+      )}
     </Reveal>
   );
 }
@@ -358,31 +398,39 @@ function TermsPanel() {
 // Training Calendar: one table per training group (cultivation, spawn) with notes and terms
 // between them. Rows come from the API (or src/data/trainings.js) and are never hidden;
 // rows without a known group are listed in a final table.
-export default function TrainingCalendar({ items }) {
+// `text`: the calendar's editable text (src/lib/trainingPage.js), defaults when not given.
+export default function TrainingCalendar({ items, text = TRAINING_PAGE_DEFAULTS.calendar }) {
   const now = useNow(items);
-  const [cultivation, spawn] = cal.tables;
+  const [cultivation, spawn] = cal.tables.map((table) => ({ ...table, ...text.tables[table.group] }));
   const byGroup = (group) => items.filter((item) => item.group === group);
   const ungrouped = items.filter((item) => !KNOWN_GROUPS.has(item.group));
+  const { notice, notes, terms } = text;
+  const showNotes = hasNotes(notes);
+  const showTerms = hasTerms(terms);
 
   return (
     <div>
       <Reveal>
         <SectionHeading id={`${cal.id}-heading`} title={cal.heading} />
-        <p className="mt-6 flex items-start gap-3 rounded-xl border border-primary/30 bg-primary/10 p-4 text-sm font-medium text-[#0d1b0d] md:text-base">
-          <Info size={20} aria-hidden="true" className="mt-0.5 shrink-0 text-text-side" />
-          <span>
-            <strong className="font-bold">{cal.notice.label}</strong> {cal.notice.text}
-          </span>
-        </p>
+        {(hasText(notice.label) || hasText(notice.text)) && (
+          <p className="mt-6 flex items-start gap-3 rounded-xl border border-primary/30 bg-primary/10 p-4 text-sm font-medium text-[#0d1b0d] md:text-base">
+            <Info size={20} aria-hidden="true" className="mt-0.5 shrink-0 text-text-side" />
+            <span>
+              <strong className="font-bold">{notice.label}</strong> <LinkedText text={notice.text} />
+            </span>
+          </p>
+        )}
       </Reveal>
 
       <div className="mt-6 space-y-6">
         <CalendarTable table={cultivation} items={byGroup(cultivation.group)} now={now} />
 
-        <div className="grid items-start gap-6 lg:grid-cols-2">
-          <NotesPanel />
-          <TermsPanel />
-        </div>
+        {(showNotes || showTerms) && (
+          <div className="grid items-start gap-6 lg:grid-cols-2">
+            {showNotes && <NotesPanel notes={notes} />}
+            {showTerms && <TermsPanel terms={terms} />}
+          </div>
+        )}
 
         <CalendarTable table={spawn} items={byGroup(spawn.group)} now={now} />
 

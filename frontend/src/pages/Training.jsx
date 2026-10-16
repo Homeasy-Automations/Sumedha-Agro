@@ -4,20 +4,28 @@ import content from "../data/content";
 import defaultTrainings from "../data/trainings";
 import usePageMeta from "../hooks/usePageMeta";
 import useSiteContent from "../hooks/useSiteContent";
+import useTrainingPage from "../hooks/useTrainingPage";
 import Reveal from "../components/Reveal";
 import ButtonLink from "../components/ButtonLink";
 import TrainingCalendar from "../components/TrainingCalendar";
+import TrainingDetails from "../components/TrainingDetails";
+import { hasTrainingDetails } from "../lib/trainingPage";
 import IncubationSections from "../components/IncubationSections";
 import { anchorOffset, card, cardHover, container, heading, sectionY } from "../components/styles";
 
-const { training, trainingCalendar, incubation, technologies, images, nav, meta } = content;
-
-// Shortcuts to the page's main sections, kept in view below the site header.
-const SECTION_LINKS = [trainingCalendar, incubation, technologies];
+const { training, trainingCalendar, trainingDetails, incubation, technologies, images, nav, meta } = content;
 
 export default function Training() {
   usePageMeta(meta.training);
   const { items: trainings } = useSiteContent("trainings", defaultTrainings);
+  const page = useTrainingPage();
+  // Shortcuts to the page's main sections, kept in view below the site header.
+  const sectionLinks = [
+    trainingCalendar,
+    hasTrainingDetails(page.details) && { id: trainingDetails.id, heading: page.details.heading || trainingDetails.heading },
+    incubation,
+    technologies,
+  ].filter(Boolean);
 
   return (
     <main>
@@ -50,7 +58,7 @@ export default function Training() {
         className="sticky top-16 z-30 border-y border-border-light bg-white/95 backdrop-blur-md md:top-[116px]"
       >
         <ul className={`${container} flex gap-2 overflow-x-auto py-3`}>
-          {SECTION_LINKS.map((section) => (
+          {sectionLinks.map((section) => (
             <li key={section.id} className="shrink-0">
               <Link
                 to={`#${section.id}`}
@@ -91,7 +99,7 @@ export default function Training() {
         aria-labelledby={`${trainingCalendar.id}-heading`}
       >
         <div className={container}>
-          <TrainingCalendar items={trainings} />
+          <TrainingCalendar items={trainings} text={page.calendar} />
           <Reveal className="mt-6 flex justify-center">
             <ButtonLink to={nav.cta.to} icon={ArrowRight}>
               {training.applyLabel}
@@ -99,6 +107,8 @@ export default function Training() {
           </Reveal>
         </div>
       </section>
+
+      <TrainingDetails details={page.details} />
 
       <IncubationSections />
     </main>

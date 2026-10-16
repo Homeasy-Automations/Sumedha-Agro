@@ -6,20 +6,41 @@ import { apiRequest } from "../lib/api";
 // src/data when the API is unreachable or nothing has been added yet.
 
 const TIMEOUT_MS = 15_000;
-const cache = new Map(); // kind -> Promise<items>
+const cache = new Map(); // kind -> Promise<items> (lists) or Promise<item | null> (page text)
 
-function load(kind) {
+function fetchOnce(kind, pick) {
   if (!cache.has(kind)) {
-    const promise = apiRequest(`/api/content/${kind}`, { timeoutMs: TIMEOUT_MS }).then((data) => data.items);
+    const promise = apiRequest(`/api/content/${kind}`, { timeoutMs: TIMEOUT_MS }).then(pick);
     promise.catch(() => cache.delete(kind)); // retry on the next page view
     cache.set(kind, promise);
   }
   return cache.get(kind);
 }
 
+const load = (kind) => fetchOnce(kind, (data) => data.items);
+
 // Called by the admin panel after a change so the public pages show it straight away.
 export function invalidateSiteContent(kind) {
   cache.delete(kind);
+}
+
+// Page text saved in the admin panel (e.g. "training-page"): the saved object, or null while
+// loading, when nothing has been saved, or when the API is unreachable (callers then use
+// their defaults).
+export function useSitePage(name) {
+  const [state, setState] = useState({ name: null, item: null });
+
+  useEffect(() => {
+    let active = true;
+    fetchOnce(name, (data) => data.item ?? null)
+      .then((item) => active && setState({ name, item }))
+      .catch(() => active && setState({ name, item: null }));
+    return () => {
+      active = false;
+    };
+  }, [name]);
+
+  return state.name === name ? state.item : null;
 }
 
 // `fallback` must be a stable (module-level) array.

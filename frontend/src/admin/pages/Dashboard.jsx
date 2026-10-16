@@ -14,7 +14,7 @@ const CONTENT = [
   { key: "galleryImages", label: "Gallery images", to: "/admin/gallery", icon: Images },
   { key: "videos", label: "Videos", to: "/admin/videos", icon: Video },
   { key: "newsItems", label: "News items", to: "/admin/news", icon: Newspaper },
-  { key: "trainingPrograms", label: "Training schedule rows", to: "/admin/trainings", icon: GraduationCap },
+  { key: "trainingPrograms", label: "Training calendar batches", to: "/admin/trainings", icon: GraduationCap },
 ];
 
 function StatGrid({ title, items, totals }) {

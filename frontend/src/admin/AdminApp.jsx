@@ -3,6 +3,7 @@ import { Link, Navigate, NavLink, Outlet, Route, Routes } from "react-router-dom
 import {
   ClipboardList,
   ExternalLink,
+  FileText,
   GraduationCap,
   Images,
   LayoutDashboard,
@@ -24,6 +25,7 @@ import GalleryAdmin from "./pages/GalleryAdmin";
 import VideosAdmin from "./pages/VideosAdmin";
 import NewsAdmin from "./pages/NewsAdmin";
 import TrainingsAdmin from "./pages/TrainingsAdmin";
+import TrainingPageAdmin from "./pages/TrainingPageAdmin";
 import ApplicationsAdmin from "./pages/ApplicationsAdmin";
 import SubmissionsAdmin from "./pages/SubmissionsAdmin";
 
@@ -33,7 +35,8 @@ const NAV = [
   { to: "/admin/gallery", label: "Gallery images", icon: Images },
   { to: "/admin/videos", label: "Videos", icon: Video },
   { to: "/admin/news", label: "News & announcements", icon: Newspaper },
-  { to: "/admin/trainings", label: "Training schedule", icon: GraduationCap },
+  { to: "/admin/trainings", label: "Training calendar", icon: GraduationCap },
+  { to: "/admin/training-page", label: "Training page text", icon: FileText },
   { group: "Submissions" },
   { to: "/admin/applications", label: "Training applications", icon: ClipboardList },
   { to: "/admin/messages", label: "Contact messages", icon: Mail },
@@ -216,6 +219,7 @@ export default function AdminApp() {
           <Route path="videos" element={<VideosAdmin />} />
           <Route path="news" element={<NewsAdmin />} />
           <Route path="trainings" element={<TrainingsAdmin />} />
+          <Route path="training-page" element={<TrainingPageAdmin />} />
           <Route path="applications" element={<ApplicationsAdmin />} />
           <Route path="messages" element={<SubmissionsAdmin key="messages" kind="messages" />} />
           <Route path="quotes" element={<SubmissionsAdmin key="quotes" kind="quotes" />} />

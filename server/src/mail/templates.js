@@ -3,7 +3,7 @@
 const SIGNATURE = {
   name: "Sumedha Agro",
   lines: [
-    "982 Village Andpurdev, Banthra, Sarojni Nagar Lucknow 226401, Uttar Pradesh, India",
+    "982 Village Andpurdev, Banthra, Sarojni Nagar, Lucknow 226401, Uttar Pradesh, India",
     "Mob. +91 9473896285, +91 9125591178",
     "info@sumedhaagro.com · www.sumedhaagro.com",
   ],

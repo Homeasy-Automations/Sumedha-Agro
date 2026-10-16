@@ -28,7 +28,8 @@ export default function useVisitorCount(fallback) {
     const controller = new AbortController();
     const counted = alreadyCounted();
 
-    fetch(counted ? API_URL : `${API_URL}/hit`, { method: counted ? "GET" : "POST", signal: controller.signal })
+    // Low priority: the footer counter must not compete with the page's own files.
+    fetch(counted ? API_URL : `${API_URL}/hit`, { method: counted ? "GET" : "POST", signal: controller.signal, priority: "low" })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (typeof data?.count !== "number") return;

@@ -1,6 +1,5 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Navigate, Outlet, Routes, Route } from "react-router-dom";
-import { LazyMotion, MotionConfig } from "framer-motion";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
@@ -24,9 +23,6 @@ const Termsofservices = lazy(() => import("./pages/Termsofservices"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AdminApp = lazy(() => import("./admin/AdminApp"));
 
-// Animation code is fetched separately so it doesn't hold up the first render; `strict` makes
-// any full `motion` component (which would bundle it again) an error. Use `m` instead.
-const loadMotionFeatures = () => import("./lib/motionFeatures").then((mod) => mod.default);
 
 function PageFallback() {
   return (
@@ -56,47 +52,43 @@ function PublicLayout() {
 export default function App() {
   return (
     <Router>
-      <MotionConfig reducedMotion="user">
-        <LazyMotion features={loadMotionFeatures} strict>
-          <ScrollToTop />
-          <Routes>
-            <Route element={<PublicLayout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/training" element={<Training />} />
-              <Route path="/training/apply" element={<TrainingApply />} />
-              <Route path="/spawn-booking" element={<SpawnBooking />} />
-              {/* Services and Mushroom Technologies are now sections of the Incubation page. */}
-              {/* Pages merged into others: old links land on the new section. */}
-              <Route path="/incubation" element={<Navigate to="/training#incubation" replace />} />
-              <Route path="/services" element={<Navigate to="/training" replace />} />
-              <Route path="/technologies" element={<Navigate to="/training#technologies" replace />} />
-              <Route path="/value-added" element={<Navigate to="/spawn-booking#value-added" replace />} />
-              <Route path="/media" element={<Navigate to="/news#media" replace />} />
-              <Route path="/news" element={<News />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/products/:slug" element={<ProductDetails />} />
-              <Route path="/shop" element={<Shop />} />
-              <Route path="/get-quote" element={<GetQuote />} />
-              <Route path="/showcase" element={<Showcase />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/termsofservices" element={<Termsofservices />} />
-              {/* Any other address: "Page not found" (marked noindex). */}
-              <Route path="*" element={<NotFound />} />
-            </Route>
-            {/* Staff-only content management; not linked from the site and excluded from search engines. */}
-            <Route
-              path="/admin/*"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <AdminApp />
-                </Suspense>
-              }
-            />
-          </Routes>
-        </LazyMotion>
-      </MotionConfig>
+      <ScrollToTop />
+      <Routes>
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/training" element={<Training />} />
+          <Route path="/training/apply" element={<TrainingApply />} />
+          <Route path="/spawn-booking" element={<SpawnBooking />} />
+          {/* Services and Mushroom Technologies are now sections of the Incubation page. */}
+          {/* Pages merged into others: old links land on the new section. */}
+          <Route path="/incubation" element={<Navigate to="/training#incubation" replace />} />
+          <Route path="/services" element={<Navigate to="/training" replace />} />
+          <Route path="/technologies" element={<Navigate to="/training#technologies" replace />} />
+          <Route path="/value-added" element={<Navigate to="/spawn-booking#value-added" replace />} />
+          <Route path="/media" element={<Navigate to="/news#media" replace />} />
+          <Route path="/news" element={<News />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/products/:slug" element={<ProductDetails />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/get-quote" element={<GetQuote />} />
+          <Route path="/showcase" element={<Showcase />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/termsofservices" element={<Termsofservices />} />
+          {/* Any other address: "Page not found" (marked noindex). */}
+          <Route path="*" element={<NotFound />} />
+        </Route>
+        {/* Staff-only content management; not linked from the site and excluded from search engines. */}
+        <Route
+          path="/admin/*"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <AdminApp />
+            </Suspense>
+          }
+        />
+      </Routes>
     </Router>
   );
 }

@@ -37,6 +37,7 @@ export default defineConfig(({ mode }) => {
       seo({
         siteUrl: 'https://sumedhaagro.com',
         disallow: ['/admin'],
+        seoData: async (load) => ({ products: (await load('src/data/product.js')).products }),
         params: {
           '/products/:slug': async (load) => (await load('src/data/product.js')).products.map((p) => p.slug),
         },

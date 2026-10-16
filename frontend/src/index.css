@@ -78,3 +78,23 @@ body {
 .on-dark :where(a, button, [tabindex]):focus-visible {
     outline-color: var(--color-primary);
 }
+
+/* Reveal (components/Reveal.jsx): hidden until scrolled into view, then fades and slides up,
+   after the element's own --reveal-delay. An animation rather than a transition, so it never
+   delays the element's hover effects; visitors who prefer reduced motion see it straight away. */
+@keyframes reveal {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+}
+@layer components {
+    @media (prefers-reduced-motion: no-preference) {
+        .reveal:not([data-shown]) {
+            opacity: 0;
+        }
+        .reveal[data-shown] {
+            animation: reveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s) backwards;
+        }
+    }
+}

@@ -47,7 +47,9 @@ function pageHtml(template, title, tags) {
  * @param {object} options
  * @param {string} options.siteUrl  Public origin, e.g. "https://example.com".
  * @param {string} [options.routesFile]  File holding the <Route> elements, relative to the Vite root.
- * @param {string} [options.seoModule]  Module exporting seoFor(path, { asset }) and headTags(seo).
+ * @param {string} [options.seoModule]  Module exporting seoFor(path, { asset, …seoData }) and headTags(seo).
+ * @param {(load: (file: string) => Promise<object>) => Promise<object>} [options.seoData]
+ *   Extra options for seoFor (e.g. the product list), loaded through Vite.
  * @param {string[]} [options.disallow]  Paths crawlers must not visit (robots.txt); also left out of the sitemap.
  * @param {string[]} [options.exclude]  Paths left out of the sitemap but still open to crawlers.
  * @param {Record<string, (load: (file: string) => Promise<object>) => Promise<Array<string|object>>|Array<string|object>>} [options.params]
@@ -57,6 +59,7 @@ export default function seo({
   siteUrl,
   routesFile = "src/App.jsx",
   seoModule = "src/seo/index.js",
+  seoData,
   disallow = [],
   exclude = [],
   params = {},
@@ -138,6 +141,7 @@ export default function seo({
         if (!index) throw new Error("[seo] index.html is missing from the build.");
         const template = String(index.source);
         const { seoFor, headTags } = await load(seoModule);
+        const data = seoData ? await seoData(load) : {};
 
         // Imported images are "/src/…" paths when loaded through Vite; map them to the built files.
         const built = new Map();
@@ -151,7 +155,7 @@ export default function seo({
 
         const missing = [];
         for (const path of paths) {
-          const page = seoFor(path, { asset });
+          const page = seoFor(path, { ...data, asset });
           if (!page) {
             missing.push(path);
             continue;

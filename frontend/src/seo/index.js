@@ -4,8 +4,9 @@
 //    crawlers that don't run JavaScript (WhatsApp, Facebook, LinkedIn…) see the right page;
 //  - components/Seo.jsx updates them in the browser as visitors move between pages.
 // A route added to src/App.jsx needs an entry in PAGES (the build stops until it has one).
+// Product pages need the product list (src/data/product.js), passed in by the caller so it
+// stays out of the code every page loads.
 import content from "../data/content";
-import { products } from "../data/product";
 
 const { meta, site, contact } = content;
 
@@ -103,12 +104,16 @@ function trailTo(path, name) {
 
 const normalize = (pathname) => (pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname) || "/";
 
+// A product page address (its SEO needs the product list).
+export const isProductPath = (pathname) => /^\/products\/[^/]+$/.test(normalize(pathname));
+
 /**
  * The page's SEO data, or null when the path is not a page of the site.
+ * products: the product list, needed for product pages.
  * asset: turns an imported image URL into a public URL (the build maps source paths to the
  * hashed files; in the browser imported URLs are already public).
  */
-export function seoFor(pathname, { asset = (url) => url } = {}) {
+export function seoFor(pathname, { products = [], asset = (url) => url } = {}) {
   const path = normalize(pathname);
 
   const page = PAGES[path];

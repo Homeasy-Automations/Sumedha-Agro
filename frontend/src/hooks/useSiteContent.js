@@ -3,14 +3,15 @@ import { apiRequest } from "../lib/api";
 
 // Content managed in the admin panel (gallery, videos, news, trainings), fetched once per
 // page load and shared between components. Falls back to the static defaults in
-// src/data when the API is unreachable or nothing has been added yet.
+// src/data when the API is unreachable or nothing has been added yet. Fetched at low priority:
+// the pages render without it, so it shouldn't compete with their scripts and images.
 
 const TIMEOUT_MS = 15_000;
 const cache = new Map(); // kind -> Promise<items> (lists) or Promise<item | null> (page text)
 
 function fetchOnce(kind, pick) {
   if (!cache.has(kind)) {
-    const promise = apiRequest(`/api/content/${kind}`, { timeoutMs: TIMEOUT_MS }).then(pick);
+    const promise = apiRequest(`/api/content/${kind}`, { timeoutMs: TIMEOUT_MS, priority: "low" }).then(pick);
     promise.catch(() => cache.delete(kind)); // retry on the next page view
     cache.set(kind, promise);
   }

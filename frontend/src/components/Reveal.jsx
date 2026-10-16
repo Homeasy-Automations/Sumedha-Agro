@@ -1,25 +1,21 @@
-import { m } from "framer-motion";
+import { useRef } from "react";
+import useInView from "../hooks/useInView";
 
-const MotionDiv = m.div;
-
-const variants = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0 },
-};
-
-// Fade/slide-in on scroll, matching the motion used elsewhere on the site.
-export default function Reveal({ delay = 0, className = "", children, ...rest }) {
+// Fade/slide-in on scroll, matching the motion used elsewhere on the site. The animation is
+// CSS (.reveal in index.css, off for visitors who prefer reduced motion); this only marks the
+// element once 15% of it is in view.
+export default function Reveal({ delay = 0, className = "", style, children, ...rest }) {
+  const ref = useRef(null);
+  const shown = useInView(ref);
   return (
-    <MotionDiv
-      className={className}
-      variants={variants}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
+    <div
+      ref={ref}
+      className={`reveal ${className}`}
+      data-shown={shown || undefined}
+      style={delay ? { ...style, "--reveal-delay": `${delay}s` } : style}
       {...rest}
     >
       {children}
-    </MotionDiv>
+    </div>
   );
 }

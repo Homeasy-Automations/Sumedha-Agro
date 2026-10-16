@@ -13,7 +13,8 @@ export class ApiError extends Error {
 }
 
 // withStatus: resolve to { status, data } instead of data, e.g. to tell 201 Created from 200 OK.
-export async function apiRequest(path, { method = "GET", body, token, signal, timeoutMs, withStatus = false } = {}) {
+// priority: "low" for requests the page can show without (fetched after its own files).
+export async function apiRequest(path, { method = "GET", body, token, signal, timeoutMs, withStatus = false, priority } = {}) {
   const headers = { Accept: "application/json" };
   let payload = body;
   if (body !== undefined && !(body instanceof FormData)) {
@@ -30,6 +31,7 @@ export async function apiRequest(path, { method = "GET", body, token, signal, ti
       headers,
       body: payload,
       signal: signals.length > 1 ? AbortSignal.any(signals) : signals[0],
+      priority,
     });
   } catch (err) {
     if (err.name === "AbortError" && signal?.aborted) throw err;

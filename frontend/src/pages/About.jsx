@@ -1,6 +1,6 @@
+import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { m } from "framer-motion";
 import content from "../data/content";
 import Reveal from "../components/Reveal";
 import SectionHeading from "../components/SectionHeading";
@@ -8,13 +8,27 @@ import HeadingCard from "../components/HeadingCard";
 import ButtonLink from "../components/ButtonLink";
 import Icon from "../components/Icon";
 import LinkContext from "../components/LinkContext";
+import useInView from "../hooks/useInView";
 import { body, card, cardHover, container, heading, iconTile, muted, pillOnDark, sectionY } from "../components/styles";
 import { aboutCta, commitment, leadership, missionVision, stats, whoWeAre } from "../data/legacyContent";
 
 const { about, training, images, nav, ui } = content;
 
-const MotionDiv = m.div;
 const BadgeIcon = whoWeAre.badge.icon;
+
+// Stat progress bar: grows from the left once it scrolls into view (CSS transition; it just
+// appears for visitors who prefer reduced motion).
+function GrowBar({ progress, delay }) {
+  const ref = useRef(null);
+  const shown = useInView(ref, 0);
+  return (
+    <div
+      ref={ref}
+      className="h-full origin-left rounded-full bg-primary transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+      style={{ width: `${progress}%`, transform: shown ? "none" : "scaleX(0)", transitionDelay: `${delay}s` }}
+    />
+  );
+}
 
 // Grid spans keep the seven focus cards in full rows: 3 columns on lg, 2 on md.
 const focusSpans = {
@@ -223,14 +237,7 @@ export default function About() {
                         {stat.value} <span className={`text-lg font-medium ${muted}`}>{stat.unit}</span>
                       </p>
                       <div aria-hidden="true" className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
-                        <MotionDiv
-                          className="h-full origin-left rounded-full bg-primary"
-                          style={{ width: `${stat.progress}%` }}
-                          initial={{ scaleX: 0 }}
-                          whileInView={{ scaleX: 1 }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.9, delay: 0.2 + i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                        />
+                        <GrowBar progress={stat.progress} delay={0.2 + i * 0.1} />
                       </div>
                     </div>
                   </Reveal>

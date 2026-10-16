@@ -11,6 +11,7 @@ import { MdNorth } from "react-icons/md";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { IoLocation } from "react-icons/io5";
+import privacyFarmImage from "../assets/pages/privacy-farm.webp";
 
 export default function Privacy() {
   return (
@@ -312,7 +313,7 @@ export default function Privacy() {
                       alt="Sumedha Agro farm"
                       className="w-full h-32 object-cover rounded opacity-80 filter grayscale hover:grayscale-0 transition-all duration-500"
                       data-alt="A clean organic mushroom farming facility interior"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuA269NDudFC1hyTzpKE7ci5c3JUYciIOkgn6opO9BdJcjsoc8oRiVb7a-jxcNOwNROUP4_QCYi_IGsvgUlkWl3NveP-mar2rfffCXLPcKdmthAYMXy4l-skWTXkujOZW7fLCxtPlNXCX3sIEsuf7Tt4AGt7GwcKCVqGdK_IsaxcE4et0CSnHrQmzcAuGYbCL3Z5sUlLqqq4HXh776FVSVZNTJy5VVhbleI2FfiFBDAI96VOnCvAiwWf--_IUdTLOHLZZrwtHL7vQbs"
+                      src={privacyFarmImage}
                     />
                   </div>
                 </div>

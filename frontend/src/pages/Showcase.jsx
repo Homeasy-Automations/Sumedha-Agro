@@ -10,6 +10,10 @@ import { MdSpoke } from "react-icons/md";
 import { WiHumidity } from "react-icons/wi";
 import { MdOutlineShoppingBasket } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import showcaseOysterImage from "../assets/pages/showcase-oyster.webp";
+import panSearedOysterImage from "../assets/pages/recipe-pan-seared-oyster.webp";
+import mushroomSoupImage from "../assets/pages/recipe-mushroom-soup.webp";
+import mushroomTempuraImage from "../assets/pages/recipe-mushroom-tempura.webp";
 
 export default function Showcase() {
   const [activeTab, setActiveTab] = useState("oyster");
@@ -102,7 +106,7 @@ export default function Showcase() {
               <div
                 style={{
                   backgroundImage:
-                    "url('https://lh3.googleusercontent.com/aida-public/AB6AXuAXpF8k1xv23r5m1wVIQbhzC49WvQhJmprDAS9Y_AvEEagbrjt38mMvCVKP0s7tg5NK-QRX9OuSkhPmgdDOPKpwaQqYaqzVzkRTeg6C52551Ei6G2JnKtSeqKzsYlhTQsd-FileX8D5T00Qn6BjbddJ3m-SGvJ3Z6Ez1TrLQjxSw0tYAQz1UGk7ZKxY2vgbpeTicaeuSCNB8WYRu9w2Aw2gGEOAL4yde4dQXq62R9QO8yMnB4NaU0GnGS__ow0n-LRugASxOVSlzrg')",
+                    `url(${showcaseOysterImage})`,
                 }}
                 className="relative w-full aspect-4/3 bg-gray-100 rounded-2xl overflow-hidden shadow-xl bg-cover bg-center"
                 data-alt="High resolution close up of fresh oyster mushrooms with dramatic lighting"
@@ -485,7 +489,7 @@ export default function Showcase() {
                 </div>
                 <div
                 style={{
-                    backgroundImage : "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBHU1-qqOmSeVjwX5xBeRpv4XDkO774f0CA34E5mPI2oqFcVjxv3Jaw8KZh5vFMVdsc8FaIZd8ufPdkFoXvnHvfrWqfgSlZSTTK6YmBdf-O_ofm4vWxNJx7cczHz92zjoRio--5J-N2gZiNxIYGF-8d-1X7XTf_X8fBxEEAQB3KbzZ7pawX3Cg-QgbAhCi3i8ofUxRZBOcKRq0-ynx34yLDstx9zAvR6CDokC4d1_1HuNDTvoXpTkVTKq4QQC2q2qWxSe46SiL1FKY')"
+                    backgroundImage : `url(${panSearedOysterImage})`
                 }}
                   className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                   data-alt="Gourmet plate of pan seared oyster mushrooms with herbs"
@@ -533,7 +537,7 @@ export default function Showcase() {
                   className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                   data-alt="Rich creamy mushroom soup in a rustic bowl"
                   style={{
-                    backgroundImage : "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCmfPGtCX6XPy-HC1pTk2IkUvmIERPPmGbutXONGHP_4eJVp5e1E8D_rdtRKmoh1ZcZuho_cc5JMvlMXedg_E2cfPu2VSQbYq9o5rIIHjkFMjlrBNJPk0HVdBK7ofI_bDtxeJsn7zpfCoFF39DCUrjFD7DCBsQTBIN3cUtNP-a0T-OvRCU3gHf-6aGoStAFCsnbqHfYD8Qk2Sc7Yp4n8j7zsXJIb6mgJviVml9RSQ0x6SnS_HkqgbAMDGR2dvn6i2kMv3_rWuyDzsw')"
+                    backgroundImage : `url(${mushroomSoupImage})`
                   }}
                 //   style="
                 //   background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCmfPGtCX6XPy-HC1pTk2IkUvmIERPPmGbutXONGHP_4eJVp5e1E8D_rdtRKmoh1ZcZuho_cc5JMvlMXedg_E2cfPu2VSQbYq9o5rIIHjkFMjlrBNJPk0HVdBK7ofI_bDtxeJsn7zpfCoFF39DCUrjFD7DCBsQTBIN3cUtNP-a0T-OvRCU3gHf-6aGoStAFCsnbqHfYD8Qk2Sc7Yp4n8j7zsXJIb6mgJviVml9RSQ0x6SnS_HkqgbAMDGR2dvn6i2kMv3_rWuyDzsw');
@@ -579,7 +583,7 @@ export default function Showcase() {
                   className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                   data-alt="Crispy fried mushroom tempura with dipping sauce"
                   style={{
-                    backgroundImage : "url('https://lh3.googleusercontent.com/aida-public/AB6AXuB8c8bBrbqil14q4dJPOfZXoFw2e73DntSFJT_HwuQYNieQ43IMXhSsXwlV2SXIaEQF90FJkLF-oIFvPxoE0WJoMYuN_1MYrB48FSmLIoQqRkzRJkjlq20hr9kiecVzcEQtZSun_grj58XZcyMZWIGjb0fjKu7xd59f0feAKobLzHGJHR0IDsOHlKWzWHHDaSmyUcPz6YJ_JWiB49cCH7_3dCABVHhaRYD1L_DYy5NC7_Kwm_-hWZ0VUvqTWsXwQz2lHOhbaOJlYXE')"
+                    backgroundImage : `url(${mushroomTempuraImage})`
                   }}
                 //   style="
                 //   background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB8c8bBrbqil14q4dJPOfZXoFw2e73DntSFJT_HwuQYNieQ43IMXhSsXwlV2SXIaEQF90FJkLF-oIFvPxoE0WJoMYuN_1MYrB48FSmLIoQqRkzRJkjlq20hr9kiecVzcEQtZSun_grj58XZcyMZWIGjb0fjKu7xd59f0feAKobLzHGJHR0IDsOHlKWzWHHDaSmyUcPz6YJ_JWiB49cCH7_3dCABVHhaRYD1L_DYy5NC7_Kwm_-hWZ0VUvqTWsXwQz2lHOhbaOJlYXE');

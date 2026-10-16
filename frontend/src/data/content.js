@@ -13,6 +13,16 @@ import spawnImage from "../assets/Seeds.jpg";
 import trainingImage from "../assets/hero.jpg";
 import aboutTrainingImage from "../assets/Aboutpage training.jpeg";
 import homeTrainingImage from "../assets/home training image.jpeg";
+import chipsImage from "../assets/value-added/mushroom-chips.webp";
+import papadImage from "../assets/value-added/mushroom-papad.webp";
+import driedPacksImage from "../assets/value-added/mushroom-dried-packs.webp";
+import ketchupImage from "../assets/value-added/mushroom-ketchup.webp";
+import teaCoffeeImage from "../assets/value-added/mushroom-tea-and-coffee.webp";
+import jerkyImage from "../assets/value-added/mushroom-jerky-crisps.webp";
+
+// Creative Commons licences used by the stock photos below (credited on the page).
+const CC_BY_2 = { license: "CC BY 2.0", licenseUrl: "https://creativecommons.org/licenses/by/2.0/" };
+const CC_BY_3 = { license: "CC BY 3.0", licenseUrl: "https://creativecommons.org/licenses/by/3.0/" };
 
 const contact = {
   heading: "Contact us",
@@ -457,6 +467,71 @@ const content = {
       { id: "mechanized-quality-spawn-production", icon: "Cog", title: "Mechanized Quality Spawn Production" },
       { id: "crop-waste-to-food-plate", icon: "Recycle", title: "Crop waste to food plate" },
     ],
+    // Photos are illustrative stock images (Openverse), not Sumedha Agro's own products.
+    // `credit` is required for CC BY photos and is listed under the cards; CC0 needs none.
+    products: {
+      heading: "Value added products",
+      creditsLabel: "Photo credits",
+      items: [
+        {
+          id: "mushroom-chips",
+          icon: "Popcorn",
+          title: "Mushroom Chips",
+          image: {
+            src: chipsImage,
+            alt: "Crispy fried mushroom slices in a bowl",
+            credit: { title: "fried mushrooms", author: "bee wolf ray", url: "https://www.flickr.com/photos/9673663@N08/4218184594", ...CC_BY_2 },
+          },
+        },
+        {
+          id: "mushroom-papad",
+          icon: "Cookie",
+          title: "Mushroom Papad",
+          image: {
+            src: papadImage,
+            alt: "Roasted papads stacked on a plate",
+            credit: { title: "Roasted Papad - Howrah 2013-11-02 4068", author: "Biswarup Ganguly", url: "https://commons.wikimedia.org/w/index.php?curid=29409079", ...CC_BY_3 },
+          },
+        },
+        {
+          id: "mushroom-dried-packs",
+          icon: "Package",
+          title: "Mushroom Dried Packs",
+          image: {
+            src: driedPacksImage,
+            alt: "Open bag full of dried shiitake mushrooms",
+            credit: { title: "Dried Mushrooms", author: "cuthbert8", url: "https://www.flickr.com/photos/108040444@N07/14450871782", ...CC_BY_2 },
+          },
+        },
+        {
+          id: "mushroom-ketchup",
+          icon: "Soup",
+          title: "Mushroom Ketchup",
+          image: {
+            src: ketchupImage,
+            alt: "White bowl of thick red ketchup",
+            credit: { title: "Ketchup-01", author: "idealisms", url: "https://commons.wikimedia.org/w/index.php?curid=19134606", ...CC_BY_2 },
+          },
+        },
+        {
+          id: "mushroom-tea-and-coffee",
+          icon: "Coffee",
+          title: "Mushroom Tea and Coffee",
+          // CC0 (public domain), from rawpixel: https://www.rawpixel.com/image/5902433
+          image: { src: teaCoffeeImage, alt: "Cup of milky coffee on a saucer with coffee beans" },
+        },
+        {
+          id: "mushroom-jerky-crisps",
+          icon: "Flame",
+          title: "Mushroom Jerky / Crisps",
+          image: {
+            src: jerkyImage,
+            alt: "Strips of dark mushroom jerky in a bowl",
+            credit: { title: "Mushroom jerky", author: "jamesonf", url: "https://www.flickr.com/photos/24314126@N05/20638491308", ...CC_BY_2 },
+          },
+        },
+      ],
+    },
   },
 
   // Section of the News & Announcements page.

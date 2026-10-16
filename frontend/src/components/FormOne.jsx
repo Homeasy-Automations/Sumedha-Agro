@@ -11,6 +11,7 @@ import { IoMdBusiness } from "react-icons/io";
 import Seeds from "../assets/Seeds.jpg";
 import Bulk from "../assets/Bulk.jpg";
 import Pickles from "../assets/Pickles.jpg";
+import quoteHeaderImage from "../assets/pages/quote-form-header.webp";
 
 export default function FormOne({ handleNext, formData, setFormData, scrollTo }) {
 const businessRef = useRef(null);
@@ -63,7 +64,7 @@ useEffect(() => {
           <div
             style={{
               backgroundImage:
-                "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCO5qZceNACJnnfdyx1ooFgH_Wo6NOCnp2H5QJSovXmqd3w5d5TzX2qrn1nDewvHGdzPqQiy7fDDgzsylZmQQMRq6HnO3AyEmnnbjdfI9C6KCuNgyz4oxM734Dm9FHJOBc8sQV19EjyV-5gYAkCivqIpL47zhS3QdTosEmqyLw-opbtB64CusaPl0Ka4dYrNDx1z9uhJGnb9DKFb8od3q9K5HlqHMjHMhiZ_KvR9hb-jzt9Y91BMKPPnOKQHTg4YhalSHh9idPOLFg')",
+                `url(${quoteHeaderImage})`,
             }}
             className="absolute inset-0 bg-cover bg-center"
             data-alt="Vibrant fresh organic mushrooms in a farm setting"
